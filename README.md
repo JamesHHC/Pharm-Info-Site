@@ -20,7 +20,7 @@ PostgreSQL was used to set up four tables to contain the needed information.
     Contains info about pharmacies.
     <ul>
       <li>id - serial (PK, NN)</li>
-      <li>name - char (NN)</li>
+      <li>name - text (NN)</li>
       <li>communication - text</li>
       <li>verbal_orders - boolean</li>
       <li>general_notes - text</li>
@@ -35,14 +35,14 @@ PostgreSQL was used to set up four tables to contain the needed information.
     Contains info about contacts.
     <ul>
       <li>id - serial (PK, NN)</li>
-      <li>name - char (NN)</li>
-      <li>email - char</li>
-      <li>phone - char</li>
-      <li>title - char</li>
+      <li>name - text (NN)</li>
+      <li>email - text</li>
+      <li>phone - text</li>
+      <li>title - text</li>
       <li>preferences - text</li>
       <li>dnc - boolean</li>
       <li>intake_only - boolean</li>
-      <li>contact_type - char</li>
+      <li>contact_type - text</li>
       <li>created_at - timestamp (NN)</li>
     </ul>
   </p>
@@ -67,7 +67,7 @@ PostgreSQL was used to set up four tables to contain the needed information.
     Contains an entry for a single training requirement
     <ul>
       <li>id - serial (PK, NN)</li>
-      <li>name - char (NN)</li>
+      <li>name - text (NN)</li>
       <li>description - text (NN)</li>
     </ul>
   </p>
