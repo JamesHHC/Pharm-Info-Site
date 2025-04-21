@@ -19,33 +19,67 @@ PostgreSQL was used to set up four tables to contain the needed information.
     <strong>pharmacies</strong><br>
     Contains info about pharmacies.
     <ul>
-      <li>id - SERIAL PK</li>
-      <li>name - TEXT</li>
-      <li>TODO</li>
+      <li>id - serial (PK, NN)</li>
+      <li>name - char (NN)</li>
+      <li>communication - text</li>
+      <li>verbal_orders - boolean</li>
+      <li>general_notes - text</li>
+      <li>oncall_prefs - text</li>
+      <li>rules - integer[]</li>
+      <li>training_req - integer[]</li>
+      <li>created_at - timestamp (NN)</li>
     </ul>
   </p>
   <p> <!-- Contacts Table -->
     <strong>contacts</strong><br>
     Contains info about contacts.
     <ul>
-      <li>id - SERIAL PK</li>
-      <li>name - TEXT</li>
-      <li>TODO</li>
+      <li>id - serial (PK, NN)</li>
+      <li>name - char (NN)</li>
+      <li>email - char</li>
+      <li>phone - char</li>
+      <li>title - char</li>
+      <li>preferences - text</li>
+      <li>dnc - boolean</li>
+      <li>intake_only - boolean</li>
+      <li>contact_type - char</li>
+      <li>created_at - timestamp (NN)</li>
     </ul>
   </p>
   <p> <!-- Pharmacy-Contacts Table -->
     <strong>pharmacy_contacts</strong><br>
     Many-to-many join table for pharmacies & contacts.
     <ul>
-      <li>pharmacy_id - SERIAL PK</li>
-      <li>contact_id - SERIAL PK</li>
+      <li>pharmacy_id - serial (PK, FK, NN)</li>
+      <li>contact_id - serial (PK, FK, NN)</li>
+    </ul>
+  </p>
+  <p> <!-- Rules Table -->
+    <strong>rules</strong><br>
+    Contains an entry for a single rule.
+    <ul>
+      <li>id - serial (PK, NN)</li>
+      <li>rule - text (NN)</li>
+    </ul>
+  </p>
+  <p> <!-- Training Requirements Table -->
+    <strong>training</strong><br>
+    Contains an entry for a single training requirement
+    <ul>
+      <li>id - serial (PK, NN)</li>
+      <li>name - char (NN)</li>
+      <li>description - text (NN)</li>
     </ul>
   </p>
   <p> <!-- User Table -->
     <strong>users</strong><br>
     For authentication/access management.
     <ul>
-      <li>TODO</li>
+      <li>id - serial (PK, NN)</li>
+      <li>username - text (NN, UQ)</li>
+      <li>password_hash - text (NN)</li>
+      <li>role - text (NN)</li>
+      <li>created_at - timestamp (NN)</li>
     </ul>
   </p>
 </div>

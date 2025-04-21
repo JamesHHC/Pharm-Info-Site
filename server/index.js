@@ -25,5 +25,5 @@ app.get('/api/pharmacies', async (req, res) => {
 });
 
 app.listen(port, () => {
-	console.log(`Server running on port ${port}`);
+	console.log('\x1b[36m%s\x1b[0m', `Server running on port ${port}`);
 });
