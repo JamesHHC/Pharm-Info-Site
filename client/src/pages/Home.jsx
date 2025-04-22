@@ -1,8 +1,28 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 function Home() {
 	const [activeTab, setActiveTab] = useState('pharmacies');
 	const [searchTerm, setSearchTerm] = useState('');
+	const [pharmacies, setPharmacies] = useState([]);
+
+	useEffect(() => {
+		const fetchPharmacies = async () => {
+			try {
+				const res = await fetch('http://localhost:5000/api/pharmacies');
+				const data = await res.json();
+				setPharmacies(data);
+			} catch (err) {
+				console.error('Failed to fetch pharmacies', err);
+			}
+		};
+
+		fetchPharmacies();
+	}, []);
+
+	const filteredPharmacies = pharmacies.filter((pharmacy) =>
+		pharmacy.name.toLowerCase().includes(searchTerm.toLowerCase())
+	);
+
 	return (
 		<div className="flex h-screen p-1 bg-gray-200 min-w-[1100px]">
 			<div className="w-1/4 p-1">
@@ -31,8 +51,8 @@ function Home() {
 							Contacts
 						</button>
 					</div>
-					{/* Search bar & create button */}
-					<div className="flex space-x-2 h-10.5 mb-2">
+					<div className="flex space-x-2 h-10.5 mb-4">
+						{/* Search Bar */}
 						<input
 							type="text"
 							placeholder={`Search ${activeTab}...`}
@@ -40,9 +60,10 @@ function Home() {
 							onChange={(e) => setSearchTerm(e.target.value)}
 							className="h-full w-full px-4 border border-gray-300 rounded-md focus:outline-blue-300"
 						/>
+						{/* Create Button */}
 						<button
 							onClick={handleAdd}
-							className="w-12 h-10.5 text-4xl font-medium bg-green-400 text-white rounded-md hover:bg-green-300"
+							className="w-12 h-10.5 text-4xl font-medium bg-green-500 text-white rounded-md hover:bg-green-400"
 						>
 							<span className="relative bottom-[3px]">+</span>
 						</button>
@@ -50,9 +71,17 @@ function Home() {
 					{/* Tab Content */}
 					<div className="flex-1 overflow-auto">
 						{activeTab === 'pharmacies' &&
-						<div>
-							Pharmacy list goes here
-						</div>
+						<ul className="space-y-2">
+							{filteredPharmacies.map((pharmacy) => (
+								<li
+									key={pharmacy.id}
+									className="p-2 bg-gray-100 rounded-md hover:bg-gray-200 cursor-pointer"
+								>
+									<strong>{pharmacy.name}</strong><br></br>
+									{pharmacy.verbal_orders ? 'Verbal orders allowed' : 'No verbal orders'}
+								</li>
+							))}
+						</ul>
 					}
 						{activeTab === 'contacts' &&
 						<div>
