@@ -56,7 +56,7 @@ function Home() {
 
 	return (
 		<>
-		<div className="flex h-screen p-1 bg-gray-200 min-w-[1100px]">
+		<div className="flex h-screen p-1 bg-gray-600/30 min-w-[1100px]">
 			<div className="w-1/4 p-1">
 				{/* Left Column with Tabs */}
 				<div className="p-4 rounded-xl shadow-lg h-full bg-white flex flex-col">
@@ -105,14 +105,14 @@ function Home() {
 						</button>
 					</div>
 					{/* Tab Content */}
-					<div className="flex-1 overflow-auto scrollbar-thin pr-1">
+					<div className="flex-1 overflow-auto rounded-md scrollbar-thin p-2 bg-gray-200 border border-gray-200">
 						{/* Pharmacy list */}
 						{ activeTab === 'pharmacies' &&
 							<ul className="space-y-2">
 								{filteredPharmacies.map((pharmacy) => (
 									<li
 										key={pharmacy.id}
-										className="p-2 bg-gray-100 rounded-md hover:bg-gray-200 cursor-pointer shadow-sm"
+										className="p-2 bg-white rounded-md hover:bg-white/70 cursor-pointer shadow-sm"
 									>
 										<h2>{pharmacy.name}</h2>
 										<h5>{pharmacy.verbal_orders ? 'Verbal orders allowed' : 'No verbal orders'}</h5>
@@ -127,7 +127,7 @@ function Home() {
 								{filteredContacts.map((contact) => (
 									<li
 										key={contact.id}
-										className="p-2 bg-gray-100 rounded-md hover:bg-gray-200 cursor-pointer shadow-sm"
+										className="p-2 bg-white rounded-md hover:bg-white/70 cursor-pointer shadow-sm"
 									>
 										<h2>{contact.name}</h2>
 										<h5>{contact.title}</h5>
