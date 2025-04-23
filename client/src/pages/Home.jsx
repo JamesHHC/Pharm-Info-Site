@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 
 import PharmacyFormModal from './modals/PharmacyFormModal';
 import ContactFormModal from './modals/ContactFormModal';
+import InfoPanel from './content/InfoPanel';
 
 function Home() {
 	// For tabs/search bar
@@ -13,27 +14,31 @@ function Home() {
 	// For modals
 	const [showPharmacyModal, setShowPharmacyModal] = useState(false);
 	const [showContactModal, setShowContactModal] = useState(false);
+	// Selected list item
+	const [selectedItem, setSelectedItem] = useState(null);
+
+	// Functions for syncing data
+	const fetchPharmacies = async () => {
+		try {
+			const res = await fetch('http://localhost:5000/api/pharmacies');
+			const data = await res.json();
+			setPharmacies(data);
+		} catch (err) {
+			console.error('Failed to fetch pharmacies', err);
+		}
+	};
+	const fetchContacts = async () => {
+		try {
+			const res = await fetch('http://localhost:5000/api/contacts');
+			const data = await res.json();
+			setContacts(data);
+		} catch (err) {
+			console.error('Failed to fetch pharmacies', err);
+		}
+	};
 
 	// Sync lists to db
 	useEffect(() => {
-		const fetchPharmacies = async () => {
-			try {
-				const res = await fetch('http://localhost:5000/api/pharmacies');
-				const data = await res.json();
-				setPharmacies(data);
-			} catch (err) {
-				console.error('Failed to fetch pharmacies', err);
-			}
-		};
-		const fetchContacts = async () => {
-			try {
-				const res = await fetch('http://localhost:5000/api/contacts');
-				const data = await res.json();
-				setContacts(data);
-			} catch (err) {
-				console.error('Failed to fetch pharmacies', err);
-			}
-		};
 		fetchPharmacies();
 		fetchContacts();
 
@@ -56,7 +61,7 @@ function Home() {
 
 	return (
 		<>
-		<div className="flex h-screen p-1 bg-gray-600/30 min-w-[1100px]">
+		<div className="flex h-screen p-1 bg-gray-600/80 min-w-[1100px]">
 			<div className="w-1/4 p-1">
 				{/* Left Column with Tabs */}
 				<div className="p-4 rounded-xl shadow-lg h-full bg-white flex flex-col">
@@ -105,7 +110,7 @@ function Home() {
 						</button>
 					</div>
 					{/* Tab Content */}
-					<div className="flex-1 overflow-auto rounded-md scrollbar-thin p-2 bg-gray-200 border border-gray-200">
+					<div tabIndex='-1' className="flex-1 overflow-auto rounded-md scrollbar-thin p-2 bg-gray-200 border border-gray-200">
 						{/* Pharmacy list */}
 						{ activeTab === 'pharmacies' &&
 							<ul className="space-y-2">
@@ -113,6 +118,7 @@ function Home() {
 									<li
 										key={pharmacy.id}
 										className="p-2 bg-white rounded-md hover:bg-white/70 cursor-pointer shadow-sm"
+										onClick={() => setSelectedItem(pharmacy)}
 									>
 										<h2>{pharmacy.name}</h2>
 										<h5>{pharmacy.verbal_orders ? 'Verbal orders allowed' : 'No verbal orders'}</h5>
@@ -128,10 +134,13 @@ function Home() {
 									<li
 										key={contact.id}
 										className="p-2 bg-white rounded-md hover:bg-white/70 cursor-pointer shadow-sm"
+										onClick={() => setSelectedItem(contact)}
 									>
-										<h2>{contact.name}</h2>
-										<h5>{contact.title}</h5>
-										<p>{contact.preferences}</p>
+										<h2 style={contact.dnc ? {color: 'rgba(200, 80, 80, 1)'} : contact.intake_only ?
+											{color: 'rgba(240, 180, 100, 1)'} : {}}>{contact.name}</h2>
+										<h5>{contact.dnc ? 'DNC' : contact.intake_only ? 'INTAKE ONLY' : ''}</h5>
+										<p>{contact.email}</p>
+										<p>{contact.phone}</p>
 									</li>
 								))}
 							</ul>
@@ -142,10 +151,11 @@ function Home() {
 			<div className="w-3/4 p-1">
 				{/* Details panel */}
 				<div className="p-4 rounded-xl shadow-lg h-full bg-white">
-					Right content
+					<InfoPanel selectedItem={selectedItem} />
 				</div>
 			</div>
 		</div>
+		{/* New pharmacy modal */}
 		<PharmacyFormModal
 			isOpen={showPharmacyModal}
 			onClose={() => setShowPharmacyModal(false)}
@@ -175,9 +185,11 @@ function Home() {
 				});
 				const newPharm = await res.json();
 				// console.log(newPharm);
+				fetchPharmacies();
 				setShowPharmacyModal(false);
 			}}
 		/>
+		{/* New contact modal */}
 		<ContactFormModal
 			isOpen={showContactModal}
 			onClose={() => setShowContactModal(false)}
@@ -203,6 +215,7 @@ function Home() {
 				});
 				const newCont = await res.json();
 				// console.log(newCont);
+				fetchContacts();
 				setShowContactModal(false);
 			}}
 		/>

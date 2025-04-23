@@ -5,6 +5,11 @@
 */
 
 /* Custom text styles */
+h0 {
+	font-size: 32px;
+	font-weight: bold;
+	color: rgba(60, 60, 80, 0.8);
+}
 h1 {
 	font-size: 28px;
 	font-weight: bold;
@@ -15,10 +20,19 @@ h2 {
 	font-weight: bold;
 	color: rgba(60, 60, 80, 0.8);
 }
+h4 {
+	font-size: 24px;
+	font-weight: lighter;
+	color: rgba(100, 100, 100, 1);
+}
 h5 {
 	font-size: 14px;
 	font-weight: lighter;
 	color: rgba(100, 100, 100, 1);
+}
+h6 {
+	font-size: 20px;
+	color: rgba(255, 0, 0, 1);
 }
 
 /* Custom scrollbar */
