@@ -150,7 +150,7 @@ function Home() {
 			</div>
 			<div className="w-3/4 p-1">
 				{/* Details panel */}
-				<div className="p-4 rounded-xl shadow-lg h-full bg-white">
+				<div className="p-4 rounded-xl shadow-lg h-full bg-white overflow-auto">
 					<InfoPanel selectedItem={selectedItem} />
 				</div>
 			</div>
