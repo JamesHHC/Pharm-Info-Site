@@ -121,7 +121,7 @@ function Home() {
 										onClick={() => setSelectedItem(pharmacy)}
 									>
 										<h2>{pharmacy.name}</h2>
-										<h5>{pharmacy.verbal_orders ? 'Verbal orders allowed' : 'No verbal orders'}</h5>
+										<h5>{pharmacy.verbal_orders ? '' : '⚠️ NO VERBAL ORDERS'}</h5>
 										<p>{pharmacy.general_notes}</p>
 									</li>
 								))}
@@ -137,8 +137,8 @@ function Home() {
 										onClick={() => setSelectedItem(contact)}
 									>
 										<h2 style={contact.dnc ? {color: 'rgba(200, 80, 80, 1)'} : contact.intake_only ?
-											{color: 'rgba(240, 180, 100, 1)'} : {}}>{contact.name}</h2>
-										<h5>{contact.dnc ? 'DNC' : contact.intake_only ? 'INTAKE ONLY' : ''}</h5>
+											{color: 'rgba(210, 150, 20, 1)'} : {}}>{contact.name}</h2>
+										<h5>{contact.dnc ? '❌ DNC' : contact.intake_only ? '⚠️ INTAKE ONLY' : ''}</h5>
 										<p>{contact.email}</p>
 										<p>{contact.phone}</p>
 									</li>

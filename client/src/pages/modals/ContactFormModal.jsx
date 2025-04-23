@@ -24,12 +24,12 @@ export default function ContactFormModal({ isOpen, onClose, onSubmit }) {
 							id="dnc" name="dnc" type="checkbox" onClick={() => dnc_OR_intake(event)}
 							className="mb-3 p-2 w-5 h-5 accent-cyan-800 focus:outline-offset-0 focus:outline-cyan-500/60"
 						/>
-						<label htmlFor="dnc" className="block text-sm font-light text-gray-700 mb-3 p-2 items">DNC</label>
+						<label htmlFor="dnc" className="block text-sm font-light text-gray-700 mb-3 p-2 items mr-4">❌ DNC</label>
 						<input 
 							id="intake_only" name="intake_only" type="checkbox" onClick={() => dnc_OR_intake(event)}
 							className="mb-3 p-2 w-5 h-5 accent-cyan-800 focus:outline-offset-0 focus:outline-cyan-500/60"
 						/>
-						<label htmlFor="intake_only" className="block text-sm font-light text-gray-700 mb-3 p-2 items">Intake Only</label>
+						<label htmlFor="intake_only" className="block text-sm font-light text-gray-700 mb-3 p-2 items">⚠️ Intake Only</label>
 					</div>
 
 					{/* Title */}
