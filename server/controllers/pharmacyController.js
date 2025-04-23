@@ -18,7 +18,7 @@ const newPharmacy = async (req, res) => {
 	try {
 		const result = await db.query(
 			`INSERT INTO pharmacies (name, communication, verbal_orders, general_notes, oncall_prefs, rules, training_req)
-				VALUES ($1 $2 $3 $4 $5 $6 $7)
+				VALUES ($1, $2, $3, $4, $5, $6, $7)
 				RETURNING *`,
 			[name, communication, verbal_orders, general_notes, oncall_prefs, rules, training_req]
 		);

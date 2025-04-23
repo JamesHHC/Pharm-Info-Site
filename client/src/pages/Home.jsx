@@ -67,7 +67,7 @@ function Home() {
 							onClick={() => setActiveTab('pharmacies')}
 							className={`px-4 py-2 rounded-md w-1/2 ${
 								activeTab === 'pharmacies'
-									? 'bg-gray-400 text-white font-bold'
+									? 'bg-cyan-900/70 text-white font-bold'
 									: 'bg-gray-100 text-gray-400'
 							}`}
 						>
@@ -78,7 +78,7 @@ function Home() {
 							onClick={() => setActiveTab('contacts')}
 							className={`px-4 py-2 rounded-md w-1/2 ${
 								activeTab === 'contacts'
-									? 'bg-gray-400 text-white font-bold'
+									? 'bg-cyan-900/70 text-white font-bold'
 									: 'bg-gray-100 text-gray-400'
 							}`}
 						>
@@ -93,15 +93,15 @@ function Home() {
 							placeholder={`Search ${activeTab}...`}
 							value={searchTerm}
 							onChange={(e) => setSearchTerm(e.target.value)}
-							className="h-full w-full px-4 border border-gray-300 rounded-md focus:outline-blue-300"
+							className="h-full w-full px-4 border border-gray-300 rounded-md focus:outline-cyan-500/60"
 						/>
 						{/* Create Button */}
 						<button
 							tabIndex='-1'
 							onClick={handleAdd}
-							className="w-12 h-10.5 text-4xl font-medium bg-green-500 text-white rounded-md hover:bg-green-400"
+							className="w-12 h-10.5 text-4xl text-green-500/80 font-medium border-2 border-green-500/80 rounded-md hover:text-white hover:bg-green-500/80"
 						>
-							<span className="relative bottom-[3px]">+</span>
+							<span className="relative bottom-[5px]">+</span>
 						</button>
 					</div>
 					{/* Tab Content */}
@@ -149,18 +149,60 @@ function Home() {
 		<PharmacyFormModal
 			isOpen={showPharmacyModal}
 			onClose={() => setShowPharmacyModal(false)}
-			onSubmit={(e) => {
+			onSubmit={ async (e) => {
 				e.preventDefault();
-				// gather form data and submit to API
+				// Get form data
+				const formData = new FormData(e.target);
+				const newPharmacy = {
+					name: formData.get('name')?.trim(),
+					communication: formData.get('communication')?.trim(),
+					verbal_orders: formData.get('verbal_orders') === 'on',
+					general_notes: formData.get('general_notes')?.trim(),
+					oncall_prefs: formData.get('oncall_prefs')?.trim(),
+					rules: [],
+					training_reg: [],
+				};
+				// Ensure data isn't blank
+				if (!newPharmacy.name) {
+					alert('Required fields cannot be blank.');
+					return;
+				}
+				// Send info to db
+				const res = await fetch('http://localhost:5000/api/pharmacies', {
+				  method: 'POST',
+				  headers: { 'Content-Type': 'application/json' },
+				  body: JSON.stringify(newPharmacy),
+				});
+				const newPharm = await res.json();
+				// console.log(newPharm);
 				setShowPharmacyModal(false);
 			}}
 		/>
 		<ContactFormModal
 			isOpen={showContactModal}
 			onClose={() => setShowContactModal(false)}
-			onSubmit={(e) => {
+			onSubmit={ async (e) => {
 				e.preventDefault();
-				// gather form data and submit to API
+				// Get form formData
+				const formData = new FormData(e.target);
+				const newContact = {
+					name: formData.get('name')?.trim(),
+					email: formData.get('email')?.trim(),
+					phone: formData.get('phone')?.trim(),
+					title: formData.get('title')?.trim(),
+					preferences: formData.get('preferences')?.trim(),
+					dnc: formData.get('dnc') === 'on',
+					intake_only: formData.get('intake_only') === 'on',
+					contact_type: null,
+				}
+				// Send info to db
+				const res = await fetch('http://localhost:5000/api/contacts', {
+				  method: 'POST',
+				  headers: { 'Content-Type': 'application/json' },
+				  body: JSON.stringify(newContact),
+				});
+				const newCont = await res.json();
+				// console.log(newCont);
 				setShowContactModal(false);
 			}}
 		/>
