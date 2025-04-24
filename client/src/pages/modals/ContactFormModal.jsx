@@ -5,7 +5,7 @@ export default function ContactFormModal({ isOpen, onClose, onSubmit }) {
 
 	return (
 		<div className="fixed inset-0 bg-black/30 backdrop-blur-[5px] flex items-center justify-center z-600">
-			<div className="bg-white p-6 rounded-lg shadow-2xl w-150">
+			<div className="bg-white p-6 rounded-lg shadow-2xl w-150 max-h-[90vh] overflow-y-auto scrollbar-thin">
 				<h1 className="mb-4">Add New Contact</h1>
 				<form onSubmit={onSubmit}>
 					
@@ -19,17 +19,36 @@ export default function ContactFormModal({ isOpen, onClose, onSubmit }) {
 					/>
 
 					{/* DNC/Intake-Only */}
-					<div className="flex items-center">
+					<div className="flex items-center mb-1.5">
 						<input 
-							id="dnc" name="dnc" type="checkbox" onClick={() => dnc_OR_intake(event)}
-							className="mb-3 p-2 w-5 h-5 accent-cyan-800 focus:outline-offset-0 focus:outline-cyan-500/60"
+							id="dnc" name="dnc" type="checkbox"
+							className="p-2 w-5 h-5 accent-cyan-800 focus:outline-offset-0 focus:outline-cyan-500/60"
 						/>
-						<label htmlFor="dnc" className="block text-sm font-light text-gray-700 mb-3 p-2 items mr-4">❌ DNC</label>
+						<label htmlFor="dnc" className="block text-sm p-2 items mr-4">❌DNC</label>
 						<input 
-							id="intake_only" name="intake_only" type="checkbox" onClick={() => dnc_OR_intake(event)}
-							className="mb-3 p-2 w-5 h-5 accent-cyan-800 focus:outline-offset-0 focus:outline-cyan-500/60"
+							id="intake_only" name="intake_only" type="checkbox"
+							className=" p-2 w-5 h-5 accent-cyan-800 focus:outline-offset-0 focus:outline-cyan-500/60"
 						/>
-						<label htmlFor="intake_only" className="block text-sm font-light text-gray-700 mb-3 p-2 items">⚠️ Intake Only</label>
+						<label htmlFor="intake_only" className="block text-sm p-2 items">⚠️Intake Only</label>
+					</div>
+
+					{/* Contact Type */}
+					<label htmlFor="contact_types" className="block text-sm font-light text-gray-700 mb-1">Contact Type</label>
+					<div id="contact_types" className="resize-y mb-3 border border-gray-300 p-2 rounded h-26 w-full overflow-y-auto space-y-1 scrollbar-thin">
+						{['Accounts Receivable', 'Care Coordination', 'Clinical', 'Compliance', 'Documentation', 'Executive', 'Intake', 'On-call'].map((type) => (
+							<div key={type} className="flex items-center">
+								<input
+									type="checkbox"
+									id={`contact_type_${type}`}
+									name="contact_type"
+									value={type}
+									className="mr-2 w-4 h-4 accent-cyan-800 focus:outline-cyan-500/60"
+								/>
+								<label htmlFor={`contact_type_${type}`} className="text-sm">
+									{type}
+								</label>
+							</div>
+						))}
 					</div>
 
 					{/* Title */}
@@ -57,18 +76,12 @@ export default function ContactFormModal({ isOpen, onClose, onSubmit }) {
 					<label htmlFor="preferences" className="block text-sm font-light text-gray-700 mb-1">Preferences</label>
 					<textarea
 						id="preferences" name="preferences" placeholder="Type here..."
-						className="w-full mb-3 border border-gray-300 p-2 rounded focus:outline-cyan-500/60"
+						className="w-full mb-1.5 border border-gray-300 p-2 rounded focus:outline-cyan-500/60"
 					/>
-
-					{/* Contact Type */}
-					<label className="block text-sm font-light text-gray-700 mb-1">Contact Type</label>
-					<p className="mb-3">Placeholder</p>
-					{/* TODO */}
 
 					{/* Pharmacies */}
 					<label className="block text-sm font-light text-gray-700 mb-1">Pharmacies</label>
-					<p className="mb-3">Placeholder</p>
-					{/* TODO */}
+					<p className="mb-3">{/* TODO */}</p>
 					
 					{/* Cancel/Submit Buttons */}
 					<div className="flex justify-end space-x-2">
@@ -80,12 +93,4 @@ export default function ContactFormModal({ isOpen, onClose, onSubmit }) {
 			</div>
 		</div>
 	);
-}
-
-function dnc_OR_intake(event) {
-	var cbs = document.querySelectorAll('input[type="checkbox"]:checked');
-	if (cbs.length > 1) {
-		if (cbs[0].id === event.target.id) cbs[1].checked = 0;
-		else cbs[0].checked = 0;
-	}
 }

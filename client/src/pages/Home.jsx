@@ -70,7 +70,7 @@ function Home() {
 						<button
 							tabIndex='-1'
 							onClick={() => setActiveTab('pharmacies')}
-							className={`px-4 py-2 rounded-md w-1/2 ${
+							className={`px-4 py-2 rounded-md w-1/2 shadow-sm ${
 								activeTab === 'pharmacies'
 									? 'bg-cyan-900/70 text-white font-bold'
 									: 'bg-gray-100 text-gray-400'
@@ -81,7 +81,7 @@ function Home() {
 						<button
 							tabIndex='-1'
 							onClick={() => setActiveTab('contacts')}
-							className={`px-4 py-2 rounded-md w-1/2 ${
+							className={`px-4 py-2 rounded-md w-1/2 shadow-sm ${
 								activeTab === 'contacts'
 									? 'bg-cyan-900/70 text-white font-bold'
 									: 'bg-gray-100 text-gray-400'
@@ -98,19 +98,19 @@ function Home() {
 							placeholder={`Search ${activeTab}...`}
 							value={searchTerm}
 							onChange={(e) => setSearchTerm(e.target.value)}
-							className="h-full w-full px-4 border border-gray-300 rounded-md focus:outline-cyan-500/60"
+							className="h-full w-full px-4 border border-gray-300 rounded-md focus:outline-cyan-500/60 shadow-sm"
 						/>
 						{/* Create Button */}
 						<button
 							tabIndex='-1'
 							onClick={handleAdd}
-							className="w-12 h-10.5 text-4xl text-green-500/80 font-medium border-2 border-green-500/80 rounded-md hover:text-white hover:bg-green-500/80"
+							className="w-12 h-10.5 text-4xl shadow-sm text-green-500/80 font-medium border-2 border-green-500/80 rounded-md hover:text-white hover:bg-green-500/80"
 						>
 							<span className="relative bottom-[5px]">+</span>
 						</button>
 					</div>
 					{/* Tab Content */}
-					<div tabIndex='-1' className="flex-1 overflow-auto rounded-md scrollbar-thin p-2 bg-gray-200 border border-gray-200">
+					<div tabIndex='-1' className="flex-1 overflow-auto rounded-md scrollbar-thin p-2 bg-gray-200 border border-gray-200 shadow-sm">
 						{/* Pharmacy list */}
 						{ activeTab === 'pharmacies' &&
 							<ul className="space-y-2">
@@ -121,7 +121,7 @@ function Home() {
 										onClick={() => setSelectedItem(pharmacy)}
 									>
 										<h2>{pharmacy.name}</h2>
-										<h5>{pharmacy.verbal_orders ? '' : '⚠️ NO VERBAL ORDERS'}</h5>
+										<h5>{pharmacy.verbal_orders ? '' : '⚠️NO VERBAL ORDERS'}</h5>
 										<p>{pharmacy.general_notes}</p>
 									</li>
 								))}
@@ -136,9 +136,15 @@ function Home() {
 										className="p-2 bg-white rounded-md hover:bg-white/70 cursor-pointer shadow-sm"
 										onClick={() => setSelectedItem(contact)}
 									>
-										<h2 style={contact.dnc ? {color: 'rgba(200, 80, 80, 1)'} : contact.intake_only ?
-											{color: 'rgba(210, 150, 20, 1)'} : {}}>{contact.name}</h2>
-										<h5>{contact.dnc ? '❌ DNC' : contact.intake_only ? '⚠️ INTAKE ONLY' : ''}</h5>
+										<h2 style={contact.dnc ? {color: 'rgba(200, 80, 80, 1)'} : contact.intake_only ? {color: 'rgba(210, 150, 20, 1)'} : {}}>{contact.name}</h2>
+										<h5>{contact.dnc ? '❌DNC ' : ''}{contact.intake_only ? '⚠️INTAKE ONLY' : ''}</h5>
+										{contact.contact_type &&
+											<div className="text-gray-400 text-sm flex flex-wrap gap-2 mt-1.5 mt-0.5">
+												{(contact.contact_type).map((type) => (
+													<div className="bg-gray-100 outline outline-gray-400 px-2 py-1 rounded-full shadow-sm" key={type}>{type}</div>
+												))}
+											</div>
+										}
 										<p>{contact.email}</p>
 										<p>{contact.phone}</p>
 									</li>
@@ -150,7 +156,7 @@ function Home() {
 			</div>
 			<div className="w-3/4 p-1">
 				{/* Details panel */}
-				<div className="p-4 rounded-xl shadow-lg h-full bg-white overflow-auto">
+				<div className="p-4 rounded-xl shadow-lg h-full bg-white overflow-auto scrollbar-thin">
 					<InfoPanel selectedItem={selectedItem} />
 				</div>
 			</div>
@@ -205,7 +211,7 @@ function Home() {
 					preferences: formData.get('preferences')?.trim(),
 					dnc: formData.get('dnc') === 'on',
 					intake_only: formData.get('intake_only') === 'on',
-					contact_type: null,
+					contact_type: formData.getAll('contact_type'),
 				}
 				// Send info to db
 				const res = await fetch('http://localhost:5000/api/contacts', {

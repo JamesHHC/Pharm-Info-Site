@@ -19,49 +19,46 @@ export default function PharmacyFormModal({ isOpen, onClose, onSubmit }) {
 					/>
 
 					{/* Verbal Orders */}
-					<div className="flex items-center">
+					<div className="flex items-center mb-1.5">
 						<input 
 							id="verbal_orders" name="verbal_orders" type="checkbox"
-							className="mb-3 p-2 w-5 h-5 accent-cyan-800 focus:outline-offset-0 focus:outline-cyan-500/60"
+							className="p-2 w-5 h-5 accent-cyan-800 focus:outline-offset-0 focus:outline-cyan-500/60"
 						/>
-						<label htmlFor="verbal_orders" className="block text-sm font-light text-gray-700 mb-3 p-2 items">Verbal Orders Allowed</label>
+						<label htmlFor="verbal_orders" className="block text-sm font-light text-gray-700 p-2 items">Verbal Orders Allowed</label>
 					</div>
 
 					{/* Communication Prefs */}
 					<label htmlFor="name" className="block text-sm font-light text-gray-700 mb-1">Communication Preferences</label>
 					<textarea
 						id="communication" name="communication" placeholder="Type here..."
-						className="w-full mb-3 border border-gray-300 p-2 rounded focus:outline-cyan-500/60"
+						className="w-full mb-1.5 border border-gray-300 p-2 rounded focus:outline-cyan-500/60"
 					/>
 
 					{/* General Notes */}
 					<label htmlFor="name" className="block text-sm font-light text-gray-700 mb-1">General Notes</label>
 					<textarea
 						id="general_notes" name="general_notes" placeholder="Type here..."
-						className="w-full mb-3 border border-gray-300 p-2 rounded focus:outline-cyan-500/60"
+						className="w-full mb-1.5 border border-gray-300 p-2 rounded focus:outline-cyan-500/60"
 					/>
 
 					{/* On-call Prefs */}
 					<label htmlFor="name" className="block text-sm font-light text-gray-700 mb-1">On-call Preferences</label>
 					<textarea
 						id="oncall_prefs" name="oncall_prefs" placeholder="Type here..."
-						className="w-full mb-3 border border-gray-300 p-2 rounded focus:outline-cyan-500/60"
+						className="w-full mb-1.5 border border-gray-300 p-2 rounded focus:outline-cyan-500/60"
 					/>
 					
 					{/* Rules */}
 					<label className="block text-sm font-light text-gray-700 mb-1">Rules</label>
-					<p className="mb-3">Placeholder</p>
-					{/* TODO */}
+					<p className="mb-3">{/* TODO */}</p>
 
 					{/* Training Req */}
 					<label className="block text-sm font-light text-gray-700 mb-1">Training Requirements</label>
-					<p className="mb-3">Placeholder</p>
-					{/* TODO */}
+					<p className="mb-3">{/* TODO */}</p>
 
 					{/* Contacts */}
 					<label className="block text-sm font-light text-gray-700 mb-1">Contacts</label>
-					<p className="mb-3">Placeholder</p>
-					{/* TODO */}
+					<p className="mb-3">{/* TODO */}</p>
 
 					{/* Cancel/Submit Buttons */}
 					<div className="flex justify-end space-x-2">

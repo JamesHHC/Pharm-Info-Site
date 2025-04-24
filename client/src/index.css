@@ -4,6 +4,11 @@
 @custom-variant shad (&:where(.shadowed, .shadowed *));
 */
 
+/* Preserve whitespace  */
+div {
+	white-space: pre-wrap;
+}
+
 /* Custom text styles */
 .title {
 	font-size: 32px;
@@ -43,6 +48,17 @@ h6 {
 	background: transparent;
 }
 .scrollbar-thin::-webkit-scrollbar-thumb {
-	background-color: rgba(153, 161, 175, 0.4);
+	background-color: rgba(198, 203, 211, 1);
 	border-radius: 9999px;
+}
+
+.edit-icon:after {
+	content: '\270e';
+	color: rgba(60, 60, 80, 0.6);
+}
+.edit-icon:hover {
+	opacity: 100%;
+}
+.edit-icon {
+	opacity: 50%;
 }
