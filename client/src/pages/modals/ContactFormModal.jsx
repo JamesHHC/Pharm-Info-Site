@@ -1,4 +1,5 @@
 import React from 'react';
+import './ModalStyles.css'
 
 export default function ContactFormModal({ isOpen, onClose, onSubmit }) {
 	if (!isOpen) return null;
@@ -6,7 +7,7 @@ export default function ContactFormModal({ isOpen, onClose, onSubmit }) {
 	return (
 		<div className="fixed inset-0 bg-black/30 backdrop-blur-[5px] flex items-center justify-center z-600">
 			<div className="bg-white p-6 rounded-lg shadow-2xl w-150 max-h-[90vh] overflow-y-auto scrollbar-thin">
-				<h1 className="mb-4">Add New Contact</h1>
+				<p className="modal-title mb-4">Add New Contact</p>
 				<form onSubmit={onSubmit}>
 					
 					{/* Contact Name */}
@@ -22,32 +23,30 @@ export default function ContactFormModal({ isOpen, onClose, onSubmit }) {
 					<div className="flex items-center mb-1.5">
 						<input 
 							id="dnc" name="dnc" type="checkbox"
-							className="p-2 w-5 h-5 accent-cyan-800 focus:outline-offset-0 focus:outline-cyan-500/60"
+							className="appearance-none flex-none custom-chk transition border-1 border-gray-300 w-5 h-5 focus:outline-cyan-500/60 checked:border-0 checked:bg-cyan-800 rounded-full"
 						/>
 						<label htmlFor="dnc" className="block text-sm p-2 items mr-4">❌DNC</label>
 						<input 
 							id="intake_only" name="intake_only" type="checkbox"
-							className=" p-2 w-5 h-5 accent-cyan-800 focus:outline-offset-0 focus:outline-cyan-500/60"
+							className="appearance-none flex-none custom-chk transition border-1 border-gray-300 w-5 h-5 focus:outline-cyan-500/60 checked:border-0 checked:bg-cyan-800 rounded-full"
 						/>
 						<label htmlFor="intake_only" className="block text-sm p-2 items">⚠️Intake Only</label>
 					</div>
 
 					{/* Contact Type */}
-					<label htmlFor="contact_types" className="block text-sm font-light text-gray-700 mb-1">Contact Type</label>
-					<div id="contact_types" className="resize-y mb-3 border border-gray-300 p-2 rounded h-26 w-full overflow-y-auto space-y-1 scrollbar-thin">
+					<p className="block text-sm font-light text-gray-700 mb-1">Contact Type</p>
+					<div className="flex-wrap bg-gray-100 resize-y mb-3 border border-gray-300 p-2 rounded h-24 w-full overflow-auto space-x-2 space-y-2 scrollbar-thin">
 						{['Accounts Receivable', 'Care Coordination', 'Clinical', 'Compliance', 'Documentation', 'Executive', 'Intake', 'On-call'].map((type) => (
-							<div key={type} className="flex items-center">
+							<label htmlFor={`contact_type_${type}`} key={type} className="flex-none inline-flex items-center bg-white p-2 shadow-sm rounded-full">
 								<input
 									type="checkbox"
 									id={`contact_type_${type}`}
 									name="contact_type"
 									value={type}
-									className="mr-2 w-4 h-4 accent-cyan-800 focus:outline-cyan-500/60"
+									className="appearance-none flex-none custom-chk transition border-1 border-gray-300 mr-2 w-5 h-5 focus:outline-cyan-500/60 checked:border-0 checked:bg-cyan-800 pointer-events-none rounded-full"
 								/>
-								<label htmlFor={`contact_type_${type}`} className="text-sm">
-									{type}
-								</label>
-							</div>
+								<span className="text-sm">{type}</span>
+							</label>
 						))}
 					</div>
 
@@ -76,17 +75,17 @@ export default function ContactFormModal({ isOpen, onClose, onSubmit }) {
 					<label htmlFor="preferences" className="block text-sm font-light text-gray-700 mb-1">Preferences</label>
 					<textarea
 						id="preferences" name="preferences" placeholder="Type here..."
-						className="w-full mb-1.5 border border-gray-300 p-2 rounded focus:outline-cyan-500/60"
+						className="w-full mb-1.5 border border-gray-300 p-2 rounded focus:outline-cyan-500/60 scrollbar-thin"
 					/>
 
 					{/* Pharmacies */}
-					<label className="block text-sm font-light text-gray-700 mb-1">Pharmacies</label>
+					<p className="block text-sm font-light text-gray-700 mb-1">Pharmacies</p>
 					<p className="mb-3">{/* TODO */}</p>
 					
 					{/* Cancel/Submit Buttons */}
 					<div className="flex justify-end space-x-2">
 						<button type="button" onClick={onClose} className="px-4 py-2 bg-gray-200 text-gray-400 hover:bg-gray-300 rounded">Cancel</button>
-						<button type="submit" className="px-4 py-2 bg-green-500/80 hover:bg-green-600/80 text-white rounded">Add</button>
+						<button type="submit" className="px-4 py-2 bg-emerald-500 hover:bg-emerald-600 text-white rounded">Add</button>
 					</div>
 
 				</form>

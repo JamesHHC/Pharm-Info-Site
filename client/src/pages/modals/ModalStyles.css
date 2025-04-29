@@ -1,0 +1,17 @@
+/* Custom checkboxes  */
+.custom-chk::after {
+	content: '\2713';
+	font-weight: bold;
+	color: white;
+	font-size: 14px;
+	opacity: 0; /* Invisible when not checked */
+}
+.custom-chk:checked::after {
+	opacity: 1; /* Visible when checked */
+}
+.custom-chk {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	position: relative;
+}

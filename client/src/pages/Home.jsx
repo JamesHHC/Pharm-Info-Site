@@ -23,7 +23,8 @@ function Home() {
 			const res = await fetch('http://localhost:5000/api/pharmacies');
 			const data = await res.json();
 			setPharmacies(data);
-		} catch (err) {
+		}
+		catch (err) {
 			console.error('Failed to fetch pharmacies', err);
 		}
 	};
@@ -32,7 +33,8 @@ function Home() {
 			const res = await fetch('http://localhost:5000/api/contacts');
 			const data = await res.json();
 			setContacts(data);
-		} catch (err) {
+		}
+		catch (err) {
 			console.error('Failed to fetch pharmacies', err);
 		}
 	};
@@ -90,10 +92,11 @@ function Home() {
 							Contacts
 						</button>
 					</div>
-					<div className="flex space-x-2 h-10.5 mb-4">
+					<div className="flex space-x-1 h-10.5 mb-4">
 						{/* Search Bar */}
 						<input
 							tabIndex='-1'
+							id="search-bar"
 							type="text"
 							placeholder={`Search ${activeTab}...`}
 							value={searchTerm}
@@ -104,7 +107,7 @@ function Home() {
 						<button
 							tabIndex='-1'
 							onClick={handleAdd}
-							className="w-12 h-10.5 text-4xl shadow-sm text-green-500/80 font-medium border-2 border-green-500/80 rounded-md hover:text-white hover:bg-green-500/80"
+							className="w-12 h-10.5 text-4xl shadow-sm text-teal-600/60 font-medium border-2 border-teal-600/60 rounded-md hover:border-0 hover:text-white hover:bg-teal-600/60"
 						>
 							<span className="relative bottom-[5px]">+</span>
 						</button>
@@ -120,9 +123,9 @@ function Home() {
 										className="p-2 bg-white rounded-md hover:bg-white/70 cursor-pointer shadow-sm"
 										onClick={() => setSelectedItem(pharmacy)}
 									>
-										<h2>{pharmacy.name}</h2>
-										<h5>{pharmacy.verbal_orders ? '' : '⚠️NO VERBAL ORDERS'}</h5>
-										<p>{pharmacy.general_notes}</p>
+										<p className="item-title">{pharmacy.name}</p>
+										<p className="light-small">{pharmacy.verbal_orders ? '' : '⚠️NO VERBAL ORDERS'}</p>
+										<p>{pharmacy.oncall_prefs}</p>
 									</li>
 								))}
 							</ul>
@@ -136,8 +139,8 @@ function Home() {
 										className="p-2 bg-white rounded-md hover:bg-white/70 cursor-pointer shadow-sm"
 										onClick={() => setSelectedItem(contact)}
 									>
-										<h2 style={contact.dnc ? {color: 'rgba(200, 80, 80, 1)'} : contact.intake_only ? {color: 'rgba(210, 150, 20, 1)'} : {}}>{contact.name}</h2>
-										<h5>{contact.dnc ? '❌DNC ' : ''}{contact.intake_only ? '⚠️INTAKE ONLY' : ''}</h5>
+										<p className="item-title" style={contact.dnc ? {color: 'rgba(200, 80, 80, 1)'} : contact.intake_only ? {color: 'rgba(210, 150, 20, 1)'} : {}}>{contact.name}</p>
+										<p className="light-small">{contact.dnc ? '❌DNC ' : ''}{contact.intake_only ? '⚠️INTAKE ONLY' : ''}</p>
 										{contact.contact_type &&
 											<div className="text-gray-400 text-sm flex flex-wrap gap-2 mt-1.5 mt-0.5">
 												{(contact.contact_type).map((type) => (
@@ -145,8 +148,7 @@ function Home() {
 												))}
 											</div>
 										}
-										<p>{contact.email}</p>
-										<p>{contact.phone}</p>
+										<p>{contact.title}</p>
 									</li>
 								))}
 							</ul>
@@ -165,7 +167,7 @@ function Home() {
 		<PharmacyFormModal
 			isOpen={showPharmacyModal}
 			onClose={() => setShowPharmacyModal(false)}
-			onSubmit={ async (e) => {
+			onSubmit={ async (e, selectedRules) => {
 				e.preventDefault();
 				// Get form data
 				const formData = new FormData(e.target);
@@ -175,7 +177,7 @@ function Home() {
 					verbal_orders: formData.get('verbal_orders') === 'on',
 					general_notes: formData.get('general_notes')?.trim(),
 					oncall_prefs: formData.get('oncall_prefs')?.trim(),
-					rules: [],
+					rules: selectedRules,
 					training_reg: [],
 				};
 				// Ensure data isn't blank
@@ -190,9 +192,10 @@ function Home() {
 				  body: JSON.stringify(newPharmacy),
 				});
 				const newPharm = await res.json();
-				// console.log(newPharm);
 				fetchPharmacies();
 				setShowPharmacyModal(false);
+				// Display newly created item
+				setSelectedItem(newPharm);
 			}}
 		/>
 		{/* New contact modal */}
@@ -220,9 +223,10 @@ function Home() {
 				  body: JSON.stringify(newContact),
 				});
 				const newCont = await res.json();
-				// console.log(newCont);
 				fetchContacts();
 				setShowContactModal(false);
+				// Display newly created item
+				setSelectedItem(newCont);
 			}}
 		/>
 		</>

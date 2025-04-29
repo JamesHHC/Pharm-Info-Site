@@ -15,29 +15,30 @@ div {
 	font-weight: bold;
 	color: rgba(60, 60, 80, 0.8);
 }
-h1 {
+.modal-title {
 	font-size: 28px;
 	font-weight: bold;
 	color: rgba(60, 60, 80, 0.8);
 }
-h2 {
+.submodal-title {
+	font-size: 22px;
+	font-weight: bold;
+	color: rgba(60, 60, 80, 0.8);
+}
+.item-title {
 	font-size: 20px;
 	font-weight: bold;
 	color: rgba(60, 60, 80, 0.8);
 }
-h4 {
+.light-large {
 	font-size: 24px;
 	font-weight: lighter;
 	color: rgba(100, 100, 100, 1);
 }
-h5 {
+.light-small {
 	font-size: 14px;
 	font-weight: lighter;
 	color: rgba(100, 100, 100, 1);
-}
-h6 {
-	font-size: 20px;
-	color: rgba(255, 0, 0, 1);
 }
 
 /* Custom scrollbar */
@@ -52,6 +53,7 @@ h6 {
 	border-radius: 9999px;
 }
 
+/* Edit icon  */
 .edit-icon:after {
 	content: '\270e';
 	color: rgba(60, 60, 80, 0.6);

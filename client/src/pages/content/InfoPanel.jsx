@@ -3,7 +3,7 @@ import React from 'react';
 let lastItem = null;
 
 export default function InfoPanel({selectedItem}) {
-	if (!selectedItem) return <div className="flex h-full"><h4 className="m-auto">Select a pharmacy or contact to view its details.</h4></div>;
+	if (!selectedItem) return <div className="flex h-full"><p className="light-large m-auto">Select a pharmacy or contact to view its details.</p></div>;
 
 	// Pharmacy
 	if (selectedItem?.verbal_orders !== undefined) {
@@ -11,7 +11,7 @@ export default function InfoPanel({selectedItem}) {
 			<>
 				{/* Header Section */}
 				<div className="bg-gray-200/70 p-3 rounded-xl shadow-sm">
-					<h5>Pharmacy Info</h5>
+					<p className="light-small">Pharmacy Info</p>
 					<div className="flex">
 						<p className="title">{selectedItem.name}</p>
 						<span className="edit-icon h-full my-auto ml-2 text-[24px]"></span>
@@ -48,7 +48,7 @@ export default function InfoPanel({selectedItem}) {
 			<>
 				{/* Header Section */}
 				<div className="bg-gray-200/70 p-3 rounded-xl shadow-sm">
-					<h5>Contact Info</h5>
+					<p className="light-small">Contact Info</p>
 					<div className="flex">
 						<p style={selectedItem.dnc ? {color: 'rgba(200, 80, 80, 1)'} : selectedItem.intake_only ? {color: 'rgba(210, 150, 20, 1)'} : {}} className="title">{selectedItem.name}</p>
 						<p className="edit-icon h-full my-auto ml-2 text-[24px]"></p>
