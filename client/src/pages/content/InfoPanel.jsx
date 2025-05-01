@@ -1,12 +1,54 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 
 let lastItem = null;
 
-export default function InfoPanel({selectedItem}) {
+export default function InfoPanel({ selectedItem }) {
+	const [rules, setRules] = useState([]);
+	const [trainings, setTrainings] = useState([]);
+	const [pharmRules, setPharmRules] = useState([]);
+	const [pharmTrainings, setPharmTrainings] = useState([]);
+
+	// GET functions
+	const fetchRules = async () => {
+		fetch('http://localhost:5000/api/rules')
+			.then((res) => res.json())
+			.then((data) => setRules(data))
+			.catch((err) => console.error('Failed to fetch rules', err));
+	};
+	const fetchTrainings = async () => {
+		fetch('http://localhost:5000/api/training')
+			.then((res) => res.json())
+			.then((data) => setTrainings(data))
+			.catch((err) => console.error('Failed to fetch trainings', err));
+	};
+	const fetchPharmRules = async () => {
+		setPharmRules([]);
+		fetch(`http://localhost:5000/api/pharmrules?pharmacy_id=${selectedItem.id}`)
+			.then((res) => res.json())
+			.then((data) => setPharmRules(data))
+			.catch((err) => console.error('Failed to fetch pharmacy rules', err));
+	};
+	const fetchPharmTrainings = async () => {
+		setPharmTrainings([]);
+		fetch(`http://localhost:5000/api/pharmtraining?pharmacy_id=${selectedItem.id}`)
+			.then((res) => res.json())
+			.then((data) => setPharmTrainings(data))
+			.catch((err) => console.error('Failed to fetch pharmacy trainings', err));
+	};
+
+	useEffect(() => {
+		if (selectedItem && selectedItem.type === 'pharmacy') {
+			fetchRules();
+			fetchTrainings();
+			fetchPharmRules();
+			fetchPharmTrainings();
+		}
+	}, [selectedItem]);
+
 	if (!selectedItem) return <div className="flex h-full"><p className="light-large m-auto">Select a pharmacy or contact to view its details.</p></div>;
 
 	// Pharmacy
-	if (selectedItem?.verbal_orders !== undefined) {
+	if (selectedItem.type === 'pharmacy') {
 		return (
 			<>
 				{/* Header Section */}
@@ -14,7 +56,7 @@ export default function InfoPanel({selectedItem}) {
 					<p className="light-small">Pharmacy Info</p>
 					<div className="flex">
 						<p className="title">{selectedItem.name}</p>
-						<span className="edit-icon h-full my-auto ml-2 text-[24px]"></span>
+						<span className="cursor-pointer edit-icon h-full my-auto ml-2 text-[24px]"></span>
 					</div>
 					<p>{selectedItem.verbal_orders ? '' : '⚠️NO VERBAL ORDERS'}</p>
 				</div>
@@ -34,6 +76,20 @@ export default function InfoPanel({selectedItem}) {
 					</div>}
 
 					{/* TODO: Rules */}
+					{pharmRules.length > 0 && <div>
+						<label className="text-sm">Rules</label>
+						<div>
+							{rules.filter(rule => pharmRules.some(pr => pr.rules_id === rule.id))
+								.map(rule => (
+									<div
+										key={rule.id}
+										className="bg-white px-3 py-2 rounded-md shadow-sm border border-gray-300"
+									>
+										{rule.rule}
+									</div>
+							))}
+						</div>
+					</div>}
 
 					{/* TODO: Training */}
 
@@ -51,7 +107,7 @@ export default function InfoPanel({selectedItem}) {
 					<p className="light-small">Contact Info</p>
 					<div className="flex">
 						<p style={selectedItem.dnc ? {color: 'rgba(200, 80, 80, 1)'} : selectedItem.intake_only ? {color: 'rgba(210, 150, 20, 1)'} : {}} className="title">{selectedItem.name}</p>
-						<p className="edit-icon h-full my-auto ml-2 text-[24px]"></p>
+						<p className="cursor-pointer edit-icon h-full my-auto ml-2 text-[24px]"></p>
 					</div>
 					<p>{selectedItem.dnc ? '❌DNC ' : ''}{selectedItem.intake_only ? '⚠️INTAKE ONLY' : ''}</p>
 					{selectedItem.contact_type &&

@@ -14,13 +14,13 @@ const getPharmacies = async (req, res) => {
 
 // Insert a new pharmacy
 const newPharmacy = async (req, res) => {
-	const { name, communication, verbal_orders, general_notes, oncall_prefs, rules, training_req } = req.body;
+	const { name, communication, verbal_orders, general_notes, oncall_prefs } = req.body;
 	try {
 		const result = await db.query(
-			`INSERT INTO pharmacies (name, communication, verbal_orders, general_notes, oncall_prefs, rules, training_req)
-				VALUES ($1, $2, $3, $4, $5, $6, $7)
+			`INSERT INTO pharmacies (name, communication, verbal_orders, general_notes, oncall_prefs)
+				VALUES ($1, $2, $3, $4, $5)
 				RETURNING *`,
-			[name, communication, verbal_orders, general_notes, oncall_prefs, rules, training_req]
+			[name, communication, verbal_orders, general_notes, oncall_prefs]
 		);
 		res.status(201).json(result.rows[0]);
 	}
