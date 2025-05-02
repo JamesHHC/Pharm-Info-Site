@@ -53,7 +53,7 @@ div {
 	border-radius: 9999px;
 }
 
-/* Edit icon  */
+/* Edit icon */
 .edit-icon:after {
 	content: '\270e';
 	color: rgba(60, 60, 80, 0.6);
@@ -63,4 +63,13 @@ div {
 }
 .edit-icon {
 	opacity: 50%;
+}
+
+.noselect {
+	-webkit-touch-callout: none; /* iOS Safari */
+	-webkit-user-select: none; /* Safari */
+	-khtml-user-select: none; /* Konqueror HTML */
+	-moz-user-select: none; /* Firefox */
+	-ms-user-select: none; /* Internet Explorer/Edge */
+	user-select: none; /* Non-prefixed version, currently supported by Chrome and Opera */
 }

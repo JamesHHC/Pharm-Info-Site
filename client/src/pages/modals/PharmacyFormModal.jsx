@@ -204,6 +204,7 @@ export default function PharmacyFormModal({ isOpen, onClose, onSubmit }) {
 								value={searchedRule}
 								onChange={(e) => setSearchedRule(e.target.value)}
 								className="h-10.5 w-full px-4 border border-gray-300 rounded-md focus:outline-cyan-500/60"
+								autoComplete="off"
 							/>
 							{/* New rule button */}
 							<button
@@ -226,6 +227,7 @@ export default function PharmacyFormModal({ isOpen, onClose, onSubmit }) {
 									value={newRule}
 									onChange={(e) => setNewRule(e.target.value)} 
 									className="h-10.5 w-full px-4 border border-gray-200 rounded-md bg-white/80 focus:outline-cyan-500/60"
+									autoComplete="off"
 								/>
 								<div className="flex justify-end">
 									<button tabIndex="-1" type="button" onClick={cancelNewRule} className="px-4 py-2 bg-gray-800/10 text-gray-400 hover:bg-gray-800/20 rounded-l-md">Cancel</button>
@@ -234,7 +236,7 @@ export default function PharmacyFormModal({ isOpen, onClose, onSubmit }) {
 							</div>
 						</div>
 						{/* Rule list */}
-						<div tabIndex="-1" className="resize-y mb-4 border bg-gray-100 border-gray-300 p-2 rounded h-40 w-full overflow-y-auto overflow-x-hidden space-y-2 space-x-2 scrollbar-thin">
+						<div tabIndex="-1" className="resize-y mb-4 border bg-gray-100 border-gray-300 p-2 rounded h-80 w-full overflow-y-auto overflow-x-hidden space-y-2 space-x-2 scrollbar-thin">
 							{filteredRules.map((rule) => {
 								const isVisible = rule.rule.toLowerCase().includes(searchedRule.toLowerCase());
 								return (
@@ -243,14 +245,14 @@ export default function PharmacyFormModal({ isOpen, onClose, onSubmit }) {
 										key={rule.rule}
 									>
 										<label
-											htmlFor={`rule_${rule.rule}`}
+											htmlFor={`rule_${rule.id}`}
 											className="w-full p-2"
 										>
 											<div className="flex items-center">
 												<input
 													tabIndex="-1"
 													type="checkbox"
-													id={`rule_${rule.rule}`}
+													id={`rule_${rule.id}`}
 													name="rule"
 													value={rule.id}
 													checked={selectedRules.includes(rule.id)}
@@ -284,6 +286,7 @@ export default function PharmacyFormModal({ isOpen, onClose, onSubmit }) {
 								value={searchedTraining}
 								onChange={(e) => setSearchedTraining(e.target.value)}
 								className="h-10.5 w-full px-4 border border-gray-300 rounded-md focus:outline-cyan-500/60"
+								autoComplete="off"
 							/>
 							{/* New training button */}
 							<button
@@ -306,6 +309,7 @@ export default function PharmacyFormModal({ isOpen, onClose, onSubmit }) {
 									value={newTraining.name}
 									onChange={(e) => setNewTraining({name: e.target.value, description: newTraining.description})}
 									className="bg-white/80 h-10.5 w-full px-4 border border-gray-200 rounded-md focus:outline-cyan-500/60"
+									autoComplete="off"
 								/>
 								<textarea
 									id="new-training-desc"
@@ -321,7 +325,7 @@ export default function PharmacyFormModal({ isOpen, onClose, onSubmit }) {
 							</div>
 						</div>
 						{/* Training list */}
-						<div tabIndex="-1" className="resize-y mb-4 border bg-gray-100 border-gray-300 p-2 rounded h-40 w-full overflow-y-auto overflow-x-hidden space-y-2 space-x-2 scrollbar-thin">
+						<div tabIndex="-1" className="resize-y mb-4 border bg-gray-100 border-gray-300 p-2 rounded h-80 w-full overflow-y-auto overflow-x-hidden space-y-2 space-x-2 scrollbar-thin">
 							{filteredTrainings.map((training) => {
 								const isVisible = training.name.toLowerCase().includes(searchedTraining.toLowerCase()) || training.description.toLowerCase().includes(searchedTraining.toLowerCase());
 								return (
@@ -329,12 +333,12 @@ export default function PharmacyFormModal({ isOpen, onClose, onSubmit }) {
 										className={`bg-white flex w-full items-center justify-between rounded-md shadow-sm ${!isVisible ? 'hidden' : ''}`}
 										key={training.name}
 									>
-										<label htmlFor={`training_${training.name}`} className="w-full p-2">
+										<label htmlFor={`training_${training.id}`} className="w-full p-2">
 											<div className="flex items-center">
 												<input
 													tabIndex="-1"
 													type="checkbox"
-													id={`training_${training.name}`}
+													id={`training_${training.id}`}
 													name="training"
 													value={training.id}
 													checked={selectedTrainings.includes(training.id)}

@@ -138,16 +138,16 @@ function Home() {
 										className="p-2 bg-white rounded-md hover:bg-white/70 cursor-pointer shadow-sm"
 										onClick={() => setSelectedItem({ ...contact, type: 'contact' })}
 									>
-										<p className="item-title" style={contact.dnc ? {color: 'rgba(200, 80, 80, 1)'} : contact.intake_only ? {color: 'rgba(210, 150, 20, 1)'} : {}}>{contact.name}</p>
 										<p className="light-small">{contact.dnc ? '❌DNC ' : ''}{contact.intake_only ? '⚠️INTAKE ONLY' : ''}</p>
-										{contact.contact_type &&
+										<p className="item-title" style={contact.dnc ? {color: 'rgba(200, 80, 80, 1)'} : contact.intake_only ? {color: 'rgba(210, 150, 20, 1)'} : {}}>{contact.name}</p>
+										<p className="mt-[-4px]">{contact.title}</p>
+										{contact.contact_type.length > 0 &&
 											<div className="text-gray-400 text-sm flex flex-wrap gap-2 mt-1.5 mt-0.5">
 												{(contact.contact_type).map((type) => (
 													<div className="bg-gray-100 outline outline-gray-400 px-2 py-1 rounded-full shadow-sm" key={type}>{type}</div>
 												))}
 											</div>
 										}
-										<p>{contact.title}</p>
 									</li>
 								))}
 							</ul>
