@@ -28,9 +28,27 @@ const newRule = async (req, res) => {
 		console.error('Error creating rule:', err);
 		res.status(500).send('Server error');
 	}
-}
+};
+
+// Get rows where IDs match those in the provided array
+const getSomeRules = async (req, res) => {
+	const { ids } = req.body;
+	try {
+		const result = await db.query(
+			`SELECT * FROM rules
+				WHERE id IN (${ids.map((_, i) => `$${i + 1}`).join(',')})`,
+			ids
+		);
+		res.json(result.rows);
+	}
+	catch (err) {
+		console.error('Error getting some rules:', err);
+		res.status(500).send('Server error');
+	}
+};
 
 module.exports = {
 	getRules,
 	newRule,
+	getSomeRules,
 };

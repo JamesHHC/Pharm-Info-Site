@@ -11,41 +11,71 @@ export default function InfoPanel({ selectedItem }) {
 	const [pharmRules, setPharmRules] = useState([]);
 	const [pharmTrainings, setPharmTrainings] = useState([]);
 
+	//For contacts
+	const [contacts, setContacts] = useState([]);
+	const [pharmContacts, setPharmContacts] = useState([]);
+
 	// GET functions
-	const fetchRules = async () => {
-		fetch(`http://${serverIp}:${serverPort}/api/rules`)
-			.then((res) => res.json())
-			.then((data) => setRules(data))
-			.catch((err) => console.error('Failed to fetch rules', err));
-	};
-	const fetchTrainings = async () => {
-		fetch(`http://${serverIp}:${serverPort}/api/training`)
-			.then((res) => res.json())
-			.then((data) => setTrainings(data))
-			.catch((err) => console.error('Failed to fetch trainings', err));
-	};
 	const fetchPharmRules = async () => {
 		setPharmRules([]);
-		fetch(`http://${serverIp}:${serverPort}/api/pharmrules?pharmacy_id=${selectedItem.id}`)
-			.then((res) => res.json())
-			.then((data) => setPharmRules(data))
-			.catch((err) => console.error('Failed to fetch pharmacy rules', err));
+		setRules([]);
+		try {
+			const res = await fetch(`http://${serverIp}:${serverPort}/api/pharmrules?pharmacy_id=${selectedItem.id}`);
+			const data = await res.json();
+			setPharmRules(data);
+			// Get rules corresponding to selectedItem id
+			if (data.length > 0) fetchSomeRules(data.map(pr => pr.rules_id));
+		}
+		catch (err) {
+			console.error('Failed to fetch pharmacy rules', err);
+		}
 	};
 	const fetchPharmTrainings = async () => {
 		setPharmTrainings([]);
-		fetch(`http://${serverIp}:${serverPort}/api/pharmtraining?pharmacy_id=${selectedItem.id}`)
-			.then((res) => res.json())
-			.then((data) => setPharmTrainings(data))
-			.catch((err) => console.error('Failed to fetch pharmacy trainings', err));
+		setTrainings([]);
+		try {
+			const res = await fetch(`http://${serverIp}:${serverPort}/api/pharmtraining?pharmacy_id=${selectedItem.id}`);
+			const data = await res.json();
+			setPharmTrainings(data);
+			// Get trainings corresponding to selectedItem id
+			if (data.length > 0) fetchSomeTrainings(data.map(pt => pt.training_id));
+		}
+		catch (err) {
+			console.error('Failed to fetch pharmacy trainings', err);
+		}
+	};
+
+	// POST functions
+	const fetchSomeRules = async (idArr) => {
+		const res = await fetch(`http://${serverIp}:${serverPort}/api/rules/some`, {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify({ ids: idArr }),
+		});
+		const ruleJson = await res.json();
+		setRules(ruleJson);
+	};
+	const fetchSomeTrainings = async (idArr) => {
+		const res = await fetch(`http://${serverIp}:${serverPort}/api/training/some`, {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify({ ids: idArr }),
+		});
+		const trainingJson = await res.json();
+		setTrainings(trainingJson);
 	};
 
 	// Run whenever selectedItem changes
 	useEffect(() => {
+		// Pharmacy
 		if (selectedItem && selectedItem.type === 'pharmacy') {
-			fetchRules();
-			fetchTrainings();
 			fetchPharmRules();
 			fetchPharmTrainings();
+			// TODO, contacts
+		}
+		// Contact
+		else if (selectedItem && selectedItem.type === 'contact') {
+			// TODO, pharmacies
 		}
 	}, [selectedItem]);
 

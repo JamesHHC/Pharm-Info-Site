@@ -1,8 +1,9 @@
 const express = require('express');
 const router = express.Router();
-const { getPharmacies, newPharmacy } = require('../controllers/pharmacyController');
+const { getPharmacies, newPharmacy, getSomePharmacies } = require('../controllers/pharmacyController');
 
 router.get('/', getPharmacies);
 router.post('/', newPharmacy);
+router.post('/', getSomePharmacies);
 
 module.exports = router;
