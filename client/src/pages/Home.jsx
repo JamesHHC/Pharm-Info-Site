@@ -3,6 +3,10 @@ import { useState, useEffect } from 'react';
 import PharmacyFormModal from './modals/PharmacyFormModal';
 import ContactFormModal from './modals/ContactFormModal';
 import InfoPanel from './content/InfoPanel';
+import config from '../config.js';
+
+const serverIp = config.server_ip;
+const serverPort = config.server_port;
 
 function Home() {
 	// For tabs/search bar
@@ -20,7 +24,7 @@ function Home() {
 	// Functions for syncing data
 	const fetchPharmacies = async () => {
 		try {
-			const res = await fetch('http://localhost:5000/api/pharmacies');
+			const res = await fetch(`http://${serverIp}:${serverPort}/api/pharmacies`);
 			const data = await res.json();
 			setPharmacies(data);
 		}
@@ -30,7 +34,7 @@ function Home() {
 	};
 	const fetchContacts = async () => {
 		try {
-			const res = await fetch('http://localhost:5000/api/contacts');
+			const res = await fetch(`http://${serverIp}:${serverPort}/api/contacts`);
 			const data = await res.json();
 			setContacts(data);
 		}
@@ -185,7 +189,7 @@ function Home() {
 					return;
 				}
 				// Send info to db
-				const res = await fetch('http://localhost:5000/api/pharmacies', {
+				const res = await fetch(`http://${serverIp}:${serverPort}/api/pharmacies`, {
 					method: 'POST',
 					headers: { 'Content-Type': 'application/json' },
 					body: JSON.stringify(newPharmacy),
@@ -223,7 +227,7 @@ function Home() {
 					return;
 				}
 				// Send info to db
-				const res = await fetch('http://localhost:5000/api/contacts', {
+				const res = await fetch(`http://${serverIp}:${serverPort}/api/contacts`, {
 					method: 'POST',
 					headers: { 'Content-Type': 'application/json' },
 					body: JSON.stringify(newContact),
@@ -248,7 +252,7 @@ function Home() {
 		// Associate each rule ID
 		for (const ruleId of ruleIds) {
 			// Send info to db
-			const res = await fetch('http://localhost:5000/api/pharmrules', {
+			const res = await fetch(`http://${serverIp}:${serverPort}/api/pharmrules`, {
 				method: 'POST',
 				headers: { 'Content-Type': 'application/json' },
 				body: JSON.stringify({ pharmacy_id: pharmId, rules_id: ruleId }),
@@ -261,7 +265,7 @@ function Home() {
 		// Associate each training ID
 		for (const trainingId of trainingIds) {
 			// Send info to db
-			const res = await fetch('http://localhost:5000/api/pharmtraining', {
+			const res = await fetch(`http://${serverIp}:${serverPort}/api/pharmtraining`, {
 				method: 'POST',
 				headers: { 'Content-Type': 'application/json' },
 				body: JSON.stringify({ pharmacy_id: pharmId, training_id: trainingId }),

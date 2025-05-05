@@ -1,5 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import './ModalStyles.css'
+import config from '../../config.js';
+
+const serverIp = config.server_ip;
+const serverPort = config.server_port;
 
 export default function PharmacyFormModal({ isOpen, onClose, onSubmit }) {
 	// For rules
@@ -19,7 +23,7 @@ export default function PharmacyFormModal({ isOpen, onClose, onSubmit }) {
 	// GET rules
 	const fetchRules = () => {
 		setLoadingRules(true);
-		fetch('http://localhost:5000/api/rules')
+		fetch(`http://${serverIp}:${serverPort}/api/rules`)
 			.then((res) => res.json())
 			.then((data) => setRules(data))
 			.catch((err) => console.error('Failed to fetch rules', err))
@@ -29,7 +33,7 @@ export default function PharmacyFormModal({ isOpen, onClose, onSubmit }) {
 	// GET trainings
 	const fetchTrainings = () => {
 		setLoadingTrainings(true);
-		fetch('http://localhost:5000/api/training')
+		fetch(`http://${serverIp}:${serverPort}/api/training`)
 			.then((res) => res.json())
 			.then((data) => setTrainings(data))
 			.catch((err) => console.error('Failed to fetch trainings', err))
@@ -92,7 +96,7 @@ export default function PharmacyFormModal({ isOpen, onClose, onSubmit }) {
 		setNewRule('');
 
 		// Send info to db
-		const res = await fetch('http://localhost:5000/api/rules', {
+		const res = await fetch(`http://${serverIp}:${serverPort}/api/rules`, {
 			method: 'POST',
 			headers: { 'Content-Type': 'application/json' },
 			body: JSON.stringify({ rule: nRule }),
@@ -133,7 +137,7 @@ export default function PharmacyFormModal({ isOpen, onClose, onSubmit }) {
 		document.getElementById('new-training-form').hidden = true;
 		setNewTraining({name: '', description: ''});
 		// Send info to db
-		const res = await fetch('http://localhost:5000/api/training', {
+		const res = await fetch(`http://${serverIp}:${serverPort}/api/training`, {
 			method: 'POST',
 			headers: { 'Content-Type': 'application/json' },
 			body: JSON.stringify(nTrain),
@@ -192,7 +196,8 @@ export default function PharmacyFormModal({ isOpen, onClose, onSubmit }) {
 					
 					{/* Rules */}
 					<p className="block text-sm font-light text-gray-700 mb-1">Rules</p>
-					{loadingRules && <p className="mb-3">Loading rules...</p>}
+					{loadingRules && <p className="mb-4 border bg-gray-100 border-gray-300 p-2 rounded">Loading rules...</p>}
+					{(!loadingRules && rules.length == 0) && <p className="mb-4 border bg-gray-100 border-gray-300 p-2 rounded">None found.</p>}
 					{rules.length > 0 && <>
 						{/* Search/add bar */}
 						<div className="flex mb-1 space-x-1">
@@ -274,7 +279,8 @@ export default function PharmacyFormModal({ isOpen, onClose, onSubmit }) {
 
 					{/* Training Req */}
 					<p className="block text-sm font-light text-gray-700 mb-1">Training Requirements</p>
-					{loadingTrainings && <p className="mb-3">Loading trainings...</p>}
+					{loadingTrainings && <p className="mb-4 border bg-gray-100 border-gray-300 p-2 rounded">Loading trainings...</p>}
+					{(!loadingTrainings && trainings.length == 0) && <p className="mb-4 border bg-gray-100 border-gray-300 p-2 rounded">None found.</p>}
 					{trainings.length > 0 && <>
 						{/* Search/add bar */}
 						<div className="flex mb-1 space-x-1">

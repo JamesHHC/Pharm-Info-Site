@@ -2,10 +2,16 @@
 A web application for displaying information related to pharmacies. Built using **Vite** and the **React.js** framework.
 
 ## Client
-TODO (Run instructions)
+#### Required files:
+`client/src/config.js`
+```js
+export default {
+    server_ip: 'XX',
+    server_port: 'XX',
+};
+```
 
 ## Server
-TODO (Run instructions)
 #### Required files:
 `server/.env`
 ```env

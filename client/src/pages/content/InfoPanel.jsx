@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
+import config from '../../config.js';
 
-let lastItem = null;
+const serverIp = config.server_ip;
+const serverPort = config.server_port;
 
 export default function InfoPanel({ selectedItem }) {
 	// For rules & trainings
@@ -11,27 +13,27 @@ export default function InfoPanel({ selectedItem }) {
 
 	// GET functions
 	const fetchRules = async () => {
-		fetch('http://localhost:5000/api/rules')
+		fetch(`http://${serverIp}:${serverPort}/api/rules`)
 			.then((res) => res.json())
 			.then((data) => setRules(data))
 			.catch((err) => console.error('Failed to fetch rules', err));
 	};
 	const fetchTrainings = async () => {
-		fetch('http://localhost:5000/api/training')
+		fetch(`http://${serverIp}:${serverPort}/api/training`)
 			.then((res) => res.json())
 			.then((data) => setTrainings(data))
 			.catch((err) => console.error('Failed to fetch trainings', err));
 	};
 	const fetchPharmRules = async () => {
 		setPharmRules([]);
-		fetch(`http://localhost:5000/api/pharmrules?pharmacy_id=${selectedItem.id}`)
+		fetch(`http://${serverIp}:${serverPort}/api/pharmrules?pharmacy_id=${selectedItem.id}`)
 			.then((res) => res.json())
 			.then((data) => setPharmRules(data))
 			.catch((err) => console.error('Failed to fetch pharmacy rules', err));
 	};
 	const fetchPharmTrainings = async () => {
 		setPharmTrainings([]);
-		fetch(`http://localhost:5000/api/pharmtraining?pharmacy_id=${selectedItem.id}`)
+		fetch(`http://${serverIp}:${serverPort}/api/pharmtraining?pharmacy_id=${selectedItem.id}`)
 			.then((res) => res.json())
 			.then((data) => setPharmTrainings(data))
 			.catch((err) => console.error('Failed to fetch pharmacy trainings', err));
