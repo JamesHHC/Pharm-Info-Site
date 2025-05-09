@@ -85,9 +85,12 @@ export default function PharmacyFormModal({ isOpen, onClose, onSubmit, contacts 
 	};
 
 	// Filter rules based on user input
-	const filteredRules = rules.filter((rule) =>
-		rule.rule.toLowerCase().includes(searchedRule.toLowerCase())
-	);
+	const filteredRules = rules
+		.slice()
+		.sort((a, b) => a.rule.localeCompare(b.rule))
+		.filter((rule) =>
+			rule.rule.toLowerCase().includes(searchedRule.toLowerCase())
+		);
 
 	// Reset newRule when New Rule subform cancelled
 	const cancelNewRule = () => {
@@ -123,10 +126,13 @@ export default function PharmacyFormModal({ isOpen, onClose, onSubmit, contacts 
 	};
 
 	// Filter trainings based on user input
-	const filteredTrainings = trainings.filter((training) =>
-		training.name.toLowerCase().includes(searchedTraining.toLowerCase()) ||
-		training.description.toLowerCase().includes(searchedTraining.toLowerCase())
-	);
+	const filteredTrainings = trainings
+		.slice()
+		.sort((a, b) => a.name.localeCompare(b.name))
+		.filter((training) =>
+			training.name.toLowerCase().includes(searchedTraining.toLowerCase()) ||
+			training.description.toLowerCase().includes(searchedTraining.toLowerCase())
+		);
 
 	// Reset newTraining when New Training subform cancelled
 	const cancelNewTraining = () => {
@@ -164,9 +170,12 @@ export default function PharmacyFormModal({ isOpen, onClose, onSubmit, contacts 
 	};
 
 	// Filter contacts based on user input
-	const filteredContacts = contacts.filter((contact) =>
-		contact.name.toLowerCase().includes(searchedContact.toLowerCase())
-	);
+	const filteredContacts = contacts
+		.slice()
+		.sort((a, b) => a.name.localeCompare(b.name))
+		.filter((contact) =>
+			contact.name.toLowerCase().includes(searchedContact.toLowerCase())
+		);
 
 	if (!isOpen) return null;
 

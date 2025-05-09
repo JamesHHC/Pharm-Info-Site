@@ -31,9 +31,12 @@ export default function ContactFormModal({ isOpen, onClose, onSubmit, pharmacies
 	};
 
 	// Filter pharmacies based on user input
-	const filteredPharmacies = pharmacies.filter((pharmacy) =>
-		pharmacy.name.toLowerCase().includes(searchedPharmacy.toLowerCase())
-	);
+	const filteredPharmacies = pharmacies
+		.slice()
+		.sort((a, b) => a.name.localeCompare(b.name))
+		.filter((pharmacy) =>
+			pharmacy.name.toLowerCase().includes(searchedPharmacy.toLowerCase())
+		);
 
 	if (!isOpen) return null;
 

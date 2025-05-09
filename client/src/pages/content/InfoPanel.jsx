@@ -159,7 +159,7 @@ export default function InfoPanel({ selectedItem, setSelectedItem }) {
 					<p className="min-h-11 mb-2 bg-white px-3 py-2 rounded-md shadow-sm">{selectedItem.oncall_prefs}</p>
 
 					{/* Rules & Training */}
-					<div className="flex space-x-3">
+					<div className="lg:flex space-x-3">
 						{/* Rules */}
 						<div className="w-full">
 							<label className="text-sm">Rules</label>
@@ -178,7 +178,7 @@ export default function InfoPanel({ selectedItem, setSelectedItem }) {
 								{trainings.map(training => (
 									<div key={training.id}>
 										<div
-											className="flex py-2 px-3 w-full bg-white outline-1 outline-gray-200"
+											className="cursor-pointer flex py-2 px-3 w-full bg-white outline-1 outline-gray-200"
 											onClick={() => {
 												const desc = document.getElementById(`desc_${training.id}`);
 												const arrw = document.getElementById(`arrow_${training.id}`);
@@ -200,14 +200,15 @@ export default function InfoPanel({ selectedItem, setSelectedItem }) {
 
 					{/* Contacts */}
 					<label className="text-sm">Contacts</label>
-					<div className="flex flex-wrap gap-2 mt-1">
+					<div className="flex flex-wrap gap-2 mt-1 mb-2">
 						{contacts.map(contact => (
 								<div
 									key={contact.id}
-									className="cursor-pointer py-2 px-4 bg-white rounded-full shadow-sm"
+									className="cursor-pointer py-2 px-5 bg-white rounded-full shadow-sm"
 									onClick={() => { setSelectedItem({ ...contact, type: 'contact' }); }}
 								>
-									<div>{contact.name}</div>
+									<p className="text-md">{contact.name}</p>
+									<p className="text-sm font-light">{contact.title}</p>
 								</div>
 							)
 						)}
@@ -257,14 +258,14 @@ export default function InfoPanel({ selectedItem, setSelectedItem }) {
 
 					{/* Pharmacies */}
 					<label className="text-sm">Pharmacies</label>
-					<div className="flex flex-wrap gap-2 mt-1">
+					<div className="flex flex-wrap gap-2 mt-1 mb-2">
 						{pharmacies.map(pharmacy => (
 								<div
 									key={pharmacy.id}
 									className="cursor-pointer py-2 px-4 bg-white rounded-full shadow-sm"
 									onClick={() => { setSelectedItem({ ...pharmacy, type: 'pharmacy' }); }}
 								>
-									<div>{pharmacy.name}</div>
+									<p>{pharmacy.name}</p>
 								</div>
 							)
 						)}
