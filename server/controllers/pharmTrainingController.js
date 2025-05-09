@@ -17,20 +17,23 @@ const getPharmTrainings = async (req, res) => {
 	}
 };
 
-// Insert a new pharmacy training
+// Insert new pharmacy training(s)
 const newPharmTraining = async (req, res) => {
-	const { pharmacy_id, training_id } = req.body;
+	const { pharmacy_id, training_ids } = req.body;
 	try {
+		// Construct values in format ($1, $2), ($1, $3), etc...
+		const values = training_ids.map((_, i) => `($1, $${i + 2})`).join(', ');
+		const ids = [pharmacy_id, ...training_ids];
 		const result = await db.query(
 			`INSERT INTO pharmacy_training (pharmacy_id, training_id)
-				VALUES ($1, $2)
+				VALUES ${values}
 				RETURNING *`,
-			[pharmacy_id, training_id]
+			ids
 		);
-		res.status(201).json(result.rows[0]);
+		res.status(201).json(result.rows);
 	}
 	catch (err) {
-		console.error('Error creating pharmacy training:', err);
+		console.error('Error creating pharmacy training(s):', err);
 		res.status(500).send('Server error');
 	}
 }

@@ -75,7 +75,7 @@ function Home() {
 						<button
 							tabIndex='-1'
 							onClick={() => setActiveTab('pharmacies')}
-							className={`px-4 py-2 rounded-md w-1/2 shadow-sm ${
+							className={`cursor-pointer px-4 py-2 rounded-md w-1/2 shadow-sm ${
 								activeTab === 'pharmacies'
 									? 'bg-cyan-900/70 text-white font-bold'
 									: 'bg-gray-100 text-gray-400'
@@ -86,7 +86,7 @@ function Home() {
 						<button
 							tabIndex='-1'
 							onClick={() => setActiveTab('contacts')}
-							className={`px-4 py-2 rounded-md w-1/2 shadow-sm ${
+							className={`cursor-pointer px-4 py-2 rounded-md w-1/2 shadow-sm ${
 								activeTab === 'contacts'
 									? 'bg-cyan-900/70 text-white font-bold'
 									: 'bg-gray-100 text-gray-400'
@@ -110,7 +110,7 @@ function Home() {
 						<button
 							tabIndex='-1'
 							onClick={handleAdd}
-							className="w-12 h-10.5 text-4xl shadow-sm text-teal-600/60 font-medium border-2 border-teal-600/60 rounded-md hover:border-0 hover:text-white hover:bg-teal-600/60"
+							className="cursor-pointer w-12 h-10.5 text-4xl shadow-sm text-teal-600/60 font-medium border-2 border-teal-600/60 rounded-md hover:border-0 hover:text-white hover:bg-teal-600/60"
 						>
 							<span className="relative bottom-[5px]">+</span>
 						</button>
@@ -164,6 +164,7 @@ function Home() {
 				<div className="p-4 rounded-xl shadow-lg h-full bg-white overflow-auto scrollbar-thin">
 					<InfoPanel
 						selectedItem={selectedItem}
+						setSelectedItem={setSelectedItem}
 					/>
 				</div>
 			</div>
@@ -172,7 +173,7 @@ function Home() {
 		<PharmacyFormModal
 			isOpen={showPharmacyModal}
 			onClose={() => setShowPharmacyModal(false)}
-			onSubmit={ async (e, selectedRules, selectedTrainings) => {
+			onSubmit={ async (e, selectedRules, selectedTrainings, selectedContacts) => {
 				e.preventDefault();
 				// Get form data
 				const formData = new FormData(e.target);
@@ -197,17 +198,19 @@ function Home() {
 				const newPharm = await res.json();
 				await associateRules(newPharm.id, selectedRules);
 				await associateTraining(newPharm.id, selectedTrainings);
+				await associateContact(newPharm.id, selectedContacts);
 				fetchPharmacies();
 				setShowPharmacyModal(false);
 				// Display newly created item
 				setSelectedItem({ ...newPharm, type: 'pharmacy' });
 			}}
+			contacts={contacts}
 		/>
 		{/* New contact modal */}
 		<ContactFormModal
 			isOpen={showContactModal}
 			onClose={() => setShowContactModal(false)}
-			onSubmit={ async (e) => {
+			onSubmit={ async (e, selectedPharmacies) => {
 				e.preventDefault();
 				// Get form formData
 				const formData = new FormData(e.target);
@@ -233,11 +236,13 @@ function Home() {
 					body: JSON.stringify(newContact),
 				});
 				const newCont = await res.json();
+				await associatePharmacy(newCont.id, selectedPharmacies);
 				fetchContacts();
 				setShowContactModal(false);
 				// Display newly created item
-				setSelectedItem({ ...newCont, type: 'contact' })
+				setSelectedItem({ ...newCont, type: 'contact' });
 			}}
+			pharmacies={pharmacies}
 		/>
 		</>
 	)
@@ -249,28 +254,46 @@ function Home() {
 
 	// Update pharmacy_rules db based on selected rules
 	async function associateRules(pharmId, ruleIds) {
-		// Associate each rule ID
-		for (const ruleId of ruleIds) {
-			// Send info to db
-			const res = await fetch(`http://${serverIp}:${serverPort}/api/pharmrules`, {
-				method: 'POST',
-				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify({ pharmacy_id: pharmId, rules_id: ruleId }),
-			});
-		}
+		if (ruleIds.length == 0) return;
+		// Send info to db
+		const res = await fetch(`http://${serverIp}:${serverPort}/api/pharmrules`, {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify({ pharmacy_id: pharmId, rule_ids: ruleIds }),
+		});
 	}
 
 	// Update pharmacy_training db based on selected rules
 	async function associateTraining(pharmId, trainingIds) {
-		// Associate each training ID
-		for (const trainingId of trainingIds) {
-			// Send info to db
-			const res = await fetch(`http://${serverIp}:${serverPort}/api/pharmtraining`, {
-				method: 'POST',
-				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify({ pharmacy_id: pharmId, training_id: trainingId }),
-			});
-		}
+		if (trainingIds.length == 0) return;
+		// Send info to db
+		const res = await fetch(`http://${serverIp}:${serverPort}/api/pharmtraining`, {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify({ pharmacy_id: pharmId, training_ids: trainingIds }),
+		});
+	}
+
+	// Update pharmacy_contacts db based on selected contacts
+	async function associateContact(pharmId, contactIds) {
+		if (contactIds.length == 0) return;
+		// Send info to db
+		const res = await fetch(`http://${serverIp}:${serverPort}/api/pharmcontacts/contacts`, {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify({ pharmacy_id: pharmId, contact_ids: contactIds }),
+		});
+	}
+
+	// Update pharmacy_contacts db based on selected pharmacies
+	async function associatePharmacy(contactId, pharmacyIds) {
+		if (pharmacyIds.length == 0) return;
+		// Send info to db
+		const res = await fetch(`http://${serverIp}:${serverPort}/api/pharmcontacts/pharmacies`, {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify({ contact_id: contactId, pharmacy_ids: pharmacyIds }),
+		});
 	}
 }
 

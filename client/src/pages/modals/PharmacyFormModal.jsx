@@ -5,7 +5,7 @@ import config from '../../config.js';
 const serverIp = config.server_ip;
 const serverPort = config.server_port;
 
-export default function PharmacyFormModal({ isOpen, onClose, onSubmit }) {
+export default function PharmacyFormModal({ isOpen, onClose, onSubmit, contacts }) {
 	// For rules
 	const [loadingRules, setLoadingRules] = useState(false);
 	const [rules, setRules] = useState([]);
@@ -19,6 +19,10 @@ export default function PharmacyFormModal({ isOpen, onClose, onSubmit }) {
 	const [searchedTraining, setSearchedTraining] = useState('');
 	const [selectedTrainings, setSelectedTrainings] = useState([]);
 	const [newTraining, setNewTraining] = useState({name: '', description: ''});
+
+	// For contacts
+	const [searchedContact, setSearchedContact] = useState('');
+	const [selectedContacts, setSelectedContacts] = useState([]);
 
 	// GET rules
 	const fetchRules = () => {
@@ -58,12 +62,15 @@ export default function PharmacyFormModal({ isOpen, onClose, onSubmit }) {
 		setSearchedTraining('');
 		setSelectedTrainings([]);
 		setNewTraining({name: '', description: ''});
+		// Reset contact stuff
+		setSearchedContact('');
+		setSelectedContacts([]);
 	};
 
 	// Run when form submitted
 	const handleSubmit = async (e) => {
 		e.preventDefault();
-		await onSubmit(e, selectedRules, selectedTrainings);
+		await onSubmit(e, selectedRules, selectedTrainings, selectedContacts);
 		resetForm();
 		onClose();
 	};
@@ -147,6 +154,20 @@ export default function PharmacyFormModal({ isOpen, onClose, onSubmit }) {
 		handleTrainingChange(trainJson.id);
 	}
 
+	// Keep track of selected contacts during filtering
+	const handleContactChange = (id) => {
+		setSelectedContacts(prevSelected =>
+			prevSelected.includes(id)
+				? prevSelected.filter(cid => cid !== id)
+				: [...prevSelected, id]
+		);
+	};
+
+	// Filter contacts based on user input
+	const filteredContacts = contacts.filter((contact) =>
+		contact.name.toLowerCase().includes(searchedContact.toLowerCase())
+	);
+
 	if (!isOpen) return null;
 
 	return (
@@ -174,21 +195,21 @@ export default function PharmacyFormModal({ isOpen, onClose, onSubmit }) {
 					</div>
 
 					{/* Communication Prefs */}
-					<label htmlFor="name" className="block text-sm font-light text-gray-700 mb-1">Communication Preferences</label>
+					<label htmlFor="communication" className="block text-sm font-light text-gray-700 mb-1">Communication Preferences</label>
 					<textarea
 						id="communication" name="communication" placeholder="Type here..."
 						className="w-full mb-1.5 border border-gray-300 p-2 rounded focus:outline-cyan-500/60 scrollbar-thin"
 					/>
 
 					{/* General Notes */}
-					<label htmlFor="name" className="block text-sm font-light text-gray-700 mb-1">General Notes</label>
+					<label htmlFor="general_notes" className="block text-sm font-light text-gray-700 mb-1">General Notes</label>
 					<textarea
 						id="general_notes" name="general_notes" placeholder="Type here..."
 						className="w-full mb-1.5 border border-gray-300 p-2 rounded focus:outline-cyan-500/60 scrollbar-thin"
 					/>
 
 					{/* On-call Prefs */}
-					<label htmlFor="name" className="block text-sm font-light text-gray-700 mb-1">On-call Preferences</label>
+					<label htmlFor="oncall_prefs" className="block text-sm font-light text-gray-700 mb-1">On-call Preferences</label>
 					<textarea
 						id="oncall_prefs" name="oncall_prefs" placeholder="Type here..."
 						className="w-full mb-1.5 border border-gray-300 p-2 rounded focus:outline-cyan-500/60 scrollbar-thin"
@@ -233,13 +254,13 @@ export default function PharmacyFormModal({ isOpen, onClose, onSubmit }) {
 								autoComplete="off"
 							/>
 							<div className="flex justify-end">
-								<button tabIndex="-1" type="button" onClick={cancelNewRule} className="px-4 py-2 bg-gray-800/10 text-gray-400 hover:bg-gray-800/20 rounded-l-md">Cancel</button>
-								<button tabIndex="-1" type="button" onClick={submitNewRule} className="px-4 py-2 bg-teal-600/60 hover:bg-teal-600/80 text-white rounded-r-md">Save</button>
+								<button tabIndex="-1" type="button" onClick={cancelNewRule} className="cursor-pointer px-4 py-2 bg-gray-800/10 text-gray-400 hover:bg-gray-800/20 rounded-l-md">Cancel</button>
+								<button tabIndex="-1" type="button" onClick={submitNewRule} className="cursor-pointer px-4 py-2 bg-teal-600/60 hover:bg-teal-600/80 text-white rounded-r-md">Save</button>
 							</div>
 						</div>
 					</div>
 					{/* Rule list */}
-					<div tabIndex="-1" className="resize-y mb-4 border bg-gray-100 border-gray-300 p-2 rounded h-80 w-full overflow-y-auto overflow-x-hidden space-y-2 space-x-2 scrollbar-thin">
+					<div tabIndex="-1" className="resize-y mb-4 border bg-gray-100 border-gray-300 p-2 rounded h-40 w-full overflow-y-auto overflow-x-hidden space-y-2 space-x-2 scrollbar-thin">
 						{filteredRules.map((rule) => {
 							const isVisible = rule.rule.toLowerCase().includes(searchedRule.toLowerCase());
 							return (
@@ -320,13 +341,13 @@ export default function PharmacyFormModal({ isOpen, onClose, onSubmit }) {
 								className="bg-white/80 h-15 w-full px-4 py-2 border border-gray-200 rounded-md focus:outline-cyan-500/60"
 							/>
 							<div className="flex justify-end">
-								<button tabIndex="-1" type="button" onClick={cancelNewTraining} className="px-4 py-2 bg-gray-800/10 text-gray-400 hover:bg-gray-800/20 rounded-l-md">Cancel</button>
-								<button tabIndex="-1" type="button" onClick={submitNewTraining} className="px-4 py-2 bg-teal-600/60 hover:bg-teal-600/80 text-white rounded-r-md">Save</button>
+								<button tabIndex="-1" type="button" onClick={cancelNewTraining} className="cursor-pointer px-4 py-2 bg-gray-800/10 text-gray-400 hover:bg-gray-800/20 rounded-l-md">Cancel</button>
+								<button tabIndex="-1" type="button" onClick={submitNewTraining} className="cursor-pointer px-4 py-2 bg-teal-600/60 hover:bg-teal-600/80 text-white rounded-r-md">Save</button>
 							</div>
 						</div>
 					</div>
 					{/* Training list */}
-					<div tabIndex="-1" className="resize-y mb-4 border bg-gray-100 border-gray-300 p-2 rounded h-80 w-full overflow-y-auto overflow-x-hidden space-y-2 space-x-2 scrollbar-thin">
+					<div tabIndex="-1" className="resize-y mb-4 border bg-gray-100 border-gray-300 p-2 rounded h-40 w-full overflow-y-auto overflow-x-hidden space-y-2 space-x-2 scrollbar-thin">
 						{filteredTrainings.map((training) => {
 							const isVisible = training.name.toLowerCase().includes(searchedTraining.toLowerCase()) || training.description.toLowerCase().includes(searchedTraining.toLowerCase());
 							return (
@@ -360,12 +381,53 @@ export default function PharmacyFormModal({ isOpen, onClose, onSubmit }) {
 
 					{/* Contacts */}
 					<p className="block text-sm font-light text-gray-700 mb-1">Contacts</p>
-					<p className="mb-3">{/* TODO */}</p>
+					{/* Contacts search bar */}
+					<input
+						id="contacts-search-bar"
+						type="text"
+						placeholder="Search contacts..."
+						value={searchedContact}
+						onChange={(e) => setSearchedContact(e.target.value)}
+						className="flex mb-1 h-10.5 w-full px-4 border border-gray-300 rounded-md focus:outline-cyan-500/60"
+						autoComplete="off"
+					/>
+					{/* Contacts List */}
+					<div tabIndex="-1" className="resize-y mb-4 border bg-gray-100 border-gray-300 p-2 rounded h-40 w-full overflow-y-auto overflow-x-hidden space-y-2 space-x-2 scrollbar-thin">
+						{filteredContacts.map((contact) => {
+							const isVisible = contact.name.toLowerCase().includes(searchedContact.toLowerCase());
+							return (
+								<div
+									className={`bg-white flex w-full items-center justify-between rounded-md shadow-sm ${!isVisible ? 'hidden' : ''}`}
+									key={contact.name}
+								>
+									<label htmlFor={`contact_${contact.id}`} className="w-full p-2">
+										<div className="flex items-center">
+											<input
+												tabIndex="-1"
+												type="checkbox"
+												id={`contact_${contact.id}`}
+												name="contact"
+												value={contact.id}
+												checked={selectedContacts.includes(contact.id)}
+												onChange={() => handleContactChange(contact.id)}
+												className="appearance-none flex-none custom-chk transition border-1 border-gray-300 mr-2 w-5 h-5 focus:outline-cyan-500/60 checked:border-0 checked:bg-cyan-800 pointer-events-none rounded-full"
+											/>
+											{/* Contact info */}
+											<div className="flex-block">
+												<p className="text-sm">{contact.name}</p>
+												<p className="text-sm font-light">{contact.title}</p>
+											</div>
+										</div>
+									</label>
+								</div>
+							);
+						})}
+					</div>
 
 					{/* Cancel/Submit Buttons */}
 					<div className="flex justify-end space-x-2">
-						<button type="button" onClick={() => {onClose(); resetForm();}} className="px-4 py-2 bg-gray-200 text-gray-400 hover:bg-gray-300 rounded focus:outline-cyan-500/60">Cancel</button>
-						<button type="submit" className="px-4 py-2 bg-emerald-500 hover:bg-emerald-600 text-white rounded focus:outline-cyan-500/60">Submit</button>
+						<button type="button" onClick={() => {onClose(); resetForm();}} className="cursor-pointer px-4 py-2 bg-gray-200 text-gray-400 hover:bg-gray-300 rounded focus:outline-cyan-500/60">Cancel</button>
+						<button type="submit" className="cursor-pointer px-4 py-2 bg-emerald-500 hover:bg-emerald-600 text-white rounded focus:outline-cyan-500/60">Submit</button>
 					</div>
 
 				</form>

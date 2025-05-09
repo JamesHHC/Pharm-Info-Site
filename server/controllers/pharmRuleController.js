@@ -17,20 +17,23 @@ const getPharmRules = async (req, res) => {
 	}
 };
 
-// Insert a new pharmacy rule
+// Insert new pharmacy rule(s)
 const newPharmRule = async (req, res) => {
-	const { pharmacy_id, rules_id } = req.body;
+	const { pharmacy_id, rule_ids } = req.body;
 	try {
+		// Construct values in format ($1, $2), ($1, $3), etc...
+		const values = rules_ids.map((_, i) => `($1, $${i + 2})`).join(', ');
+		const ids = [pharmacy_id, ...rules_ids];
 		const result = await db.query(
 			`INSERT INTO pharmacy_rules (pharmacy_id, rules_id)
-				VALUES ($1, $2)
+				VALUES ${values}
 				RETURNING *`,
-			[pharmacy_id, rules_id]
+			ids
 		);
-		res.status(201).json(result.rows[0]);
+		res.status(201).json(result.rows);
 	}
 	catch (err) {
-		console.error('Error creating pharmacy rule:', err);
+		console.error('Error creating pharmacy rule(s):', err);
 		res.status(500).send('Server error');
 	}
 }

@@ -4,6 +4,6 @@ const { getPharmacies, newPharmacy, getSomePharmacies } = require('../controller
 
 router.get('/', getPharmacies);
 router.post('/', newPharmacy);
-router.post('/', getSomePharmacies);
+router.post('/some', getSomePharmacies);
 
 module.exports = router;

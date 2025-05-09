@@ -8,6 +8,7 @@ const ruleRoutes = require('./routes/ruleRoutes.js');
 const trainingRoutes = require('./routes/trainingRoutes.js');
 const pharmRuleRoutes = require('./routes/pharmRuleRoutes.js');
 const pharmTrainingRoutes = require('./routes/pharmTrainingRoutes.js');
+const pharmContactRoutes = require('./routes/pharmContactRoutes.js');
 
 dotenv.config();
 const app = express();
@@ -23,6 +24,7 @@ app.use('/api/rules', ruleRoutes);
 app.use('/api/training', trainingRoutes);
 app.use('/api/pharmrules', pharmRuleRoutes);
 app.use('/api/pharmtraining', pharmTrainingRoutes);
+app.use('/api/pharmcontacts', pharmContactRoutes);
 
 app.listen(port, () => {
 	console.log('\x1b[36m%s\x1b[0m', `Server running on port ${port}`);
