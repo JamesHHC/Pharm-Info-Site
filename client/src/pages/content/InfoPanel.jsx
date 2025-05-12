@@ -128,7 +128,7 @@ export default function InfoPanel({ selectedItem, setSelectedItem }) {
 	}, [selectedItem]);
 
 	// No item selected
-	if (!selectedItem) return <div className="flex h-full"><p className="light-large m-auto">Select a pharmacy or contact to view its details.</p></div>;
+	if (!selectedItem) return <div className="flex h-full"><p className="light-large m-auto text-center">Select a pharmacy or contact to view its details.</p></div>;
 
 	// Pharmacy
 	if (selectedItem.type === 'pharmacy') {
@@ -136,12 +136,11 @@ export default function InfoPanel({ selectedItem, setSelectedItem }) {
 			<>
 				{/* Header Section */}
 				<div className="bg-gray-200/70 p-3 rounded-xl shadow-sm">
-					<p className="light-small">Pharmacy Info</p>
-					<div className="flex">
+					<p>{selectedItem.verbal_orders ? '' : '⚠️NO VERBAL ORDERS'}</p>
+					<div className="flex mt-[-6px] mb-[-4px]">
 						<p className="title">{selectedItem.name}</p>
 						<span className="cursor-pointer edit-icon h-full my-auto ml-2 text-[24px]"></span>
 					</div>
-					<p>{selectedItem.verbal_orders ? '' : '⚠️NO VERBAL ORDERS'}</p>
 				</div>
 				{/* Pharmacy Details/Info */}
 				<div className="bg-gray-200/70 px-3 py-2 rounded-xl mt-3 text-xl shadow-sm">

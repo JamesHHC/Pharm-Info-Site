@@ -1,10 +1,15 @@
 import { useState, useEffect } from 'react';
 
+// React content
 import PharmacyFormModal from './modals/PharmacyFormModal';
 import ContactFormModal from './modals/ContactFormModal';
 import InfoPanel from './content/InfoPanel';
-import config from '../config.js';
 
+// Assets
+import logo from '../assets/logo_bluegray.svg';
+
+// Config
+import config from '../config.js';
 const serverIp = config.server_ip;
 const serverPort = config.server_port;
 
@@ -60,9 +65,9 @@ function Home() {
 
 	useEffect(() => {
 		const handleResize = () => {
-			if (window.innerWidth <= 1024) setShowSidebar(false);
-			else setShowSidebar(true);
+			if (window.innerWidth > 1024) setShowSidebar(true);
 		};
+		if (!selectedItem) setShowSidebar(true);
 		window.addEventListener('resize', handleResize);
 		return () => window.removeEventListener('resize', handleResize);
 	}, []);
@@ -83,27 +88,36 @@ function Home() {
 
 	return (
 		<>
-		<div className="flex h-screen p-1 bg-gray-600/80 min-w-100">
-			{/* Open search menu */}
+		<div className="flex h-screen p-1 bg-gray-600/80 min-w-[255px]">
+			{/* Open search menu button */}
 			<div className="absolute bottom-4 left-4 z-30 lg:hidden">
 				<button
 					tabIndex='-1'
 					onClick={() => setShowSidebar(!showSidebar)}
-					className="cursor-pointer p-2 bg-slate-600 hover:bg-slate-700 w-10 h-10 rounded-full font-bold shadow-md text-white"
+					className="cursor-pointer p-2 shadow-md bg-slate-600 hover:bg-slate-700 w-10 h-10 rounded-full font-bold text-white"
 				>
-					⌕
+					{showSidebar ? '↺' : '⌕'}
 				</button>
 			</div>
 			{/* Left Column */}
 			{showSidebar && (
 				<div className="m-1 bg-white shadow-xl overflow-auto scrollbar-thin lg:w-1/4 w-full rounded-xl">
 					<div className="p-4 rounded-xl shadow-lg h-full bg-white flex flex-col">
+						{/* Header section */}
+						<div className="flex mb-4">
+							{/* HHC logo */}
+							<img src={logo} alt="logo" className="h-14"/>
+							{/* Profile icon */}
+							<div className="flex ml-auto my-auto h-10 w-10 rounded-full border-2 border-cyan-800">
+								<p className="m-auto font-bold text-cyan-800">PH</p>
+							</div>
+						</div>
 						{/* Tab Buttons */}
 						<div className="flex space-x-2 mb-4">
 							<button
 								tabIndex='-1'
 								onClick={() => setActiveTab('pharmacies')}
-								className={`cursor-pointer px-4 py-2 rounded-md w-1/2 shadow-sm ${
+								className={`cursor-pointer py-2 rounded-md w-1/2 shadow-sm ${
 									activeTab === 'pharmacies'
 										? 'bg-cyan-900/70 text-white font-bold'
 										: 'bg-gray-100 text-gray-400'
@@ -114,7 +128,7 @@ function Home() {
 							<button
 								tabIndex='-1'
 								onClick={() => setActiveTab('contacts')}
-								className={`cursor-pointer px-4 py-2 rounded-md w-1/2 shadow-sm ${
+								className={`cursor-pointer py-2 rounded-md w-1/2 shadow-sm ${
 									activeTab === 'contacts'
 										? 'bg-cyan-900/70 text-white font-bold'
 										: 'bg-gray-100 text-gray-400'
