@@ -1,12 +1,14 @@
+// React
 import { useState, useEffect } from 'react';
 
-// React content
+// Content
 import PharmacyFormModal from './modals/PharmacyFormModal';
 import ContactFormModal from './modals/ContactFormModal';
 import InfoPanel from './content/InfoPanel';
 
 // Assets
 import logo from '../assets/logo_bluegray.svg';
+import UserIcon from '../assets/icons/UserIcon'
 
 // Config
 import config from '../config.js';
@@ -108,19 +110,19 @@ function Home() {
 							{/* HHC logo */}
 							<img src={logo} alt="logo" className="h-14"/>
 							{/* Profile icon */}
-							<div className="flex ml-auto my-auto h-10 w-10 rounded-full border-2 border-cyan-800">
-								<p className="m-auto font-bold text-cyan-800">PH</p>
+							<div className="flex cursor-pointer ml-auto my-auto h-10 w-10 rounded-full hover:bg-gray-200/70 border-2 border-slate-700/70">
+								<p className="noselect m-auto text-slate-700/70"><UserIcon/></p>
 							</div>
 						</div>
 						{/* Tab Buttons */}
-						<div className="flex space-x-2 mb-4">
+						<div className="flex space-x-2 mb-3">
 							<button
 								tabIndex='-1'
 								onClick={() => setActiveTab('pharmacies')}
-								className={`cursor-pointer py-2 rounded-md w-1/2 shadow-sm ${
+								className={`cursor-pointer py-2 rounded-md w-1/2 ${
 									activeTab === 'pharmacies'
-										? 'bg-cyan-900/70 text-white font-bold'
-										: 'bg-gray-100 text-gray-400'
+										? 'bg-cyan-900/70 text-white font-bold shadow-sm'
+										: 'bg-gray-100 text-gray-400 shadow-sm'
 								}`}
 							>
 								Pharmacies
@@ -128,16 +130,16 @@ function Home() {
 							<button
 								tabIndex='-1'
 								onClick={() => setActiveTab('contacts')}
-								className={`cursor-pointer py-2 rounded-md w-1/2 shadow-sm ${
+								className={`cursor-pointer py-2 rounded-md w-1/2 ${
 									activeTab === 'contacts'
-										? 'bg-cyan-900/70 text-white font-bold'
-										: 'bg-gray-100 text-gray-400'
+										? 'bg-cyan-900/70 text-white font-bold shadow-sm'
+										: 'bg-gray-100 text-gray-400 shadow-sm'
 								}`}
 							>
 								Contacts
 							</button>
 						</div>
-						<div className="flex space-x-1 h-10.5 mb-4">
+						<div className="flex space-x-1 h-10.5 mb-3">
 							{/* Search Bar */}
 							<input
 								tabIndex='-1'
@@ -158,7 +160,7 @@ function Home() {
 							</button>
 						</div>
 						{/* Tab Content */}
-						<div tabIndex='-1' className="flex-1 overflow-auto rounded-md scrollbar-thin p-2 bg-gray-200 border border-gray-200 shadow-sm">
+						<div tabIndex='-1' className="flex-1 overflow-auto rounded-md scrollbar-thin p-2 bg-gray-200 border border-gray-200 inset-shadow-sm">
 							{/* Pharmacy list */}
 							{ activeTab === 'pharmacies' &&
 								<ul className="space-y-2">

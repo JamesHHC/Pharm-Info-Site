@@ -47,8 +47,27 @@ const getSomeTrainings = async (req, res) => {
 	}
 };
 
+// Update training with matching id
+const updateTraining = async (req, res) => {
+	const { name, description, id } = req.body;
+	try {
+		const result = await db.query(
+			`UPDATE training
+				SET (name, description) = ($1, $2)
+				WHERE id = ($3)`,
+			[name, description, id]
+		);
+		res.status(201).json(result.rows[0]);
+	}
+	catch (err) {
+		console.error('Error updating training:', err);
+		res.status(500).send('Server error');
+	}
+};
+
 module.exports = {
 	getTrainings,
 	newTraining,
 	getSomeTrainings,
+	updateTraining,
 };

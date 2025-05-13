@@ -47,8 +47,27 @@ const getSomeRules = async (req, res) => {
 	}
 };
 
+// Update rule with matching id
+const updateRule = async (req, res) => {
+	const { rule, id } = req.body;
+	try {
+		const result = await db.query(
+			`UPDATE rules
+				SET rule = ($1)
+				WHERE id = ($2)`,
+			[rule, id]
+		);
+		res.status(201).json(result.rows[0]);
+	}
+	catch (err) {
+		console.error('Error updating rule:', err);
+		res.status(500).send('Server error');
+	}
+};
+
 module.exports = {
 	getRules,
 	newRule,
 	getSomeRules,
+	updateRule,
 };

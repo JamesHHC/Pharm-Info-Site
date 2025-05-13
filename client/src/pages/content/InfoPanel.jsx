@@ -1,6 +1,8 @@
+// React
 import React, { useEffect, useState } from 'react';
-import config from '../../config.js';
 
+// Config
+import config from '../../config.js';
 const serverIp = config.server_ip;
 const serverPort = config.server_port;
 
