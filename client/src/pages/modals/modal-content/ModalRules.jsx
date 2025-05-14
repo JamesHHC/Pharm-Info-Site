@@ -1,8 +1,11 @@
 // React
 import React, { useEffect, useState, forwardRef, useImperativeHandle } from 'react';
 
+// Content
+import TrashIcon from '../../../assets/icons/TrashIcon';
+
 // Styles
-import '../ModalStyles.css'
+import '../ModalStyles.css';
 
 // Config
 import config from '../../../config.js';
@@ -108,6 +111,24 @@ const ModalRules = forwardRef(({selectedRules, setSelectedRules}, ref) => {
 		fetchRules();
 	};
 
+	// Delete the rule currently being edited
+	const deleteRule = async () => {
+		const id = editedRule.ref.id;
+		const conf = confirm(`Are you sure you want to delete this rule?\n\n${editedRule.ref.rule}`);
+		if (conf) {
+			document.getElementById('edit-rule-form').hidden = true;
+			setEditedRule({ref: {}, new: ''});
+			// Remove id from selectedRules, if present
+			setSelectedRules(prevSelected => prevSelected.filter(rid => rid !== id));
+			// Call db to delete data
+			await fetch(`http://${serverIp}:${serverPort}/api/rules?id=${id}`, {
+				method: 'DELETE',
+				headers: { 'Content-Type': 'application/json' },
+			});
+			fetchRules();
+		}
+	};
+
 	return (<>
 		{/* Rules */}
 		<p className="block text-sm font-light text-gray-700 mb-1">Rules</p>
@@ -171,6 +192,9 @@ const ModalRules = forwardRef(({selectedRules, setSelectedRules}, ref) => {
 					autoComplete="off"
 				/>
 				<div className="flex justify-end">
+					<button tabIndex="-1" type="button" onClick={deleteRule} className="cursor-pointer mr-auto px-4 py-2 bg-red-800/20 text-red-900 hover:bg-red-800/30 rounded-md">
+						<TrashIcon className="my-auto"/>
+					</button>
 					<button tabIndex="-1" type="button" onClick={cancelEditRule} className="cursor-pointer px-4 py-2 bg-gray-800/10 text-gray-400 hover:bg-gray-800/20 rounded-l-md">Cancel</button>
 					<button tabIndex="-1" type="button" onClick={submitEditRule} className="cursor-pointer px-4 py-2 bg-orange-600/60 hover:bg-orange-600/80 text-white rounded-r-md">Save</button>
 				</div>

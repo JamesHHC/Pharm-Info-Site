@@ -65,9 +65,32 @@ const updateRule = async (req, res) => {
 	}
 };
 
+// Delete rule, including entries in pharmacy_rules
+const deleteRule = async (req, res) => {
+	const id = req.query.id;
+	try {
+		await db.query(
+			`DELETE FROM pharmacy_rules
+				WHERE rules_id = ($1)`,
+			[id]
+		);
+		await db.query(
+			`DELETE FROM rules
+				WHERE id = ($1)`,
+			[id]
+		);
+		res.status(201).json('Rule deleted!');
+	}
+	catch (err) {
+		console.error('Error deleting rule:', err);
+		res.status(500).send('Server error');
+	}
+};
+
 module.exports = {
 	getRules,
 	newRule,
 	getSomeRules,
 	updateRule,
+	deleteRule,
 };

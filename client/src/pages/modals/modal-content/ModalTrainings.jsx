@@ -1,8 +1,11 @@
 // React
 import React, { useEffect, useState, forwardRef, useImperativeHandle } from 'react';
 
+// Content
+import TrashIcon from '../../../assets/icons/TrashIcon';
+
 // Styles
-import '../ModalStyles.css'
+import '../ModalStyles.css';
 
 // Config
 import config from '../../../config.js';
@@ -48,7 +51,7 @@ const ModalTrainings = forwardRef(({selectedTrainings, setSelectedTrainings}, re
 	const handleTrainingChange = (id) => {
 		setSelectedTrainings(prevSelected =>
 			prevSelected.includes(id)
-				? prevSelected.filter(rid => rid !== id)
+				? prevSelected.filter(tid => tid !== id)
 				: [...prevSelected, id]
 		);
 	};
@@ -111,6 +114,24 @@ const ModalTrainings = forwardRef(({selectedTrainings, setSelectedTrainings}, re
 			body: JSON.stringify({name: eName, description: eDesc, id: ref.id}),
 		});
 		fetchTrainings();
+	};
+
+	// Delete the training currently being edited
+	const deleteTraining = async () => {
+		const id = editedTraining.ref.id;
+		const conf = confirm(`Are you sure you want to delete this training?\n\n${editedTraining.ref.name}`);
+		if (conf) {
+			document.getElementById('edit-training-form').hidden = true;
+			setEditedTraining({ref: {}, new: {name: '', description: ''}});
+			// Remove id from selectedTrainings, if present
+			setSelectedTrainings(prevSelected => prevSelected.filter(tid => tid !== id));
+			// Call db to delete data
+			await fetch(`http://${serverIp}:${serverPort}/api/training?id=${id}`, {
+				method: 'DELETE',
+				headers: { 'Content-Type': 'application/json' },
+			});
+			fetchTrainings();
+		}
 	};
 
 	return (<>
@@ -189,9 +210,14 @@ const ModalTrainings = forwardRef(({selectedTrainings, setSelectedTrainings}, re
 					onChange={(e) => setEditedTraining({ref: editedTraining.ref, new: {name: editedTraining.new.name, description: e.target.value}})} 
 					className="bg-white/80 h-15 w-full px-4 py-2 border border-gray-200 rounded-md focus:outline-amber-500/60"
 				/>
-				<div className="flex justify-end">
-					<button tabIndex="-1" type="button" onClick={cancelEditTraining} className="cursor-pointer px-4 py-2 bg-gray-800/10 text-gray-400 hover:bg-gray-800/20 rounded-l-md">Cancel</button>
-					<button tabIndex="-1" type="button" onClick={submitEditTraining} className="cursor-pointer px-4 py-2 bg-orange-600/60 hover:bg-orange-600/80 text-white rounded-r-md">Save</button>
+				<div>
+					<div className="flex justify-end">
+						<button tabIndex="-1" type="button" onClick={deleteTraining} className="cursor-pointer mr-auto px-4 py-2 bg-red-800/20 text-red-900 hover:bg-red-800/30 rounded-md">
+							<TrashIcon className="my-auto"/>
+						</button>
+						<button tabIndex="-1" type="button" onClick={cancelEditTraining} className="cursor-pointer px-4 py-2 bg-gray-800/10 text-gray-400 hover:bg-gray-800/20 rounded-l-md">Cancel</button>
+						<button tabIndex="-1" type="button" onClick={submitEditTraining} className="cursor-pointer px-4 py-2 bg-orange-600/60 hover:bg-orange-600/80 text-white rounded-r-md">Save</button>
+					</div>
 				</div>
 			</div>
 		</div>

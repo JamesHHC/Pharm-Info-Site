@@ -2,7 +2,7 @@
 import React, { useEffect, useState, forwardRef, useImperativeHandle } from 'react';
 
 // Styles
-import '../ModalStyles.css'
+import '../ModalStyles.css';
 
 // Config
 import config from '../../../config.js';

@@ -65,9 +65,32 @@ const updateTraining = async (req, res) => {
 	}
 };
 
+// Delete training, including entries in pharmacy_training
+const deleteTraining = async (req, res) => {
+	const id = req.query.id;
+	try {
+		await db.query(
+			`DELETE FROM pharmacy_training
+				WHERE training_id = ($1)`,
+			[id]
+		);
+		await db.query(
+			`DELETE FROM training
+				WHERE id = ($1)`,
+			[id]
+		);
+		res.status(201).json('Training deleted!');
+	}
+	catch (err) {
+		console.error('Error deleting training:', err);
+		res.status(500).send('Server error');
+	}
+};
+
 module.exports = {
 	getTrainings,
 	newTraining,
 	getSomeTrainings,
 	updateTraining,
+	deleteTraining,
 };
