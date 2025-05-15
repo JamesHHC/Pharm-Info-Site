@@ -227,25 +227,22 @@ function Home() {
 				</div>
 			</div>
 		</div>
-
-
-
 		{/* Edit pharmacy modal */}
 		<PharmacyEditModal
 			isOpen={showPharmacyEditModal}
-			onClose={() => setShowPharmacyEditModal(false)}
+			onClose={() => {
+				fetchPharmacies();
+				setShowPharmacyEditModal(false);
+			}}
 			onSubmit={ async (e, updatedPharm) => {
 				e.preventDefault();
-				fetchPharmacies();
 				setShowPharmacyEditModal(false);
 				setSelectedItem({ ...updatedPharm, type: 'pharmacy' });
 			}}
 			contacts={contacts}
 			openPharmacy={selectedItem}
+			setSelectedItem={setSelectedItem}
 		/>
-
-
-
 		{/* New pharmacy modal */}
 		<PharmacyFormModal
 			isOpen={showPharmacyModal}

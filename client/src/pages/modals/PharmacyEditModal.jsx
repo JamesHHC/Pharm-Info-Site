@@ -15,7 +15,7 @@ import config from '../../config.js';
 const serverIp = config.server_ip;
 const serverPort = config.server_port;
 
-export default function PharmacyFormModal({ isOpen, onClose, onSubmit, contacts, openPharmacy }) {
+export default function PharmacyFormModal({ isOpen, onClose, onSubmit, contacts, openPharmacy, setSelectedItem }) {
 	// For tracking form values
 	const [pharmName, setPharmName] = useState('');
 	const [pharmVerb, setPharmVerb] = useState(false);
@@ -30,7 +30,7 @@ export default function PharmacyFormModal({ isOpen, onClose, onSubmit, contacts,
 	// Set form values based on existing ones
 	useEffect(() => {
 		const initValues = async () => {
-			setPharmName(openPharmacy?.name || '');
+			setPharmName(openPharmacy.name);
 			setPharmVerb(openPharmacy?.verbal_orders || false);
 			setPharmComm(openPharmacy?.communication || '');
 			setPharmNote(openPharmacy?.general_notes || '');
@@ -89,7 +89,18 @@ export default function PharmacyFormModal({ isOpen, onClose, onSubmit, contacts,
 	};
 
 	const deletePharmacy = async () => {
-		// TODO
+		const id = openPharmacy.id;
+		const conf = confirm(`Are you sure you want to delete this pharmacy?\n\n${openPharmacy.name}`);
+		if (conf) {
+			// Call db to delete data
+			await fetch(`http://${serverIp}:${serverPort}/api/pharmacies?id=${id}`, {
+				method: 'DELETE',
+				headers: { 'Content-Type': 'application/json' },
+			});
+			setSelectedItem(null);
+			resetForm();
+			onClose();
+		}
 	};
 
 	if (!isOpen || openPharmacy.type !== 'pharmacy') return null;

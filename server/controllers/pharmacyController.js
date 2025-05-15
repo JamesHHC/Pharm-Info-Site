@@ -47,8 +47,26 @@ const getSomePharmacies = async (req, res) => {
 	}
 };
 
+// Delete pharmacy matching given id
+// including entries in pharmacy_rules, pharmacy_training, & pharmacy_contacts
+const deletePharmacy = async (req, res) => {
+	const id = req.query.id;
+	try {
+		await db.query(`DELETE FROM pharmacy_rules WHERE pharmacy_id = ($1)`, [id]);
+		await db.query(`DELETE FROM pharmacy_training WHERE pharmacy_id = ($1)`, [id]);
+		await db.query(`DELETE FROM pharmacy_contacts WHERE pharmacy_id = ($1)`, [id]);
+		await db.query(`DELETE FROM pharmacies WHERE id = ($1)`, [id]);
+		res.status(201).json('Rule deleted!');
+	}
+	catch (err) {
+		console.error('Error deleting pharmacy:', err);
+		res.status(500).send('Server error');
+	}
+};
+
 module.exports = {
 	getPharmacies,
 	newPharmacy,
 	getSomePharmacies,
+	deletePharmacy,
 };
