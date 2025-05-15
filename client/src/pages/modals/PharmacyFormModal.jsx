@@ -35,7 +35,31 @@ export default function PharmacyFormModal({ isOpen, onClose, onSubmit, contacts 
 	// Run when form submitted
 	const handleSubmit = async (e) => {
 		e.preventDefault();
-		await onSubmit(e, selectedRules, selectedTrainings, selectedContacts);
+		// Get form data
+		const formData = new FormData(e.target);
+		const newPharmacy = {
+			name: formData.get('name')?.trim(),
+			communication: formData.get('communication')?.trim(),
+			verbal_orders: formData.get('verbal_orders') === 'on',
+			general_notes: formData.get('general_notes')?.trim(),
+			oncall_prefs: formData.get('oncall_prefs')?.trim(),
+		};
+		// Ensure data isn't blank
+		if (!newPharmacy.name) {
+			alert('Required fields cannot be blank.');
+			return;
+		}
+		// Send info to db
+		const res = await fetch(`http://${serverIp}:${serverPort}/api/pharmacies`, {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify(newPharmacy),
+		});
+		const newPharm = await res.json();
+		await associateRules(newPharm.id, selectedRules);
+		await associateTraining(newPharm.id, selectedTrainings);
+		await associateContact(newPharm.id, selectedContacts);
+		await onSubmit(e, newPharm);
 		resetForm();
 		onClose();
 	};
@@ -119,4 +143,37 @@ export default function PharmacyFormModal({ isOpen, onClose, onSubmit, contacts 
 			</div>
 		</div>
 	);
+
+	// Update pharmacy_rules db based on selected rules
+	async function associateRules(pharmId, ruleIds) {
+		if (ruleIds.length == 0) return;
+		// Send info to db
+		const res = await fetch(`http://${serverIp}:${serverPort}/api/pharmrules`, {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify({ pharmacy_id: pharmId, rule_ids: ruleIds }),
+		});
+	}
+
+	// Update pharmacy_training db based on selected rules
+	async function associateTraining(pharmId, trainingIds) {
+		if (trainingIds.length == 0) return;
+		// Send info to db
+		const res = await fetch(`http://${serverIp}:${serverPort}/api/pharmtraining`, {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify({ pharmacy_id: pharmId, training_ids: trainingIds }),
+		});
+	}
+
+	// Update pharmacy_contacts db based on selected contacts
+	async function associateContact(pharmId, contactIds) {
+		if (contactIds.length == 0) return;
+		// Send info to db
+		const res = await fetch(`http://${serverIp}:${serverPort}/api/pharmcontacts/contacts`, {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify({ pharmacy_id: pharmId, contact_ids: contactIds }),
+		});
+	}
 }

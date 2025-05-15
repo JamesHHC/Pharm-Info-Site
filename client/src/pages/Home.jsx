@@ -5,6 +5,7 @@ import { useState, useEffect } from 'react';
 import PharmacyFormModal from './modals/PharmacyFormModal';
 import ContactFormModal from './modals/ContactFormModal';
 import InfoPanel from './content/InfoPanel';
+import PharmacyEditModal from './modals/PharmacyEditModal';
 
 // Assets
 import logo from '../assets/logo_bluegray.svg';
@@ -25,6 +26,8 @@ function Home() {
 	// For modals
 	const [showPharmacyModal, setShowPharmacyModal] = useState(false);
 	const [showContactModal, setShowContactModal] = useState(false);
+	const [showPharmacyEditModal, setShowPharmacyEditModal] = useState(false);
+	const [showContactEditModal, setShowContactEditModal] = useState(false);
 	// Selected list item
 	const [selectedItem, setSelectedItem] = useState(null);
 	// Sidebar state
@@ -88,8 +91,7 @@ function Home() {
 			contact.name.toLowerCase().includes(searchTerm.toLowerCase())
 		);
 
-	return (
-		<>
+	return (<>
 		<div className="flex h-screen p-1 bg-gray-600/80 min-w-[255px]">
 			{/* Open search menu button */}
 			<div className="absolute bottom-4 left-4 z-30 lg:hidden">
@@ -211,48 +213,47 @@ function Home() {
 			)}
 			{/* Right Column */}
 			<div className={`${showSidebar ? 'hidden lg:block lg:w-3/4' : 'w-full'} m-1`}>
-				{/* Details panel */}
 				<div className="p-4 rounded-xl shadow-lg h-full bg-white overflow-auto scrollbar-thin">
+					{/* Information for pharmacy/contact */}
 					<InfoPanel
 						selectedItem={selectedItem}
 						setSelectedItem={setSelectedItem}
+						editItem={ async () => {
+							selectedItem.type === 'pharmacy' ? 
+								setShowPharmacyEditModal(true) :
+								setShowContactEditModal(true);
+						}}
 					/>
 				</div>
 			</div>
 		</div>
+
+
+
+		{/* Edit pharmacy modal */}
+		<PharmacyEditModal
+			isOpen={showPharmacyEditModal}
+			onClose={() => setShowPharmacyEditModal(false)}
+			onSubmit={ async (e, updatedPharm) => {
+				e.preventDefault();
+				fetchPharmacies();
+				setShowPharmacyEditModal(false);
+				setSelectedItem({ ...updatedPharm, type: 'pharmacy' });
+			}}
+			contacts={contacts}
+			openPharmacy={selectedItem}
+		/>
+
+
+
 		{/* New pharmacy modal */}
 		<PharmacyFormModal
 			isOpen={showPharmacyModal}
 			onClose={() => setShowPharmacyModal(false)}
-			onSubmit={ async (e, selectedRules, selectedTrainings, selectedContacts) => {
+			onSubmit={ async (e, newPharm) => {
 				e.preventDefault();
-				// Get form data
-				const formData = new FormData(e.target);
-				const newPharmacy = {
-					name: formData.get('name')?.trim(),
-					communication: formData.get('communication')?.trim(),
-					verbal_orders: formData.get('verbal_orders') === 'on',
-					general_notes: formData.get('general_notes')?.trim(),
-					oncall_prefs: formData.get('oncall_prefs')?.trim(),
-				};
-				// Ensure data isn't blank
-				if (!newPharmacy.name) {
-					alert('Required fields cannot be blank.');
-					return;
-				}
-				// Send info to db
-				const res = await fetch(`http://${serverIp}:${serverPort}/api/pharmacies`, {
-					method: 'POST',
-					headers: { 'Content-Type': 'application/json' },
-					body: JSON.stringify(newPharmacy),
-				});
-				const newPharm = await res.json();
-				await associateRules(newPharm.id, selectedRules);
-				await associateTraining(newPharm.id, selectedTrainings);
-				await associateContact(newPharm.id, selectedContacts);
 				fetchPharmacies();
 				setShowPharmacyModal(false);
-				// Display newly created item
 				setSelectedItem({ ...newPharm, type: 'pharmacy' });
 			}}
 			contacts={contacts}
@@ -261,90 +262,20 @@ function Home() {
 		<ContactFormModal
 			isOpen={showContactModal}
 			onClose={() => setShowContactModal(false)}
-			onSubmit={ async (e, selectedPharmacies) => {
+			onSubmit={ async (e, newCont) => {
 				e.preventDefault();
-				// Get form formData
-				const formData = new FormData(e.target);
-				const newContact = {
-					name: formData.get('name')?.trim(),
-					email: formData.get('email')?.trim(),
-					phone: formData.get('phone')?.trim(),
-					title: formData.get('title')?.trim(),
-					preferences: formData.get('preferences')?.trim(),
-					dnc: formData.get('dnc') === 'on',
-					intake_only: formData.get('intake_only') === 'on',
-					contact_type: formData.getAll('contact_type'),
-				}
-				// Ensure data isn't blank
-				if (!newContact.name) {
-					alert('Required fields cannot be blank.');
-					return;
-				}
-				// Send info to db
-				const res = await fetch(`http://${serverIp}:${serverPort}/api/contacts`, {
-					method: 'POST',
-					headers: { 'Content-Type': 'application/json' },
-					body: JSON.stringify(newContact),
-				});
-				const newCont = await res.json();
-				await associatePharmacy(newCont.id, selectedPharmacies);
 				fetchContacts();
 				setShowContactModal(false);
-				// Display newly created item
 				setSelectedItem({ ...newCont, type: 'contact' });
 			}}
 			pharmacies={pharmacies}
 		/>
-		</>
-	)
+	</>);
+
 	// Determine which modal to display
 	function handleAdd(){
 		if (activeTab === 'pharmacies') setShowPharmacyModal(true);
 		else if (activeTab === 'contacts') setShowContactModal(true);
-	}
-
-	// Update pharmacy_rules db based on selected rules
-	async function associateRules(pharmId, ruleIds) {
-		if (ruleIds.length == 0) return;
-		// Send info to db
-		const res = await fetch(`http://${serverIp}:${serverPort}/api/pharmrules`, {
-			method: 'POST',
-			headers: { 'Content-Type': 'application/json' },
-			body: JSON.stringify({ pharmacy_id: pharmId, rule_ids: ruleIds }),
-		});
-	}
-
-	// Update pharmacy_training db based on selected rules
-	async function associateTraining(pharmId, trainingIds) {
-		if (trainingIds.length == 0) return;
-		// Send info to db
-		const res = await fetch(`http://${serverIp}:${serverPort}/api/pharmtraining`, {
-			method: 'POST',
-			headers: { 'Content-Type': 'application/json' },
-			body: JSON.stringify({ pharmacy_id: pharmId, training_ids: trainingIds }),
-		});
-	}
-
-	// Update pharmacy_contacts db based on selected contacts
-	async function associateContact(pharmId, contactIds) {
-		if (contactIds.length == 0) return;
-		// Send info to db
-		const res = await fetch(`http://${serverIp}:${serverPort}/api/pharmcontacts/contacts`, {
-			method: 'POST',
-			headers: { 'Content-Type': 'application/json' },
-			body: JSON.stringify({ pharmacy_id: pharmId, contact_ids: contactIds }),
-		});
-	}
-
-	// Update pharmacy_contacts db based on selected pharmacies
-	async function associatePharmacy(contactId, pharmacyIds) {
-		if (pharmacyIds.length == 0) return;
-		// Send info to db
-		const res = await fetch(`http://${serverIp}:${serverPort}/api/pharmcontacts/pharmacies`, {
-			method: 'POST',
-			headers: { 'Content-Type': 'application/json' },
-			body: JSON.stringify({ contact_id: contactId, pharmacy_ids: pharmacyIds }),
-		});
 	}
 }
 

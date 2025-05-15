@@ -7,6 +7,11 @@ import ModalPharmacies from './modal-content/ModalPharmacies';
 // Styles
 import './ModalStyles.css'
 
+// Config
+import config from '../../config.js';
+const serverIp = config.server_ip;
+const serverPort = config.server_port;
+
 export default function ContactFormModal({ isOpen, onClose, onSubmit, pharmacies }) {
 	// For tracking selected options
 	const [selectedPharmacies, setSelectedPharmacies] = useState([]);
@@ -22,7 +27,32 @@ export default function ContactFormModal({ isOpen, onClose, onSubmit, pharmacies
 	// Run when form submitted
 	const handleSubmit = async (e) => {
 		e.preventDefault();
-		await onSubmit(e, selectedPharmacies);
+		// Get form data
+		const formData = new FormData(e.target);
+		const newContact = {
+			name: formData.get('name')?.trim(),
+			email: formData.get('email')?.trim(),
+			phone: formData.get('phone')?.trim(),
+			title: formData.get('title')?.trim(),
+			preferences: formData.get('preferences')?.trim(),
+			dnc: formData.get('dnc') === 'on',
+			intake_only: formData.get('intake_only') === 'on',
+			contact_type: formData.getAll('contact_type'),
+		}
+		// Ensure data isn't blank
+		if (!newContact.name) {
+			alert('Required fields cannot be blank.');
+			return;
+		}
+		// Send info to db
+		const res = await fetch(`http://${serverIp}:${serverPort}/api/contacts`, {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify(newContact),
+		});
+		const newCont = await res.json();
+		await associatePharmacy(newCont.id, selectedPharmacies);
+		await onSubmit(e, newCont);
 		resetForm();
 		onClose();
 	};
@@ -122,4 +152,15 @@ export default function ContactFormModal({ isOpen, onClose, onSubmit, pharmacies
 			</div>
 		</div>
 	);
+
+	// Update pharmacy_contacts db based on selected pharmacies
+	async function associatePharmacy(contactId, pharmacyIds) {
+		if (pharmacyIds.length == 0) return;
+		// Send info to db
+		const res = await fetch(`http://${serverIp}:${serverPort}/api/pharmcontacts/pharmacies`, {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify({ contact_id: contactId, pharmacy_ids: pharmacyIds }),
+		});
+	}
 }

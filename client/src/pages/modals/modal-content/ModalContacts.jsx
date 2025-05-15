@@ -70,7 +70,7 @@ const ModalContacts = forwardRef(({selectedContacts, setSelectedContacts, contac
 									id={`contact_${contact.id}`}
 									name="contact"
 									value={contact.id}
-									checked={selectedContacts.includes(contact.id)}
+									checked={selectedContacts?.includes(contact.id) ?? false}
 									onChange={() => handleContactChange(contact.id)}
 									className="appearance-none flex-none custom-chk transition border-1 border-gray-300 mr-2 w-5 h-5 focus:outline-cyan-500/60 checked:border-0 checked:bg-cyan-800 pointer-events-none rounded-full"
 								/>
