@@ -56,7 +56,7 @@ const deletePharmacy = async (req, res) => {
 		await db.query(`DELETE FROM pharmacy_training WHERE pharmacy_id = ($1)`, [id]);
 		await db.query(`DELETE FROM pharmacy_contacts WHERE pharmacy_id = ($1)`, [id]);
 		await db.query(`DELETE FROM pharmacies WHERE id = ($1)`, [id]);
-		res.status(201).json('Rule deleted!');
+		res.status(201).json('Pharmacy deleted!');
 	}
 	catch (err) {
 		console.error('Error deleting pharmacy:', err);

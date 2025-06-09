@@ -47,8 +47,24 @@ const getSomeContacts = async (req, res) => {
 	}
 };
 
+// Delete contact matching given id
+// including entries in pharmacy_contacts
+const deleteContact = async (req, res) => {
+	const id = req.query.id;
+	try {
+		await db.query(`DELETE FROM pharmacy_contacts WHERE contact_id = ($1)`, [id]);
+		await db.query(`DELETE FROM contacts WHERE id = ($1)`, [id]);
+		res.status(201).json('Contact deleted!');
+	}
+	catch (err) {
+		console.error('Error deleting contact:', err);
+		res.status(500).send('Server error');
+	}
+};
+
 module.exports = {
 	getContacts,
 	newContact,
 	getSomeContacts,
+	deleteContact,
 };

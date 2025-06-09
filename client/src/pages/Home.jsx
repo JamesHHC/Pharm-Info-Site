@@ -6,6 +6,7 @@ import PharmacyFormModal from './modals/PharmacyFormModal';
 import ContactFormModal from './modals/ContactFormModal';
 import InfoPanel from './content/InfoPanel';
 import PharmacyEditModal from './modals/PharmacyEditModal';
+import ContactEditModal from './modals/ContactEditModal';
 
 // Assets
 import logo from '../assets/logo_bluegray.svg';
@@ -231,8 +232,8 @@ function Home() {
 		<PharmacyEditModal
 			isOpen={showPharmacyEditModal}
 			onClose={() => {
-				fetchPharmacies();
 				setShowPharmacyEditModal(false);
+				fetchPharmacies();
 			}}
 			onSubmit={ async (e, updatedPharm) => {
 				e.preventDefault();
@@ -243,6 +244,24 @@ function Home() {
 			openPharmacy={selectedItem}
 			setSelectedItem={setSelectedItem}
 		/>
+
+		{/* Edit contact modal */}
+		<ContactEditModal
+			isOpen={showContactEditModal}
+			onClose={() => {
+				setShowContactEditModal(false);
+				fetchContacts();
+			}}
+			onSubmit={ async (e, updatedCont) => {
+				e.preventDefault();
+				setShowContactEditModal(false);
+				setSelectedItem({ ...updatedCont, type: 'contact' });
+			}}
+			pharmacies={pharmacies}
+			openContact={selectedItem}
+			setSelectedItem={setSelectedItem}
+		/>
+
 		{/* New pharmacy modal */}
 		<PharmacyFormModal
 			isOpen={showPharmacyModal}
@@ -255,6 +274,7 @@ function Home() {
 			}}
 			contacts={contacts}
 		/>
+
 		{/* New contact modal */}
 		<ContactFormModal
 			isOpen={showContactModal}

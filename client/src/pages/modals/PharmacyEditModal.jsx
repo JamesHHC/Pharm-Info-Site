@@ -29,6 +29,7 @@ export default function PharmacyFormModal({ isOpen, onClose, onSubmit, contacts,
 
 	// Set form values based on existing ones
 	useEffect(() => {
+		// TODO (low-priority): Auto-resize textareas for better UX once production-ready
 		const initValues = async () => {
 			setPharmName(openPharmacy.name);
 			setPharmVerb(openPharmacy?.verbal_orders || false);
@@ -57,8 +58,8 @@ export default function PharmacyFormModal({ isOpen, onClose, onSubmit, contacts,
 
 	// Run when form submitted
 	const handleSubmit = async (e) => {
-		return alert('TODO: Update function'); // TODO
 		e.preventDefault();
+		return alert('TODO: Update function'); // TODO
 		// Get form data
 		const formData = new FormData(e.target);
 		const newPharmacy = {
@@ -88,6 +89,7 @@ export default function PharmacyFormModal({ isOpen, onClose, onSubmit, contacts,
 		onClose();
 	};
 
+	// Delete the pharmacy currently being edited
 	const deletePharmacy = async () => {
 		const id = openPharmacy.id;
 		const conf = confirm(`Are you sure you want to delete this pharmacy?\n\n${openPharmacy.name}`);
