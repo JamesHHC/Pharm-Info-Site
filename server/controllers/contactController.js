@@ -62,9 +62,29 @@ const deleteContact = async (req, res) => {
 	}
 };
 
+// Overwrite values of existing contact for given id
+const updateContact = async (req, res) => {
+	const { id, name, email, phone, title, preferences, dnc, intake_only, contact_type } = req.body;
+	try {
+		const result = await db.query(
+			`UPDATE contacts SET (name, email, phone, title, preferences, dnc, intake_only, contact_type) =
+				($2, $3, $4, $5, $6, $7, $8, $9)
+				WHERE id = ($1)
+				RETURNING *`,
+			[id, name, email, phone, title, preferences, dnc, intake_only, contact_type]
+		);
+		res.status(201).json(result.rows[0]);
+	}
+	catch (err) {
+		console.error('Error updating contact:', err);
+		res.status(500).send('Server error');
+	}
+};
+
 module.exports = {
 	getContacts,
 	newContact,
 	getSomeContacts,
 	deleteContact,
+	updateContact,
 };

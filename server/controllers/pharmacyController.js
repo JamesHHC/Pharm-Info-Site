@@ -64,9 +64,29 @@ const deletePharmacy = async (req, res) => {
 	}
 };
 
+// Overwrite values of existing pharmacy for given id
+const updatePharmacy = async (req, res) => {
+	const { id, name, communication, verbal_orders, general_notes, oncall_prefs } = req.body;
+	try {
+		const result = await db.query(
+			`UPDATE pharmacies SET (name, communication, verbal_orders, general_notes, oncall_prefs) =
+				($2, $3, $4, $5, $6)
+				WHERE id = ($1)
+				RETURNING *`,
+			[id, name, communication, verbal_orders, general_notes, oncall_prefs]
+		);
+		res.status(201).json(result.rows[0]);
+	}
+	catch (err) {
+		console.error('Error updating pharmacy:', err);
+		res.status(500).send('Server error');
+	}
+};
+
 module.exports = {
 	getPharmacies,
 	newPharmacy,
 	getSomePharmacies,
 	deletePharmacy,
+	updatePharmacy,
 };

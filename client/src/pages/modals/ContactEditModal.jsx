@@ -55,33 +55,33 @@ export default function ContactFormModal({ isOpen, onClose, onSubmit, pharmacies
 	// Run when form submitted
 	const handleSubmit = async (e) => {
 		e.preventDefault();
-		return alert('TODO: Update function'); // TODO
 		// Get form data
 		const formData = new FormData(e.target);
-		const newContact = {
-			name: formData.get('name')?.trim(),
-			email: formData.get('email')?.trim(),
-			phone: formData.get('phone')?.trim(),
-			title: formData.get('title')?.trim(),
-			preferences: formData.get('preferences')?.trim(),
-			dnc: formData.get('dnc') === 'on',
-			intake_only: formData.get('intake_only') === 'on',
-			contact_type: formData.getAll('contact_type'),
+		const updatedContact = {
+			id: openContact.id,
+			name: contName.trim(),
+			email: contEmail?.trim(),
+			phone: contPhone?.trim(),
+			title: contTitle?.trim(),
+			preferences: contPrefs?.trim(),
+			dnc: contDNC,
+			intake_only: contIntake,
+			contact_type: contTypes,
 		}
 		// Ensure data isn't blank
-		if (!newContact.name) {
+		if (!updatedContact.name) {
 			alert('Required fields cannot be blank.');
 			return;
 		}
 		// Send info to db
 		const res = await fetch(`http://${serverIp}:${serverPort}/api/contacts`, {
-			method: 'POST',
+			method: 'PUT',
 			headers: { 'Content-Type': 'application/json' },
-			body: JSON.stringify(newContact),
+			body: JSON.stringify(updatedContact),
 		});
-		const newCont = await res.json();
-		await associatePharmacy(newCont.id, selectedPharmacies);
-		await onSubmit(e, newCont);
+		const updatedCont = await res.json();
+		await associatePharmacy(updatedCont.id, selectedPharmacies);
+		await onSubmit(e, updatedCont);
 		resetForm();
 		onClose();
 	};
@@ -220,10 +220,9 @@ export default function ContactFormModal({ isOpen, onClose, onSubmit, pharmacies
 
 	// Update pharmacy_contacts db based on selected pharmacies
 	async function associatePharmacy(contactId, pharmacyIds) {
-		if (pharmacyIds.length == 0) return;
 		// Send info to db
 		const res = await fetch(`http://${serverIp}:${serverPort}/api/pharmcontacts/pharmacies`, {
-			method: 'POST',
+			method: 'PATCH',
 			headers: { 'Content-Type': 'application/json' },
 			body: JSON.stringify({ contact_id: contactId, pharmacy_ids: pharmacyIds }),
 		});

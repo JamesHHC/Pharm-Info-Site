@@ -38,8 +38,7 @@ export default function PharmacyFormModal({ isOpen, onClose, onSubmit, contacts,
 			setPharmCall(openPharmacy?.oncall_prefs || '');
 			setSelectedRules(await getPharmRules(openPharmacy.id));
 			setSelectedTrainings(await getPharmTrainings(openPharmacy.id));
-			if (contacts.length > 0) setSelectedContacts(await getPharmContacts(openPharmacy.id));
-			else setSelectedContacts([]);
+			setSelectedContacts(await getPharmContacts(openPharmacy.id));
 		}
 		if (isOpen) initValues();
 	}, [isOpen]);
@@ -59,32 +58,32 @@ export default function PharmacyFormModal({ isOpen, onClose, onSubmit, contacts,
 	// Run when form submitted
 	const handleSubmit = async (e) => {
 		e.preventDefault();
-		return alert('TODO: Update function'); // TODO
 		// Get form data
 		const formData = new FormData(e.target);
-		const newPharmacy = {
-			name: formData.get('name')?.trim(),
-			communication: formData.get('communication')?.trim(),
-			verbal_orders: formData.get('verbal_orders') === 'on',
-			general_notes: formData.get('general_notes')?.trim(),
-			oncall_prefs: formData.get('oncall_prefs')?.trim(),
+		const updatedPharmacy = {
+			id: openPharmacy.id,
+			name: pharmName.trim(),
+			communication: pharmComm?.trim(),
+			verbal_orders: pharmVerb,
+			general_notes: pharmNote?.trim(),
+			oncall_prefs: pharmCall?.trim(),
 		};
 		// Ensure data isn't blank
-		if (!newPharmacy.name) {
+		if (!updatedPharmacy.name) {
 			alert('Required fields cannot be blank.');
 			return;
 		}
 		// Send info to db
 		const res = await fetch(`http://${serverIp}:${serverPort}/api/pharmacies`, {
-			method: 'POST',
+			method: 'PUT',
 			headers: { 'Content-Type': 'application/json' },
-			body: JSON.stringify(newPharmacy),
+			body: JSON.stringify(updatedPharmacy),
 		});
-		const newPharm = await res.json();
-		await associateRules(newPharm.id, selectedRules);
-		await associateTraining(newPharm.id, selectedTrainings);
-		await associateContact(newPharm.id, selectedContacts);
-		await onSubmit(e, newPharm);
+		const updatedPharm = await res.json();
+		await associateRules(updatedPharm.id, selectedRules);
+		await associateTraining(updatedPharm.id, selectedTrainings);
+		await associateContact(updatedPharm.id, selectedContacts);
+		await onSubmit(e, updatedPharm);
 		resetForm();
 		onClose();
 	};
@@ -133,19 +132,19 @@ export default function PharmacyFormModal({ isOpen, onClose, onSubmit, contacts,
 						<label htmlFor="verbal_orders" className="block text-sm p-2 items">Verbal Orders Allowed</label>
 					</div>
 
-					{/* Communication Prefs */}
-					<label htmlFor="communication" className="block text-sm font-light text-gray-700 mb-1">Communication Preferences</label>
-					<textarea
-						value={pharmComm} onChange={(e) => setPharmComm(e.target.value)}
-						id="communication" name="communication" placeholder="Type here..."
-						className="w-full mb-1.5 border border-gray-300 p-2 rounded focus:outline-cyan-500/60 scrollbar-thin"
-					/>
-
 					{/* General Notes */}
 					<label htmlFor="general_notes" className="block text-sm font-light text-gray-700 mb-1">General Notes</label>
 					<textarea
 						value={pharmNote} onChange={(e) => setPharmNote(e.target.value)}
 						id="general_notes" name="general_notes" placeholder="Type here..."
+						className="w-full mb-1.5 border border-gray-300 p-2 rounded focus:outline-cyan-500/60 scrollbar-thin"
+					/>
+
+					{/* Communication Prefs */}
+					<label htmlFor="communication" className="block text-sm font-light text-gray-700 mb-1">Communication Preferences</label>
+					<textarea
+						value={pharmComm} onChange={(e) => setPharmComm(e.target.value)}
+						id="communication" name="communication" placeholder="Type here..."
 						className="w-full mb-1.5 border border-gray-300 p-2 rounded focus:outline-cyan-500/60 scrollbar-thin"
 					/>
 
@@ -195,10 +194,9 @@ export default function PharmacyFormModal({ isOpen, onClose, onSubmit, contacts,
 
 	// Update pharmacy_rules db based on selected rules
 	async function associateRules(pharmId, ruleIds) {
-		if (ruleIds.length == 0) return;
 		// Send info to db
 		const res = await fetch(`http://${serverIp}:${serverPort}/api/pharmrules`, {
-			method: 'POST',
+			method: 'PATCH',
 			headers: { 'Content-Type': 'application/json' },
 			body: JSON.stringify({ pharmacy_id: pharmId, rule_ids: ruleIds }),
 		});
@@ -206,10 +204,9 @@ export default function PharmacyFormModal({ isOpen, onClose, onSubmit, contacts,
 
 	// Update pharmacy_training db based on selected rules
 	async function associateTraining(pharmId, trainingIds) {
-		if (trainingIds.length == 0) return;
 		// Send info to db
 		const res = await fetch(`http://${serverIp}:${serverPort}/api/pharmtraining`, {
-			method: 'POST',
+			method: 'PATCH',
 			headers: { 'Content-Type': 'application/json' },
 			body: JSON.stringify({ pharmacy_id: pharmId, training_ids: trainingIds }),
 		});
@@ -217,10 +214,9 @@ export default function PharmacyFormModal({ isOpen, onClose, onSubmit, contacts,
 
 	// Update pharmacy_contacts db based on selected contacts
 	async function associateContact(pharmId, contactIds) {
-		if (contactIds.length == 0) return;
 		// Send info to db
 		const res = await fetch(`http://${serverIp}:${serverPort}/api/pharmcontacts/contacts`, {
-			method: 'POST',
+			method: 'PATCH',
 			headers: { 'Content-Type': 'application/json' },
 			body: JSON.stringify({ pharmacy_id: pharmId, contact_ids: contactIds }),
 		});

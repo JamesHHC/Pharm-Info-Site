@@ -90,17 +90,17 @@ export default function PharmacyFormModal({ isOpen, onClose, onSubmit, contacts 
 						<label htmlFor="verbal_orders" className="block text-sm p-2 items">Verbal Orders Allowed</label>
 					</div>
 
-					{/* Communication Prefs */}
-					<label htmlFor="communication" className="block text-sm font-light text-gray-700 mb-1">Communication Preferences</label>
-					<textarea
-						id="communication" name="communication" placeholder="Type here..."
-						className="w-full mb-1.5 border border-gray-300 p-2 rounded focus:outline-cyan-500/60 scrollbar-thin"
-					/>
-
 					{/* General Notes */}
 					<label htmlFor="general_notes" className="block text-sm font-light text-gray-700 mb-1">General Notes</label>
 					<textarea
 						id="general_notes" name="general_notes" placeholder="Type here..."
+						className="w-full mb-1.5 border border-gray-300 p-2 rounded focus:outline-cyan-500/60 scrollbar-thin"
+					/>
+
+					{/* Communication Prefs */}
+					<label htmlFor="communication" className="block text-sm font-light text-gray-700 mb-1">Communication Preferences</label>
+					<textarea
+						id="communication" name="communication" placeholder="Type here..."
 						className="w-full mb-1.5 border border-gray-300 p-2 rounded focus:outline-cyan-500/60 scrollbar-thin"
 					/>
 
