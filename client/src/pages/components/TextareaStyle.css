@@ -2,3 +2,8 @@
 .q-textarea .ql-toolbar {
   	border-radius: 0.25rem 0.25rem 0 0;
 }
+
+.q-textarea .ql-tooltip {
+	left: 0 !important;
+	border-radius: 0.25rem;
+}

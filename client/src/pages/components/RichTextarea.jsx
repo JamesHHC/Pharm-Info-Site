@@ -8,6 +8,7 @@ import 'quill/dist/quill.snow.css';
 export default function RichTextarea({ id, name, label, initialValue = '', onChange }) {
 	const editorRef = useRef(null);
 	const quillRef = useRef(null);
+	const hiddenInputRef = useRef(null);
 
 	useEffect(() => {
 		if (!editorRef.current || quillRef.current) return;
@@ -15,22 +16,36 @@ export default function RichTextarea({ id, name, label, initialValue = '', onCha
 		quillRef.current = new Quill(editorRef.current, {
 			theme: 'snow',
 			placeholder: 'Type here...',
+			modules: {
+				toolbar: [
+					[{ size: [ 'small', false, 'large' ] }],
+					[
+						'bold',
+						'italic',
+						'underline',
+						{ 'color': [] },
+						{ 'background': [] },
+					],
+					[ 'link', 'clean' ],
+				],
+			},
 		});
 
 		quillRef.current.root.innerHTML = initialValue;
 
 		quillRef.current.on('text-change', () => {
 			const delta = quillRef.current.getContents();
+			if (hiddenInputRef.current) hiddenInputRef.current.value = JSON.stringify(delta);
 			onChange?.(delta);
 		});
 	}, []);
 
 	return (
-		<div className="q-textarea mb-3">
+		<div className="q-textarea mb-4 overflow-visible">
 			{label && (
-				<label htmlFor={id} className="block text-sm font-light text-gray-700 mb-1">
+				<p className="block text-sm font-light text-gray-700 mb-1">
 					{label}
-				</label>
+				</p>
 			)}
 			<div
 				id={id}
@@ -38,7 +53,7 @@ export default function RichTextarea({ id, name, label, initialValue = '', onCha
 				className="w-full border border-gray-300 rounded-b bg-white focus:outline-cyan-500/60 scrollbar-thin"
 			/>
 			{/* Hidden input to hook into <form> submission */}
-			<input type="hidden" name={name} value={JSON.stringify(quillRef.current?.getContents() || '')} />
+			<input ref={hiddenInputRef} type="hidden" name={name} />
 		</div>
 	);
 }
