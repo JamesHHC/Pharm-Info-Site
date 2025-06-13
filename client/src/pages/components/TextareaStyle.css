@@ -1,0 +1,4 @@
+/* Round top of Quill toolbar */
+.q-textarea .ql-toolbar {
+  	border-radius: 0.25rem 0.25rem 0 0;
+}

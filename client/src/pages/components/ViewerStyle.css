@@ -1,0 +1,31 @@
+/* Remove default Quill border in viewer */
+.q-viewer .ql-container.ql-snow {
+  border: none !important;
+}
+
+/* Clean up padding and background for the editor */
+.q-viewer .ql-editor {
+  padding: 0 !important;
+  background-color: transparent !important;
+  font-size: 1rem; /* tailwind text-sm */
+  color: #1f2937;       /* tailwind gray-800 */
+}
+
+.q-viewer .ql-editor a {
+  color: #0e7490; /* tailwind cyan-600 */
+  text-decoration: underline;
+}
+
+.q-viewer .ql-container {
+  display: flex;
+  align-items: center;      /* vertical centering */
+  padding: 0 !important;
+  border: none !important;
+  min-height: inherit;
+}
+
+.q-viewer .ql-editor {
+  padding: 0 !important;
+  margin: 0 !important;
+  background: transparent !important;
+}

@@ -5,6 +5,7 @@ import React, { useEffect, useState, useRef } from 'react';
 import ModalRules from './modal-content/ModalRules';
 import ModalTrainings from './modal-content/ModalTrainings';
 import ModalContacts from './modal-content/ModalContacts';
+import RichTextarea from '../components/RichTextarea';
 
 // Styles
 import './ModalStyles.css'
@@ -91,24 +92,24 @@ export default function PharmacyFormModal({ isOpen, onClose, onSubmit, contacts 
 					</div>
 
 					{/* General Notes */}
-					<label htmlFor="general_notes" className="block text-sm font-light text-gray-700 mb-1">General Notes</label>
-					<textarea
-						id="general_notes" name="general_notes" placeholder="Type here..."
-						className="w-full mb-1.5 border border-gray-300 p-2 rounded focus:outline-cyan-500/60 scrollbar-thin"
+					<RichTextarea
+						id="general_notes"
+						name="general_notes"
+						label="General Notes"
 					/>
 
 					{/* Communication Prefs */}
-					<label htmlFor="communication" className="block text-sm font-light text-gray-700 mb-1">Communication Preferences</label>
-					<textarea
-						id="communication" name="communication" placeholder="Type here..."
-						className="w-full mb-1.5 border border-gray-300 p-2 rounded focus:outline-cyan-500/60 scrollbar-thin"
+					<RichTextarea
+						id="communication"
+						name="communication"
+						label="Communication Preferences"
 					/>
 
 					{/* On-call Prefs */}
-					<label htmlFor="oncall_prefs" className="block text-sm font-light text-gray-700 mb-1">On-call Preferences</label>
-					<textarea
-						id="oncall_prefs" name="oncall_prefs" placeholder="Type here..."
-						className="w-full mb-1.5 border border-gray-300 p-2 rounded focus:outline-cyan-500/60 scrollbar-thin"
+					<RichTextarea
+						id="oncall_prefs"
+						name="oncall_prefs"
+						label="On-call Preferences"
 					/>
 					
 					{/* Rules */}
