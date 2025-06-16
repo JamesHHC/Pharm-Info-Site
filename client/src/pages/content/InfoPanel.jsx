@@ -140,18 +140,18 @@ export default function InfoPanel({ selectedItem, setSelectedItem, editItem }) {
 				
 				{/* General Notes */}
 				<label className="text-sm">General Notes</label>
-				{/*<p className="min-h-11 mb-2 bg-white px-3 py-2 rounded-md shadow-sm">{selectedItem.general_notes}</p>*/}
 				<RichViewer deltaString={selectedItem.general_notes} />
+				{/*<p className="min-h-11 mb-2 bg-white px-3 py-2 rounded-md shadow-sm">{selectedItem.general_notes}</p>*/}
 
 				{/* Communication Preferences */}
 				<label className="text-sm">Communication Preferences</label>
-				{/*<p className="min-h-11 mb-2 bg-white px-3 py-2 rounded-md shadow-sm">{selectedItem.communication}</p>*/}
 				<RichViewer deltaString={selectedItem.communication} />
+				{/*<p className="min-h-11 mb-2 bg-white px-3 py-2 rounded-md shadow-sm">{selectedItem.communication}</p>*/}
 
 				{/* On-call Preferences */}
 				<label className="text-sm">On-call Preferences</label>
-				{/*<p className="min-h-11 mb-2 bg-white px-3 py-2 rounded-md shadow-sm">{selectedItem.oncall_prefs}</p>*/}
 				<RichViewer deltaString={selectedItem.oncall_prefs} />
+				{/*<p className="min-h-11 mb-2 bg-white px-3 py-2 rounded-md shadow-sm">{selectedItem.oncall_prefs}</p>*/}
 
 				{/* Rules & Training */}
 				<div className="lg:flex space-x-3">

@@ -5,7 +5,7 @@ import Quill from 'quill';
 import './ViewerStyle.css';
 import 'quill/dist/quill.snow.css';
 
-export default function DeltaViewer({ deltaString }) {
+export default function DeltaViewer({ deltaString, styling }) {
 	const containerRef = useRef(null);
 	const quillRef = useRef(null);
 
@@ -22,13 +22,13 @@ export default function DeltaViewer({ deltaString }) {
 			const delta = JSON.parse(deltaString);
 			quillRef.current.setContents(delta);
 		}
-		catch (err) {
+		catch {
 			quillRef.current.root.innerHTML = deltaString;
 		}
 	}, [deltaString]);
 
 	return (
-		<div className="q-viewer min-h-8 mb-2 bg-white px-3 py-2 rounded-md shadow-sm">
+		<div className={`q-viewer ${styling == 'off' ? 'pt-0.5' : 'min-h-8 mb-2 bg-white px-3 py-2 rounded-md shadow-sm'}`}>
 			<div ref={containerRef} className="" />
 		</div>
 	);

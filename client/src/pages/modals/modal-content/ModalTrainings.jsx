@@ -1,8 +1,10 @@
 // React
-import React, { useEffect, useState, forwardRef, useImperativeHandle } from 'react';
+import React, { useEffect, useState, useRef, forwardRef, useImperativeHandle } from 'react';
 
 // Content
 import TrashIcon from '../../../assets/icons/TrashIcon';
+import RichTextarea from '../../components/RichTextarea';
+import RichViewer from '../../components/RichViewer';
 
 // Styles
 import '../ModalStyles.css';
@@ -16,8 +18,19 @@ const ModalTrainings = forwardRef(({selectedTrainings, setSelectedTrainings}, re
 	const [loadingTrainings, setLoadingTrainings] = useState(false);
 	const [trainings, setTrainings] = useState([]);
 	const [searchedTraining, setSearchedTraining] = useState('');
-	const [newTraining, setNewTraining] = useState({name: '', description: ''});
-	const [editedTraining, setEditedTraining] = useState({ref: {}, new: {name: '', description: ''}});
+
+	// New training
+	const [newTrainingName, setNewTrainingName] = useState('');
+	const [newTrainingDesc, setNewTrainingDesc] = useState('');
+	const newTrainingNameRef = useRef();
+	const newTrainingDescRef = useRef();
+
+	// Edit training
+	const [editedTrainingName, setEditedTrainingName] = useState('');
+	const [editedTrainingDesc, setEditedTrainingDesc] = useState('');
+	const [refTraining, setRefTraining] = useState({});
+	const editTrainingNameRef = useRef();
+	const editTrainingDescRef = useRef();
 
 	// GET trainings
 	const fetchTrainings = () => {
@@ -39,8 +52,15 @@ const ModalTrainings = forwardRef(({selectedTrainings, setSelectedTrainings}, re
 		// Reset training stuff
 		setSearchedTraining('');
 		setSelectedTrainings([]);
-		setNewTraining({name: '', description: ''});
-		setEditedTraining({ref: {}, new: {name: '', description: ''}});
+		setNewTrainingName('');
+		setNewTrainingDesc('');
+		newTrainingNameRef.current?.clear();
+		newTrainingDescRef.current?.clear();
+		setEditedTrainingName('');
+		setEditedTrainingDesc('');
+		setRefTraining({});
+		editTrainingNameRef.current?.clear();
+		editTrainingDescRef.current?.clear();
 	};
 
 	useImperativeHandle(ref, () => ({
@@ -68,18 +88,20 @@ const ModalTrainings = forwardRef(({selectedTrainings, setSelectedTrainings}, re
 	// Reset newTraining when New Training subform cancelled
 	const cancelNewTraining = () => {
 		document.getElementById('new-training-form').hidden = true;
-		setNewTraining({name: '', description: ''});
+		setNewTrainingName('');
+		setNewTrainingDesc('');
+		newTrainingNameRef.current?.clear();
+		newTrainingDescRef.current?.clear();
 	};
 
 	// Handle submission of newTraining to db when New Training subform submitted
 	const submitNewTraining = async () => {
 		const nTrain = {
-			name: newTraining?.name?.trim(),
-			description: newTraining?.description?.trim(),
+			name: newTrainingName?.trim(),
+			description: newTrainingDesc?.trim(),
 		};
 		if (nTrain.name === '' || nTrain.description === '') return;
 		document.getElementById('new-training-form').hidden = true;
-		setNewTraining({name: '', description: ''});
 		// Send info to db
 		const res = await fetch(`http://${serverIp}:${serverPort}/api/training`, {
 			method: 'POST',
@@ -89,40 +111,55 @@ const ModalTrainings = forwardRef(({selectedTrainings, setSelectedTrainings}, re
 		const trainJson = await res.json();
 		await fetchTrainings();
 		handleTrainingChange(trainJson.id);
+		setNewTrainingName('');
+		setNewTrainingDesc('');
+		newTrainingNameRef.current?.clear();
+		newTrainingDescRef.current?.clear();
 	}
 
 	// Reset editedTraining when Edit Training subform cancelled
 	const cancelEditTraining = async () => {
 		document.getElementById('edit-training-form').hidden = true;
-		setEditedTraining({ref: {}, new: {name: '', description: ''}});
+		setEditedTrainingName('');
+		setEditedTrainingDesc('');
+		setRefTraining({});
+		editTrainingNameRef.current?.clear();
+		editTrainingDescRef.current?.clear();
 	};
 
 	// Handle db update based on editedTraining
 	const submitEditTraining = async () => {
-		const ref = editedTraining.ref;
-		const eName = editedTraining.new.name.trim();
-		const eDesc = editedTraining.new.description.trim();
+		const eName = editedTrainingName.trim();
+		const eDesc = editedTrainingDesc.trim();
 		if (eName === '' || eDesc === '') return;
-		if (eName === ref.name && eDesc === ref.description) return;
+		if (eName === refTraining.name && eDesc === refTraining.description) return;
 		document.getElementById('edit-training-form').hidden = true;
-		setEditedTraining({ref: {}, new: {name: '', description: ''}});
 
 		// Send info to db
 		await fetch(`http://${serverIp}:${serverPort}/api/training`, {
 			method: 'PUT',
 			headers: { 'Content-Type': 'application/json' },
-			body: JSON.stringify({name: eName, description: eDesc, id: ref.id}),
+			body: JSON.stringify({name: eName, description: eDesc, id: refTraining.id}),
 		});
 		fetchTrainings();
+		setEditedTrainingName('');
+		setEditedTrainingDesc('');
+		setRefTraining({});
+		editTrainingNameRef.current?.clear();
+		editTrainingDescRef.current?.clear();
 	};
 
 	// Delete the training currently being edited
 	const deleteTraining = async () => {
-		const id = editedTraining.ref.id;
-		const conf = confirm(`Are you sure you want to delete this training?\n\n${editedTraining.ref.name}`);
+		const id = refTraining.id;
+		const conf = confirm(`Are you sure you want to delete this training?\n\nThe training will be deleted from ALL pharmacies.`);
 		if (conf) {
 			document.getElementById('edit-training-form').hidden = true;
-			setEditedTraining({ref: {}, new: {name: '', description: ''}});
+			setEditedTrainingName('');
+			setEditedTrainingDesc('');
+			setRefTraining({});
+			editTrainingNameRef.current?.clear();
+			editTrainingDescRef.current?.clear();
 			// Remove id from selectedTrainings, if present
 			setSelectedTrainings(prevSelected => prevSelected.filter(tid => tid !== id));
 			// Call db to delete data
@@ -172,17 +209,17 @@ const ModalTrainings = forwardRef(({selectedTrainings, setSelectedTrainings}, re
 					id="new-training-name"
 					type="text"
 					placeholder="Enter training name..."
-					value={newTraining.name}
-					onChange={(e) => setNewTraining({name: e.target.value, description: newTraining.description})}
-					className="bg-white/80 h-10.5 w-full px-4 border border-gray-200 rounded-md focus:outline-cyan-500/60"
+					value={newTrainingName}
+					onChange={(e) => setNewTrainingName(e.target.value)}
+					className="bg-white/80 h-10.5 w-full px-4 border border-gray-300 rounded-md focus:outline-cyan-500/60"
 					autoComplete="off"
 				/>
-				<textarea
+				<RichTextarea 
 					id="new-training-desc"
+					name="new-training-desc"
 					placeholder="Enter training description..."
-					value={newTraining.description}
-					onChange={(e) => setNewTraining({name: newTraining.name, description: e.target.value})} 
-					className="bg-white/80 h-15 w-full px-4 py-2 border border-gray-200 rounded-md focus:outline-cyan-500/60"
+					onChange={(e) => setNewTrainingDesc(e)}
+					ref={newTrainingDescRef}
 				/>
 				<div className="flex justify-end">
 					<button tabIndex="-1" type="button" onClick={cancelNewTraining} className="cursor-pointer px-4 py-2 bg-gray-800/10 text-gray-400 hover:bg-gray-800/20 rounded-l-md">Cancel</button>
@@ -198,17 +235,17 @@ const ModalTrainings = forwardRef(({selectedTrainings, setSelectedTrainings}, re
 					id="edit-training-name"
 					type="text"
 					placeholder="Edit training name..."
-					value={editedTraining.new.name}
-					onChange={(e) => setEditedTraining({ref: editedTraining.ref, new: {name: e.target.value, description: editedTraining.new.description}})}
+					value={editedTrainingName}
+					onChange={(e) => setEditedTrainingName(e.target.value)}
 					className="bg-white/80 h-10.5 w-full px-4 border border-gray-200 rounded-md focus:outline-amber-500/60"
 					autoComplete="off"
 				/>
-				<textarea
+				<RichTextarea 
 					id="edit-training-desc"
-					placeholder="Edit training description..."
-					value={editedTraining.new.description}
-					onChange={(e) => setEditedTraining({ref: editedTraining.ref, new: {name: editedTraining.new.name, description: e.target.value}})} 
-					className="bg-white/80 h-15 w-full px-4 py-2 border border-gray-200 rounded-md focus:outline-amber-500/60"
+					name="edit-training-desc"
+					placeholder="Enter training description..."
+					onChange={(e) => setEditedTrainingDesc(e)}
+					ref={editTrainingDescRef}
 				/>
 				<div>
 					<div className="flex justify-end">
@@ -228,7 +265,7 @@ const ModalTrainings = forwardRef(({selectedTrainings, setSelectedTrainings}, re
 				return (
 					<div
 						className={`bg-white flex w-full items-center justify-between rounded-md shadow-sm ${!isVisible ? 'hidden' : ''}`}
-						key={training.name}
+						key={training.id}
 					>
 						<label htmlFor={`training_${training.id}`} className="w-full p-2">
 							<div className="flex items-center">
@@ -242,7 +279,8 @@ const ModalTrainings = forwardRef(({selectedTrainings, setSelectedTrainings}, re
 									onChange={() => handleTrainingChange(training.id)}
 									className="appearance-none flex-none custom-chk transition border-1 border-gray-300 mr-2 w-5 h-5 focus:outline-cyan-500/60 checked:border-0 checked:bg-cyan-800 pointer-events-none rounded-full"
 								/>
-								<span className="text-sm">{training.name}</span>
+								{/*<span className="text-sm">{training.name}</span>*/}
+								<RichViewer deltaString={training.name} styling='off' />
 							</div>
 						</label>
 						{/* Edit icon */}
@@ -251,7 +289,9 @@ const ModalTrainings = forwardRef(({selectedTrainings, setSelectedTrainings}, re
 							onClick={() => {
 								// Prevent new/edit from opening at the same time
 								if (!document.getElementById('new-training-form').hidden) return;
-								setEditedTraining({ref: training, new: {name: training.name, description: training.description}});
+								setEditedTrainingName(training.name);
+								editTrainingDescRef.current.setVal(training.description);
+								setRefTraining(training);
 								document.getElementById('edit-training-form').hidden = false;
 							}}
 						>

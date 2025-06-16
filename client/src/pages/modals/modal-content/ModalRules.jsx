@@ -1,8 +1,10 @@
 // React
-import React, { useEffect, useState, forwardRef, useImperativeHandle } from 'react';
+import React, { useEffect, useState, useRef, forwardRef, useImperativeHandle } from 'react';
 
 // Content
 import TrashIcon from '../../../assets/icons/TrashIcon';
+import RichTextarea from '../../components/RichTextarea';
+import RichViewer from '../../components/RichViewer';
 
 // Styles
 import '../ModalStyles.css';
@@ -16,8 +18,15 @@ const ModalRules = forwardRef(({selectedRules, setSelectedRules}, ref) => {
 	const [loadingRules, setLoadingRules] = useState(false);
 	const [rules, setRules] = useState([]);
 	const [searchedRule, setSearchedRule] = useState('');
+
+	// New rule
 	const [newRule, setNewRule] = useState('');
-	const [editedRule, setEditedRule] = useState({ref: {}, new: ''});
+	const newRuleRef = useRef();
+
+	// Edit rule
+	const [refRule, setRefRule] = useState({});
+	const [editedRule, setEditedRule] = useState('');
+	const editRuleRef = useRef();
 
 	// GET rules
 	const fetchRules = () => {
@@ -40,7 +49,8 @@ const ModalRules = forwardRef(({selectedRules, setSelectedRules}, ref) => {
 		setSearchedRule('');
 		setSelectedRules([]);
 		setNewRule('');
-		setEditedRule({ref: {}, new: ''});
+		setEditedRule('');
+		setRefRule({});
 	};
 
 	useImperativeHandle(ref, () => ({
@@ -67,57 +77,62 @@ const ModalRules = forwardRef(({selectedRules, setSelectedRules}, ref) => {
 	// Reset newRule when New Rule subform cancelled
 	const cancelNewRule = () => {
 		document.getElementById('new-rule-form').hidden = true;
+		newRuleRef.current?.clear();
 		setNewRule('');
 	};
 
 	// Handle submission of newRule to db when New Rule subform submitted
 	const submitNewRule = async () => {
-		const nRule = newRule.trim();
-		if (nRule === '') return;
+		if (newRule == '') return;
 		document.getElementById('new-rule-form').hidden = true;
-		setNewRule('');
 
 		// Send info to db
 		const res = await fetch(`http://${serverIp}:${serverPort}/api/rules`, {
 			method: 'POST',
 			headers: { 'Content-Type': 'application/json' },
-			body: JSON.stringify({ rule: nRule }),
+			body: JSON.stringify({ rule: newRule }),
 		});
 		const ruleJson = await res.json();
 		await fetchRules();
 		handleRuleChange(ruleJson.id);
+		newRuleRef.current?.clear();
+		setNewRule('');
 	};
 
 	// Reset editedRule when Edit Rule subform cancelled
 	const cancelEditRule = async () => {
 		document.getElementById('edit-rule-form').hidden = true;
-		setEditedRule({ref: {}, new: ''});
+		editRuleRef.current?.clear();
+		setEditedRule('');
+		setRefRule({});
 	};
 
 	// Handle db update based on editedRule
 	const submitEditRule = async () => {
-		const eId = editedRule.ref.id;
-		const eRule = editedRule.new.trim();
-		if (eRule === '' || editedRule.ref.rule === eRule) return;
+		if (editedRule == '' || editedRule === refRule.rule) return;
 		document.getElementById('edit-rule-form').hidden = true;
-		setEditedRule({ref: {}, new: ''});
 
 		// Send info to db
 		await fetch(`http://${serverIp}:${serverPort}/api/rules`, {
 			method: 'PUT',
 			headers: { 'Content-Type': 'application/json' },
-			body: JSON.stringify({ rule: eRule, id: eId }),
+			body: JSON.stringify({ rule: editedRule, id: refRule.id }),
 		});
 		fetchRules();
+		editRuleRef.current?.clear();
+		setEditedRule('');
+		setRefRule({});
 	};
 
 	// Delete the rule currently being edited
 	const deleteRule = async () => {
-		const id = editedRule.ref.id;
-		const conf = confirm(`Are you sure you want to delete this rule?\n\n${editedRule.ref.rule}`);
+		const id = refRule.id;
+		const conf = confirm(`Are you sure you want to delete this rule?\n\nThe rule will be deleted from ALL pharmacies.`);
 		if (conf) {
 			document.getElementById('edit-rule-form').hidden = true;
-			setEditedRule({ref: {}, new: ''});
+			editRuleRef.current?.clear();
+			setEditedRule('');
+			setRefRule({});
 			// Remove id from selectedRules, if present
 			setSelectedRules(prevSelected => prevSelected.filter(rid => rid !== id));
 			// Call db to delete data
@@ -163,14 +178,12 @@ const ModalRules = forwardRef(({selectedRules, setSelectedRules}, ref) => {
 		<div hidden id="new-rule-form" className="my-1 rounded bg-sky-100 border-2 border-cyan-500/60 p-2">
 			<p className="block text-sm font-light text-gray-700 mb-1">New Rule</p>
 			<div className="space-y-2">
-				<input
+				<RichTextarea 
 					id="new-rule-input"
-					type="text"
+					name="new-rule-input"
 					placeholder="Enter rule..."
-					value={newRule}
-					onChange={(e) => setNewRule(e.target.value)} 
-					className="h-10.5 w-full px-4 border border-gray-200 rounded-md bg-white/80 focus:outline-cyan-500/60"
-					autoComplete="off"
+					onChange={(e) => setNewRule(e)}
+					ref={newRuleRef}
 				/>
 				<div className="flex justify-end">
 					<button tabIndex="-1" type="button" onClick={cancelNewRule} className="cursor-pointer px-4 py-2 bg-gray-800/10 text-gray-400 hover:bg-gray-800/20 rounded-l-md">Cancel</button>
@@ -182,14 +195,11 @@ const ModalRules = forwardRef(({selectedRules, setSelectedRules}, ref) => {
 		<div hidden id="edit-rule-form" className="my-1 rounded bg-orange-100 border-2 border-amber-500/60 p-2">
 			<p className="block text-sm font-light text-gray-700 mb-1">Edit Rule</p>
 			<div className="space-y-2">
-				<input
+				<RichTextarea
 					id="edit-rule-input"
-					type="text"
-					placeholder="Make your changes here..."
-					value={editedRule.new}
-					onChange={(e) => setEditedRule({ref: editedRule.ref, new: e.target.value})} 
-					className="h-10.5 w-full px-4 border border-gray-200 rounded-md bg-white/80 focus:outline-amber-500/60"
-					autoComplete="off"
+					name="edit-rule-input"
+					onChange={(e) => setEditedRule(e)}
+					ref={editRuleRef}
 				/>
 				<div className="flex justify-end">
 					<button tabIndex="-1" type="button" onClick={deleteRule} className="cursor-pointer mr-auto px-4 py-2 bg-red-800/20 text-red-900 hover:bg-red-800/30 rounded-md">
@@ -207,7 +217,7 @@ const ModalRules = forwardRef(({selectedRules, setSelectedRules}, ref) => {
 				return (
 					<div 
 						className={`flex justify-between w-full items-center bg-white rounded-md shadow-sm ${!isVisible ? 'hidden' : ''}`}
-						key={rule.rule}
+						key={rule.id}
 					>
 						<label
 							htmlFor={`rule_${rule.id}`}
@@ -224,7 +234,8 @@ const ModalRules = forwardRef(({selectedRules, setSelectedRules}, ref) => {
 									onChange={() => handleRuleChange(rule.id)}
 									className="appearance-none flex-none custom-chk transition border-1 border-gray-300 mr-2 w-5 h-5 focus:outline-cyan-500/60 checked:border-0 checked:bg-cyan-800 pointer-events-none rounded-full"
 								/>
-								<span className="text-sm">{rule.rule}</span>
+								{/*<span className="text-sm">{rule.rule}</span>*/}
+								<RichViewer deltaString={rule.rule} styling='off' />
 							</div>
 						</label>
 						{/* Edit icon */}
@@ -233,7 +244,8 @@ const ModalRules = forwardRef(({selectedRules, setSelectedRules}, ref) => {
 							onClick={() => {
 								// Prevent new/edit from opening at the same time
 								if (!document.getElementById('new-rule-form').hidden) return;
-								setEditedRule({ref: rule, new: rule.rule});
+								editRuleRef.current.setVal(rule.rule);
+								setRefRule(rule);
 								document.getElementById('edit-rule-form').hidden = false;
 							}}
 						>
