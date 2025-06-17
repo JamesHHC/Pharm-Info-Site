@@ -4,6 +4,7 @@ import React, { useEffect, useState, useRef } from 'react';
 // Content
 import ModalPharmacies from './modal-content/ModalPharmacies';
 import TrashIcon from '../../assets/icons/TrashIcon';
+import RichTextarea from '../components/RichTextarea';
 
 // Styles
 import './ModalStyles.css'
@@ -26,6 +27,9 @@ export default function ContactFormModal({ isOpen, onClose, onSubmit, pharmacies
 	// For tracking selected options
 	const [selectedPharmacies, setSelectedPharmacies] = useState([]);
 
+	// RichText references
+	const prefRef = useRef();
+
 	// Set form values based on existing ones
 	useEffect(() => {
 		// TODO (low-priority): Auto-resize textareas for better UX once production-ready
@@ -37,7 +41,11 @@ export default function ContactFormModal({ isOpen, onClose, onSubmit, pharmacies
 			setContTitle(openContact?.title || '');
 			setContEmail(openContact?.email || '');
 			setContPhone(openContact?.phone || '');
+
+			// Preferences
 			setContPrefs(openContact?.preferences || '');
+			prefRef.current?.setVal(openContact?.preferences || '');
+
 			if (pharmacies.length > 0) setSelectedPharmacies(await getContPharms(openContact.id));
 			else setSelectedPharmacies([]);
 		}
@@ -189,11 +197,12 @@ export default function ContactFormModal({ isOpen, onClose, onSubmit, pharmacies
 					/>
 
 					{/* Preferences */}
-					<label htmlFor="preferences" className="block text-sm font-light text-gray-700 mb-1">Preferences</label>
-					<textarea
-						value={contPrefs} onChange={(e) => setContPrefs(e.target.value)}
-						id="preferences" name="preferences" placeholder="Type here..."
-						className="w-full mb-1.5 border border-gray-300 p-2 rounded focus:outline-cyan-500/60 scrollbar-thin"
+					<RichTextarea 
+						id="preferences"
+						name="preferences"
+						label="Preferences"
+						ref={prefRef}
+						onChange={(e) => setContPrefs(e)}
 					/>
 
 					{/* Pharmacies */}

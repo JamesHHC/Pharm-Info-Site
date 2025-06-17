@@ -5,7 +5,7 @@ import Quill from 'quill';
 import './TextareaStyle.css';
 import 'quill/dist/quill.snow.css';
 
-export default function RichTextarea({ id, name, label, initialDelta = '[{\"insert\": \"\\n\"}]', onChange, ref, placeholder }) {
+export default function RichTextarea({ id, name, label, initialDelta, onChange, ref, placeholder, options }) {
 	const editorRef = useRef(null);
 	const quillRef = useRef(null);
 	const hiddenInputRef = useRef(null);
@@ -13,31 +13,41 @@ export default function RichTextarea({ id, name, label, initialDelta = '[{\"inse
 	useEffect(() => {
 		if (!editorRef.current || quillRef.current) return;
 
-		quillRef.current = new Quill(editorRef.current, {
+		// Default toolbar options
+		let quillOps = {
 			theme: 'snow',
 			placeholder: placeholder || 'Type here...',
 			modules: {
 				toolbar: [
 					[{ size: [ 'small', false, 'large' ] }],
-					[
-						'bold',
-						'italic',
-						'underline',
-						{ 'color': [] },
-						{ 'background': [] },
-					],
+					[ 'bold', 'italic', 'underline', { 'color': [] }, { 'background': [] } ],
+					[ 'link', 'clean' ],
+				]
+			},
+		};
+		switch (options) {
+		// No background or size options
+		case 'slim':
+			quillOps.modules = {
+				toolbar: [
+					[ 'bold', 'italic', 'underline', { 'color': [] } ],
 					[ 'link', 'clean' ],
 				],
-			},
-		});
-
-		try {
-			quillRef.current.setContents(JSON.parse(initialDelta));
+			};
+			quillOps.formats = ['bold', 'italic', 'underline', 'color', 'link'];
+			break;
 		}
-		catch {
-			quillRef.current.root.innerHTML = initialDelta;
-		}
+		// Create new Quill instance using options
+		quillRef.current = new Quill(editorRef.current, quillOps);
 
+		// Takes string or stringified delta
+		if (initialDelta) {
+			try { quillRef.current.setContents(JSON.parse(initialDelta)); }
+			catch { quillRef.current.root.innerHTML = initialDelta; }
+		}
+		else quillRef.current.setContents([{"insert": "\n"}]);
+
+		// Run on text change
 		quillRef.current.on('text-change', () => {
 			const delta = quillRef.current.getContents();
 			if (hiddenInputRef.current) hiddenInputRef.current.value = JSON.stringify(delta);

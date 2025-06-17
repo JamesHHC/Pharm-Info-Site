@@ -6,6 +6,7 @@ import ModalRules from './modal-content/ModalRules';
 import ModalTrainings from './modal-content/ModalTrainings';
 import ModalContacts from './modal-content/ModalContacts';
 import TrashIcon from '../../assets/icons/TrashIcon';
+import RichTextarea from '../components/RichTextarea';
 
 // Styles
 import './ModalStyles.css'
@@ -27,15 +28,28 @@ export default function PharmacyFormModal({ isOpen, onClose, onSubmit, contacts,
 	const [selectedTrainings, setSelectedTrainings] = useState([]);
 	const [selectedContacts, setSelectedContacts] = useState([]);
 
+	// RichText references
+	const commRef = useRef();
+	const noteRef = useRef();
+	const callRef = useRef();
+
 	// Set form values based on existing ones
 	useEffect(() => {
 		// TODO (low-priority): Auto-resize textareas for better UX once production-ready
 		const initValues = async () => {
 			setPharmName(openPharmacy.name);
 			setPharmVerb(openPharmacy?.verbal_orders || false);
-			setPharmComm(openPharmacy?.communication || '');
+
+			// General Notes
 			setPharmNote(openPharmacy?.general_notes || '');
+			noteRef.current?.setVal(openPharmacy?.general_notes || '');
+			// Communication Prefs
+			setPharmComm(openPharmacy?.communication || '');
+			commRef.current?.setVal(openPharmacy?.communication || '');
+			// On-call Prefs
 			setPharmCall(openPharmacy?.oncall_prefs || '');
+			callRef.current?.setVal(openPharmacy?.oncall_prefs || '');
+
 			setSelectedRules(await getPharmRules(openPharmacy.id));
 			setSelectedTrainings(await getPharmTrainings(openPharmacy.id));
 			setSelectedContacts(await getPharmContacts(openPharmacy.id));
@@ -50,6 +64,10 @@ export default function PharmacyFormModal({ isOpen, onClose, onSubmit, contacts,
 
 	// Reset fields w/in form
 	const resetForm = () => {
+		commRef.current?.clear();
+		noteRef.current?.clear();
+		callRef.current?.clear();
+
 		rulesRef.current?.resetRulesForm();
 		trainingsRef.current?.resetTrainingsForm();
 		contactsRef.current?.resetContactsForm();
@@ -133,27 +151,30 @@ export default function PharmacyFormModal({ isOpen, onClose, onSubmit, contacts,
 					</div>
 
 					{/* General Notes */}
-					<label htmlFor="general_notes" className="block text-sm font-light text-gray-700 mb-1">General Notes</label>
-					<textarea
-						value={pharmNote} onChange={(e) => setPharmNote(e.target.value)}
-						id="general_notes" name="general_notes" placeholder="Type here..."
-						className="w-full mb-1.5 border border-gray-300 p-2 rounded focus:outline-cyan-500/60 scrollbar-thin"
+					<RichTextarea 
+						id="general_notes"
+						name="general_notes"
+						label="General Notes"
+						ref={noteRef}
+						onChange={(e) => setPharmNote(e)}
 					/>
 
 					{/* Communication Prefs */}
-					<label htmlFor="communication" className="block text-sm font-light text-gray-700 mb-1">Communication Preferences</label>
-					<textarea
-						value={pharmComm} onChange={(e) => setPharmComm(e.target.value)}
-						id="communication" name="communication" placeholder="Type here..."
-						className="w-full mb-1.5 border border-gray-300 p-2 rounded focus:outline-cyan-500/60 scrollbar-thin"
+					<RichTextarea 
+						id="communication"
+						name="communication"
+						label="Communication Preferences"
+						ref={commRef}
+						onChange={(e) => setPharmComm(e)}
 					/>
 
 					{/* On-call Prefs */}
-					<label htmlFor="oncall_prefs" className="block text-sm font-light text-gray-700 mb-1">On-call Preferences</label>
-					<textarea
-						value={pharmCall} onChange={(e) => setPharmCall(e.target.value)}
-						id="oncall_prefs" name="oncall_prefs" placeholder="Type here..."
-						className="w-full mb-1.5 border border-gray-300 p-2 rounded focus:outline-cyan-500/60 scrollbar-thin"
+					<RichTextarea 
+						id="oncall_prefs"
+						name="oncall_prefs"
+						label="On-call Preferences"
+						ref={callRef}
+						onChange={(e) => setPharmCall(e)}
 					/>
 					
 					{/* Rules */}

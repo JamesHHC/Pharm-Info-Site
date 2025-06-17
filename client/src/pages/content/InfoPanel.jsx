@@ -248,7 +248,9 @@ export default function InfoPanel({ selectedItem, setSelectedItem, editItem }) {
 			<div className="bg-gray-200/70 px-3 py-2 rounded-xl mt-3 text-xl shadow-sm">
 				{/* Preferences */}
 				<label className="text-sm">Preferences</label>
-				<p className="min-h-11 mb-2 bg-white px-3 py-2 rounded-md shadow-sm">{selectedItem.preferences}</p>
+				<RichViewer deltaString={selectedItem.preferences} />
+				{/*<p className="min-h-11 mb-2 bg-white px-3 py-2 rounded-md shadow-sm">{selectedItem.preferences}</p>*/}
+				
 				{/* Pharmacies */}
 				<label className="text-sm">Pharmacies</label>
 				<div className="flex flex-wrap gap-2 mt-1 mb-2">

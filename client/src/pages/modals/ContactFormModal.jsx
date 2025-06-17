@@ -3,6 +3,7 @@ import React, { useState, useRef } from 'react';
 
 // Content
 import ModalPharmacies from './modal-content/ModalPharmacies';
+import RichTextarea from '../components/RichTextarea';
 
 // Styles
 import './ModalStyles.css'
@@ -128,10 +129,10 @@ export default function ContactFormModal({ isOpen, onClose, onSubmit, pharmacies
 					/>
 
 					{/* Preferences */}
-					<label htmlFor="preferences" className="block text-sm font-light text-gray-700 mb-1">Preferences</label>
-					<textarea
-						id="preferences" name="preferences" placeholder="Type here..."
-						className="w-full mb-1.5 border border-gray-300 p-2 rounded focus:outline-cyan-500/60 scrollbar-thin"
+					<RichTextarea
+						id="preferences"
+						name="preferences"
+						label="Preferences"
 					/>
 
 					{/* Pharmacies */}

@@ -47,6 +47,17 @@ const ModalTrainings = forwardRef(({selectedTrainings, setSelectedTrainings}, re
 		fetchTrainings();
 	}, []);
 
+	// Converts a Quill delta to plaintext
+	const deltaToText = (delta) => {
+		try {
+			const dJson = JSON.parse(delta);
+			return dJson.ops.map(op => typeof op.insert === 'string' ? op.insert : '').join('');
+		}
+		catch {
+			return delta;
+		}
+	};
+
 	// Reset fields w/in form
 	const resetTrainingsForm = () => {
 		// Reset training stuff
@@ -82,7 +93,7 @@ const ModalTrainings = forwardRef(({selectedTrainings, setSelectedTrainings}, re
 		.sort((a, b) => a.name.localeCompare(b.name))
 		.filter((training) =>
 			training.name.toLowerCase().includes(searchedTraining.toLowerCase()) ||
-			training.description.toLowerCase().includes(searchedTraining.toLowerCase())
+			deltaToText(training.description).toLowerCase().includes(searchedTraining.toLowerCase())
 		);
 
 	// Reset newTraining when New Training subform cancelled
@@ -221,7 +232,7 @@ const ModalTrainings = forwardRef(({selectedTrainings, setSelectedTrainings}, re
 					onChange={(e) => setNewTrainingDesc(e)}
 					ref={newTrainingDescRef}
 				/>
-				<div className="flex justify-end">
+				<div className="flex justify-end mt-2">
 					<button tabIndex="-1" type="button" onClick={cancelNewTraining} className="cursor-pointer px-4 py-2 bg-gray-800/10 text-gray-400 hover:bg-gray-800/20 rounded-l-md">Cancel</button>
 					<button tabIndex="-1" type="button" onClick={submitNewTraining} className="cursor-pointer px-4 py-2 bg-teal-600/60 hover:bg-teal-600/80 text-white rounded-r-md">Save</button>
 				</div>
@@ -237,7 +248,7 @@ const ModalTrainings = forwardRef(({selectedTrainings, setSelectedTrainings}, re
 					placeholder="Edit training name..."
 					value={editedTrainingName}
 					onChange={(e) => setEditedTrainingName(e.target.value)}
-					className="bg-white/80 h-10.5 w-full px-4 border border-gray-200 rounded-md focus:outline-amber-500/60"
+					className="bg-white/80 h-10.5 w-full px-4 border border-gray-300 rounded-md focus:outline-amber-500/60"
 					autoComplete="off"
 				/>
 				<RichTextarea 
@@ -248,7 +259,7 @@ const ModalTrainings = forwardRef(({selectedTrainings, setSelectedTrainings}, re
 					ref={editTrainingDescRef}
 				/>
 				<div>
-					<div className="flex justify-end">
+					<div className="flex justify-end mt-2">
 						<button tabIndex="-1" type="button" onClick={deleteTraining} className="cursor-pointer mr-auto px-4 py-2 bg-red-800/20 text-red-900 hover:bg-red-800/30 rounded-md">
 							<TrashIcon className="my-auto"/>
 						</button>
@@ -261,7 +272,8 @@ const ModalTrainings = forwardRef(({selectedTrainings, setSelectedTrainings}, re
 		{/* Training list */}
 		<div tabIndex="-1" className="resize-y mb-4 border bg-gray-100 border-gray-300 p-2 rounded h-40 w-full overflow-y-auto overflow-x-hidden space-y-2 space-x-2 scrollbar-thin">
 			{filteredTrainings.map((training) => {
-				const isVisible = training.name.toLowerCase().includes(searchedTraining.toLowerCase()) || training.description.toLowerCase().includes(searchedTraining.toLowerCase());
+				const isVisible = training.name.toLowerCase().includes(searchedTraining.toLowerCase()) || 
+					deltaToText(training.description).toLowerCase().includes(searchedTraining.toLowerCase());
 				return (
 					<div
 						className={`bg-white flex w-full items-center justify-between rounded-md shadow-sm ${!isVisible ? 'hidden' : ''}`}

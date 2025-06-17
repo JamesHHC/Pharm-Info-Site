@@ -43,14 +43,27 @@ const ModalRules = forwardRef(({selectedRules, setSelectedRules}, ref) => {
 		fetchRules();
 	}, []);
 
+	// Converts a Quill delta to plaintext
+	const deltaToText = (delta) => {
+		try {
+			const dJson = JSON.parse(delta);
+			return dJson.ops.map(op => typeof op.insert === 'string' ? op.insert : '').join('');
+		}
+		catch {
+			return delta;
+		}
+	};
+
 	// Reset fields w/in form
 	const resetRulesForm = () => {
 		// Reset rule stuff
 		setSearchedRule('');
 		setSelectedRules([]);
 		setNewRule('');
+		newRuleRef.current?.clear();
 		setEditedRule('');
 		setRefRule({});
+		editRuleRef.current?.clear();
 	};
 
 	useImperativeHandle(ref, () => ({
@@ -69,9 +82,9 @@ const ModalRules = forwardRef(({selectedRules, setSelectedRules}, ref) => {
 	// Filter rules based on user input
 	const filteredRules = rules
 		.slice()
-		.sort((a, b) => a.rule.localeCompare(b.rule))
+		.sort((a, b) => deltaToText(a.rule).localeCompare(deltaToText(b.rule)))
 		.filter((rule) =>
-			rule.rule.toLowerCase().includes(searchedRule.toLowerCase())
+			deltaToText(rule.rule).toLowerCase().includes(searchedRule.toLowerCase())
 		);
 
 	// Reset newRule when New Rule subform cancelled
@@ -184,8 +197,9 @@ const ModalRules = forwardRef(({selectedRules, setSelectedRules}, ref) => {
 					placeholder="Enter rule..."
 					onChange={(e) => setNewRule(e)}
 					ref={newRuleRef}
+					options="slim"
 				/>
-				<div className="flex justify-end">
+				<div className="flex justify-end mt-2">
 					<button tabIndex="-1" type="button" onClick={cancelNewRule} className="cursor-pointer px-4 py-2 bg-gray-800/10 text-gray-400 hover:bg-gray-800/20 rounded-l-md">Cancel</button>
 					<button tabIndex="-1" type="button" onClick={submitNewRule} className="cursor-pointer px-4 py-2 bg-teal-600/60 hover:bg-teal-600/80 text-white rounded-r-md">Save</button>
 				</div>
@@ -200,8 +214,9 @@ const ModalRules = forwardRef(({selectedRules, setSelectedRules}, ref) => {
 					name="edit-rule-input"
 					onChange={(e) => setEditedRule(e)}
 					ref={editRuleRef}
+					options="slim"
 				/>
-				<div className="flex justify-end">
+				<div className="flex justify-end mt-2">
 					<button tabIndex="-1" type="button" onClick={deleteRule} className="cursor-pointer mr-auto px-4 py-2 bg-red-800/20 text-red-900 hover:bg-red-800/30 rounded-md">
 						<TrashIcon className="my-auto"/>
 					</button>
@@ -213,7 +228,7 @@ const ModalRules = forwardRef(({selectedRules, setSelectedRules}, ref) => {
 		{/* Rule list */}
 		<div tabIndex="-1" className="resize-y mb-4 border bg-gray-100 border-gray-300 p-2 rounded h-40 w-full overflow-y-auto overflow-x-hidden space-y-2 space-x-2 scrollbar-thin">
 			{filteredRules.map((rule) => {
-				const isVisible = rule.rule.toLowerCase().includes(searchedRule.toLowerCase());
+				const isVisible = deltaToText(rule.rule).toLowerCase().includes(searchedRule.toLowerCase());
 				return (
 					<div 
 						className={`flex justify-between w-full items-center bg-white rounded-md shadow-sm ${!isVisible ? 'hidden' : ''}`}
