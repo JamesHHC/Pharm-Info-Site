@@ -35,7 +35,7 @@ export default function ContactFormModal({ isOpen, onClose, onSubmit, pharmacies
 			email: formData.get('email')?.trim(),
 			phone: formData.get('phone')?.trim(),
 			title: formData.get('title')?.trim(),
-			preferences: formData.get('preferences')?.trim(),
+			preferences: formData.get('preferences'),
 			dnc: formData.get('dnc') === 'on',
 			intake_only: formData.get('intake_only') === 'on',
 			contact_type: formData.getAll('contact_type'),
@@ -114,19 +114,25 @@ export default function ContactFormModal({ isOpen, onClose, onSubmit, pharmacies
 						className="w-full mb-3 border border-gray-300 p-2 rounded focus:outline-cyan-500/60"
 					/>
 
-					{/* Email */}
-					<label htmlFor="email" className="block text-sm font-light text-gray-700 mb-1">Email</label>
-					<input
-						id="email" name="email" type="text" placeholder="Type here..." autoComplete="off"
-						className="w-full mb-3 border border-gray-300 p-2 rounded focus:outline-cyan-500/60"
-					/>
-
-					{/* Phone Number */}
-					<label htmlFor="phone" className="block text-sm font-light text-gray-700 mb-1">Phone Number</label>
-					<input
-						id="phone" name="phone" type="text" placeholder="Type here..." autoComplete="off"
-						className="w-full mb-3 border border-gray-300 p-2 rounded focus:outline-cyan-500/60"
-					/>
+					{/* Contact Info */}
+					<div className="sm:flex">
+						{/* Email */}
+						<div className="w-full mr-3">
+							<label htmlFor="email" className="block text-sm font-light text-gray-700 mb-1">Email</label>
+							<input
+								id="email" name="email" type="text" placeholder="Type here..." autoComplete="off"
+								className="w-full mb-3 border border-gray-300 p-2 rounded focus:outline-cyan-500/60"
+							/>
+						</div>
+						{/* Phone Number */}
+						<div className="w-full">
+							<label htmlFor="phone" className="block text-sm font-light text-gray-700 mb-1">Phone Number</label>
+							<input
+								id="phone" name="phone" type="text" placeholder="Type here..." autoComplete="off"
+								className="w-full mb-3 border border-gray-300 p-2 rounded focus:outline-cyan-500/60"
+							/>
+						</div>
+					</div>
 
 					{/* Preferences */}
 					<RichTextarea

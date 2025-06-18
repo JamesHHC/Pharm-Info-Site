@@ -12,6 +12,7 @@ const serverPort = config.server_port;
 export default function InfoPanel({ selectedItem, setSelectedItem, editItem }) {
 	const [rules, setRules] = useState([]);
 	const [trainings, setTrainings] = useState([]);
+	const [blurbs, setBlurbs] = useState([]);
 	const [contacts, setContacts] = useState([]);
 	const [pharmacies, setPharmacies] = useState([]);
 
@@ -38,6 +39,18 @@ export default function InfoPanel({ selectedItem, setSelectedItem, editItem }) {
 		}
 		catch (err) {
 			console.error('Failed to fetch pharmacy trainings', err);
+		}
+	};
+	const fetchPharmBlurbs = async () => {
+		setBlurbs([]);
+		try {
+			const res = await fetch(`http://${serverIp}:${serverPort}/api/pharmblurbs?pharmacy_id=${selectedItem.id}`);
+			const data = await res.json();
+			// Get blurbs corresponding to selectedItem id
+			if (data.length > 0) fetchSomeBlurbs(data.map(pb => pb.blurb_id));
+		}
+		catch (err) {
+			console.error('Failed to fetch pharmacy blurbs', err);
 		}
 	};
 	const fetchPharmContacts = async () => {
@@ -82,6 +95,15 @@ export default function InfoPanel({ selectedItem, setSelectedItem, editItem }) {
 		const trainingJson = await res.json();
 		setTrainings(trainingJson);
 	};
+	const fetchSomeBlurbs = async (idArr) => {
+		const res = await fetch(`http://${serverIp}:${serverPort}/api/blurbs/some`, {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify({ ids: idArr }),
+		});
+		const blurbJson = await res.json();
+		setBlurbs(blurbJson);
+	};
 	const fetchSomeContacts = async (idArr) => {
 		const res = await fetch(`http://${serverIp}:${serverPort}/api/contacts/some`, {
 			method: 'POST',
@@ -107,6 +129,7 @@ export default function InfoPanel({ selectedItem, setSelectedItem, editItem }) {
 		if (selectedItem && selectedItem.type === 'pharmacy') {
 			fetchPharmRules();
 			fetchPharmTrainings();
+			fetchPharmBlurbs();
 			fetchPharmContacts();
 		}
 		// Contact
@@ -140,73 +163,109 @@ export default function InfoPanel({ selectedItem, setSelectedItem, editItem }) {
 				
 				{/* General Notes */}
 				<label className="text-sm">General Notes</label>
-				<RichViewer deltaString={selectedItem.general_notes} />
-				{/*<p className="min-h-11 mb-2 bg-white px-3 py-2 rounded-md shadow-sm">{selectedItem.general_notes}</p>*/}
+				<div className="min-h-10 mb-2 bg-white px-3 py-2 rounded-md shadow-sm">
+					<RichViewer deltaString={selectedItem.general_notes} styling="off" />
+				</div>
+				{/*<p className="min-h-10 mb-2 bg-white px-3 py-2 rounded-md shadow-sm">{selectedItem.general_notes}</p>*/}
 
-				{/* Communication Preferences */}
-				<label className="text-sm">Communication Preferences</label>
-				<RichViewer deltaString={selectedItem.communication} />
-				{/*<p className="min-h-11 mb-2 bg-white px-3 py-2 rounded-md shadow-sm">{selectedItem.communication}</p>*/}
-
-				{/* On-call Preferences */}
-				<label className="text-sm">On-call Preferences</label>
-				<RichViewer deltaString={selectedItem.oncall_prefs} />
-				{/*<p className="min-h-11 mb-2 bg-white px-3 py-2 rounded-md shadow-sm">{selectedItem.oncall_prefs}</p>*/}
-
-				{/* Rules & Training */}
+				{/* Preferences */}
 				<div className="lg:flex space-x-3">
-					{/* Rules */}
+					{/* Communication Preferences */}
 					<div className="w-full">
-						<label className="text-sm">Rules</label>
-						<div className="min-h-11 mb-2 bg-white rounded-md shadow-sm overflow-auto scrollbar-thin">
-							{rules.map(rule => (
-								<div key={rule.id} className="py-2 px-3 w-full bg-white outline-1 outline-gray-200">
-									{rule.rule}
-								</div>
-							))}
+						<label className="text-sm">Communication Preferences</label>
+						<div className="min-h-10 mb-2 bg-white px-3 py-2 rounded-md shadow-sm">
+							<RichViewer deltaString={selectedItem.communication} styling="off" />
 						</div>
+						{/*<p className="min-h-10 mb-2 bg-white px-3 py-2 rounded-md shadow-sm">{selectedItem.communication}</p>*/}
 					</div>
-					{/* Training Requirements */}
+
+					{/* On-call Preferences */}
 					<div className="w-full">
-						<label className="text-sm">Training Requirements</label>
-						<div className="min-h-11 mb-2 bg-white rounded-md shadow-sm overflow-auto scrollbar-thin">
-							{trainings.map(training => (
-								<div key={training.id}>
-									<div
-										className="cursor-pointer flex py-2 px-3 w-full bg-white outline-1 outline-gray-200"
-										onClick={() => {
-											const desc = document.getElementById(`desc_${training.id}`);
-											const arrw = document.getElementById(`arrow_${training.id}`);
-											arrw.innerHTML = desc.hidden ? '⮟' : '⮜'
-											desc.hidden = !desc.hidden;
-										}}
-									>
-										<div>{training.name}</div>
-										<div id={`arrow_${training.id}`} className="ml-auto text-gray-400">⮜</div>
-									</div>
-									<div hidden id={`desc_${training.id}`} className="py-2 pl-5 pr-3 w-full bg-gray-100 text-sm">
-										{training.description}
-									</div>
-								</div>
-							))}
+						<label className="text-sm">On-call Preferences</label>
+						<div className="min-h-10 mb-2 bg-white px-3 py-2 rounded-md shadow-sm">
+							<RichViewer deltaString={selectedItem.oncall_prefs} styling="off" />
 						</div>
+						{/*<p className="min-h-10 mb-2 bg-white px-3 py-2 rounded-md shadow-sm">{selectedItem.oncall_prefs}</p>*/}
 					</div>
+				</div>
+				
+				{/* Rules */}
+				<label className="text-sm">Rules</label>
+				<div className="min-h-10 mb-2 bg-white rounded-md shadow-sm overflow-auto scrollbar-thin">
+					{rules.map(rule => (
+						<div key={rule.id} className="py-2 px-3 w-full bg-white outline-1 outline-gray-200">
+							{/*{rule.rule}*/}
+							<RichViewer deltaString={rule.rule} styling="off" />
+						</div>
+					))}
+				</div>
+
+				{/* Training Requirements */}
+				<label className="text-sm">Training Requirements</label>
+				<div className="min-h-10 mb-2 bg-white rounded-md shadow-sm overflow-auto scrollbar-thin">
+					{trainings.map(training => (
+						<div key={training.id}>
+							<div
+								className="cursor-pointer flex py-2 px-3 w-full bg-white outline-1 outline-gray-200"
+								onClick={() => {
+									const desc = document.getElementById(`desc_${training.id}`);
+									const arrw = document.getElementById(`arrow_${training.id}`);
+									arrw.innerHTML = desc.hidden ? '⮟' : '⮜'
+									desc.hidden = !desc.hidden;
+								}}
+							>
+								{/*<div>{training.name}</div>*/}
+								<RichViewer deltaString={training.name} styling="off" />
+								<div id={`arrow_${training.id}`} className="ml-auto my-auto text-sm text-gray-400">⮜</div>
+							</div>
+							<div hidden id={`desc_${training.id}`} className="py-2 pl-5 pr-3 w-full bg-gray-100 text-sm">
+								<RichViewer deltaString={training.description} styling="off" />
+								{/*{training.description}*/}
+							</div>
+						</div>
+					))}
+				</div>
+
+				{/* VN Instructions (Blurbs) */}
+				<label className="text-sm">VN Instructions</label>
+				<div className="min-h-10 mb-2 bg-white rounded-md shadow-sm overflow-auto scrollbar-thin">
+					{blurbs.map(blurb => (
+						<div key={blurb.id}>
+							<div
+								className="cursor-pointer flex py-2 px-3 w-full bg-white outline-1 outline-gray-200"
+								onClick={() => {
+									const desc = document.getElementById(`desc_${blurb.id}`);
+									const arrw = document.getElementById(`arrow_${blurb.id}`);
+									arrw.innerHTML = desc.hidden ? '⮟' : '⮜'
+									desc.hidden = !desc.hidden;
+								}}
+							>
+								{/*<div>{blurb.name}</div>*/}
+								<RichViewer deltaString={blurb.name} styling="off" />
+								<div id={`arrow_${blurb.id}`} className="ml-auto my-auto text-sm text-gray-400">⮜</div>
+							</div>
+							<div hidden id={`desc_${blurb.id}`} className="py-2 pl-5 pr-3 w-full bg-gray-100 text-sm">
+								<RichViewer deltaString={blurb.description} styling="off" />
+								{/*{blurb.description}*/}
+							</div>
+						</div>
+					))}
 				</div>
 
 				{/* Contacts */}
 				<label className="text-sm">Contacts</label>
 				<div className="flex flex-wrap gap-2 mt-1 mb-2">
-					{contacts.map(contact => (
+					{contacts.length > 0 && contacts.map(contact => (
 							<div
 								key={contact.id}
 								className="cursor-pointer py-2 px-5 bg-white rounded-full shadow-sm"
 								onClick={() => { setSelectedItem({ ...contact, type: 'contact' }); }}
 							>
-								<p className="text-md">{contact.name}</p>
+								<p className="text-base">{contact.name}</p>
 								<p className="text-sm font-light">{contact.title}</p>
 							</div>
 						)
-					)}
+					) || <div className="text-base font-light">No contacts</div>}
 				</div>
 			</div>
 		</>);
@@ -237,7 +296,7 @@ export default function InfoPanel({ selectedItem, setSelectedItem, editItem }) {
 					</div>
 				}
 				{/* Email/Phone */}
-				<div className="w-min mt-4 min-h-11 min-w-80 bg-white px-3 py-2 rounded-md shadow-sm">
+				<div className="w-min mt-4 min-h-10 min-w-80 bg-white px-3 py-2 rounded-md shadow-sm">
 					{selectedItem.email && <div className="inline-flex"><span className="noselect mr-2">🖃</span>{selectedItem.email}</div>}
 					<div className="my-1"></div>
 					{selectedItem.phone && <div className="inline-flex"><span className="noselect mr-2">🕾</span>{selectedItem.phone}</div>}
@@ -248,8 +307,10 @@ export default function InfoPanel({ selectedItem, setSelectedItem, editItem }) {
 			<div className="bg-gray-200/70 px-3 py-2 rounded-xl mt-3 text-xl shadow-sm">
 				{/* Preferences */}
 				<label className="text-sm">Preferences</label>
-				<RichViewer deltaString={selectedItem.preferences} />
-				{/*<p className="min-h-11 mb-2 bg-white px-3 py-2 rounded-md shadow-sm">{selectedItem.preferences}</p>*/}
+				<div className="min-h-10 mb-2 bg-white px-3 py-2 rounded-md shadow-sm">
+					<RichViewer deltaString={selectedItem.preferences} styling="off" />
+				</div>
+				{/*<p className="min-h-10 mb-2 bg-white px-3 py-2 rounded-md shadow-sm">{selectedItem.preferences}</p>*/}
 				
 				{/* Pharmacies */}
 				<label className="text-sm">Pharmacies</label>
@@ -257,7 +318,7 @@ export default function InfoPanel({ selectedItem, setSelectedItem, editItem }) {
 					{pharmacies.map(pharmacy => (
 							<div
 								key={pharmacy.id}
-								className="cursor-pointer py-2 px-4 bg-white rounded-full shadow-sm"
+								className="cursor-pointer text-base py-2 px-4 bg-white rounded-full shadow-sm"
 								onClick={() => { setSelectedItem({ ...pharmacy, type: 'pharmacy' }); }}
 							>
 								<p>{pharmacy.name}</p>

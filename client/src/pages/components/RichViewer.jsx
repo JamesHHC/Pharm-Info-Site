@@ -28,7 +28,7 @@ export default function DeltaViewer({ deltaString, styling }) {
 	}, [deltaString]);
 
 	return (
-		<div className={`q-viewer ${styling == 'off' ? 'pt-0.5' : 'min-h-8 mb-2 bg-white px-3 py-2 rounded-md shadow-sm'}`}>
+		<div className={`q-viewer ${styling == 'off' ? 'pt-0.5' : 'min-h-8 mb-2 bg-white px-3 rounded-md shadow-sm'}`}>
 			<div ref={containerRef} className="" />
 		</div>
 	);

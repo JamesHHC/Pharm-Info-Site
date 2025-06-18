@@ -109,7 +109,7 @@ const ModalTrainings = forwardRef(({selectedTrainings, setSelectedTrainings}, re
 	const submitNewTraining = async () => {
 		const nTrain = {
 			name: newTrainingName?.trim(),
-			description: newTrainingDesc?.trim(),
+			description: newTrainingDesc,
 		};
 		if (nTrain.name === '' || nTrain.description === '') return;
 		document.getElementById('new-training-form').hidden = true;
@@ -141,7 +141,7 @@ const ModalTrainings = forwardRef(({selectedTrainings, setSelectedTrainings}, re
 	// Handle db update based on editedTraining
 	const submitEditTraining = async () => {
 		const eName = editedTrainingName.trim();
-		const eDesc = editedTrainingDesc.trim();
+		const eDesc = editedTrainingDesc;
 		if (eName === '' || eDesc === '') return;
 		if (eName === refTraining.name && eDesc === refTraining.description) return;
 		document.getElementById('edit-training-form').hidden = true;

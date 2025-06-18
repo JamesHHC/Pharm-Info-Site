@@ -4,6 +4,7 @@ import React, { useEffect, useState, useRef } from 'react';
 // Content
 import ModalRules from './modal-content/ModalRules';
 import ModalTrainings from './modal-content/ModalTrainings';
+import ModalBlurbs from './modal-content/ModalBlurbs';
 import ModalContacts from './modal-content/ModalContacts';
 import TrashIcon from '../../assets/icons/TrashIcon';
 import RichTextarea from '../components/RichTextarea';
@@ -26,6 +27,7 @@ export default function PharmacyFormModal({ isOpen, onClose, onSubmit, contacts,
 	// For tracking selected options
 	const [selectedRules, setSelectedRules] = useState([]);
 	const [selectedTrainings, setSelectedTrainings] = useState([]);
+	const [selectedBlurbs, setSelectedBlurbs] = useState([]);
 	const [selectedContacts, setSelectedContacts] = useState([]);
 
 	// RichText references
@@ -52,6 +54,7 @@ export default function PharmacyFormModal({ isOpen, onClose, onSubmit, contacts,
 
 			setSelectedRules(await getPharmRules(openPharmacy.id));
 			setSelectedTrainings(await getPharmTrainings(openPharmacy.id));
+			setSelectedBlurbs(await getPharmBlurbs(openPharmacy.id));
 			setSelectedContacts(await getPharmContacts(openPharmacy.id));
 		}
 		if (isOpen) initValues();
@@ -60,6 +63,7 @@ export default function PharmacyFormModal({ isOpen, onClose, onSubmit, contacts,
 	// References
 	const rulesRef = useRef();
 	const trainingsRef = useRef();
+	const blurbsRef = useRef();
 	const contactsRef = useRef();
 
 	// Reset fields w/in form
@@ -70,6 +74,7 @@ export default function PharmacyFormModal({ isOpen, onClose, onSubmit, contacts,
 
 		rulesRef.current?.resetRulesForm();
 		trainingsRef.current?.resetTrainingsForm();
+		blurbsRef.current?.resetBlurbsForm();
 		contactsRef.current?.resetContactsForm();
 	};
 
@@ -81,10 +86,10 @@ export default function PharmacyFormModal({ isOpen, onClose, onSubmit, contacts,
 		const updatedPharmacy = {
 			id: openPharmacy.id,
 			name: pharmName.trim(),
-			communication: pharmComm?.trim(),
+			communication: pharmComm,
 			verbal_orders: pharmVerb,
-			general_notes: pharmNote?.trim(),
-			oncall_prefs: pharmCall?.trim(),
+			general_notes: pharmNote,
+			oncall_prefs: pharmCall,
 		};
 		// Ensure data isn't blank
 		if (!updatedPharmacy.name) {
@@ -100,6 +105,7 @@ export default function PharmacyFormModal({ isOpen, onClose, onSubmit, contacts,
 		const updatedPharm = await res.json();
 		await associateRules(updatedPharm.id, selectedRules);
 		await associateTraining(updatedPharm.id, selectedTrainings);
+		await associateBlurbs(updatedPharm.id, selectedBlurbs);
 		await associateContact(updatedPharm.id, selectedContacts);
 		await onSubmit(e, updatedPharm);
 		resetForm();
@@ -191,6 +197,13 @@ export default function PharmacyFormModal({ isOpen, onClose, onSubmit, contacts,
 						setSelectedTrainings={setSelectedTrainings}
 					/>
 
+					{/* VN Instructions (Blurbs) */}
+					<ModalBlurbs
+						ref={blurbsRef}
+						selectedBlurbs={selectedBlurbs}
+						setSelectedBlurbs={setSelectedBlurbs}
+					/>
+
 					{/* Pharmacy Contacts */}
 					<ModalContacts
 						ref={contactsRef}
@@ -233,6 +246,16 @@ export default function PharmacyFormModal({ isOpen, onClose, onSubmit, contacts,
 		});
 	}
 
+	// Update pharmacy_blurbs db based on selected blurbs
+	async function associateBlurbs(pharmId, blurbIds) {
+		// Send info to db
+		const res = await fetch(`http://${serverIp}:${serverPort}/api/pharmblurbs`, {
+			method: 'PATCH',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify({ pharmacy_id: pharmId, blurb_ids: blurbIds }),
+		});
+	}
+
 	// Update pharmacy_contacts db based on selected contacts
 	async function associateContact(pharmId, contactIds) {
 		// Send info to db
@@ -255,6 +278,13 @@ export default function PharmacyFormModal({ isOpen, onClose, onSubmit, contacts,
 		const res = await fetch(`http://${serverIp}:${serverPort}/api/pharmtraining?pharmacy_id=${id}`);
 		const data = await res.json();
 		return data.map(t => t.training_id);
+	}
+
+	// Return IDs of blurbs for given pharmacy ID
+	async function getPharmBlurbs(id) {
+		const res = await fetch(`http://${serverIp}:${serverPort}/api/pharmblurbs?pharmacy_id=${id}`);
+		const data = await res.json();
+		return data.map(b => b.blurb_id);
 	}
 
 	// Return IDs of contacts for given pharmacy ID

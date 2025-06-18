@@ -3,7 +3,16 @@
   	border-radius: 0.25rem 0.25rem 0 0;
 }
 
+/* Prevent tooltip from clipping */
 .q-textarea .ql-tooltip {
 	left: 0 !important;
 	border-radius: 0.25rem;
 }
+
+/* Focus color 
+.ql-toolbar:focus {
+	outline: none;
+	box-shadow: 0 0 0 2px #ff7f50;
+	border-radius: 4px;
+}
+*/

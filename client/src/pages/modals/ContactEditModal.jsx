@@ -71,7 +71,7 @@ export default function ContactFormModal({ isOpen, onClose, onSubmit, pharmacies
 			email: contEmail?.trim(),
 			phone: contPhone?.trim(),
 			title: contTitle?.trim(),
-			preferences: contPrefs?.trim(),
+			preferences: contPrefs,
 			dnc: contDNC,
 			intake_only: contIntake,
 			contact_type: contTypes,
@@ -180,21 +180,27 @@ export default function ContactFormModal({ isOpen, onClose, onSubmit, pharmacies
 						className="w-full mb-3 border border-gray-300 p-2 rounded focus:outline-cyan-500/60"
 					/>
 
-					{/* Email */}
-					<label htmlFor="email" className="block text-sm font-light text-gray-700 mb-1">Email</label>
-					<input
-						value={contEmail} onChange={(e) => setContEmail(e.target.value)}
-						id="email" name="email" type="text" placeholder="Type here..." autoComplete="off"
-						className="w-full mb-3 border border-gray-300 p-2 rounded focus:outline-cyan-500/60"
-					/>
-
-					{/* Phone Number */}
-					<label htmlFor="phone" className="block text-sm font-light text-gray-700 mb-1">Phone Number</label>
-					<input
-						value={contPhone} onChange={(e) => setContPhone(e.target.value)}
-						id="phone" name="phone" type="text" placeholder="Type here..." autoComplete="off"
-						className="w-full mb-3 border border-gray-300 p-2 rounded focus:outline-cyan-500/60"
-					/>
+					{/* Contact Info */}
+					<div className="sm:flex">
+						{/* Email */}
+						<div className="w-full mr-3">
+							<label htmlFor="email" className="block text-sm font-light text-gray-700 mb-1">Email</label>
+							<input
+								value={contEmail} onChange={(e) => setContEmail(e.target.value)}
+								id="email" name="email" type="text" placeholder="Type here..." autoComplete="off"
+								className="w-full mb-3 border border-gray-300 p-2 rounded focus:outline-cyan-500/60"
+							/>
+						</div>
+						{/* Phone Number */}
+						<div className="w-full">
+							<label htmlFor="phone" className="block text-sm font-light text-gray-700 mb-1">Phone Number</label>
+							<input
+								value={contPhone} onChange={(e) => setContPhone(e.target.value)}
+								id="phone" name="phone" type="text" placeholder="Type here..." autoComplete="off"
+								className="w-full mb-3 border border-gray-300 p-2 rounded focus:outline-cyan-500/60"
+							/>
+						</div>
+					</div>
 
 					{/* Preferences */}
 					<RichTextarea 

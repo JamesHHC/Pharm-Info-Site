@@ -4,6 +4,7 @@ import React, { useEffect, useState, useRef } from 'react';
 // Content
 import ModalRules from './modal-content/ModalRules';
 import ModalTrainings from './modal-content/ModalTrainings';
+import ModalBlurbs from './modal-content/ModalBlurbs';
 import ModalContacts from './modal-content/ModalContacts';
 import RichTextarea from '../components/RichTextarea';
 
@@ -19,17 +20,20 @@ export default function PharmacyFormModal({ isOpen, onClose, onSubmit, contacts 
 	// For tracking selected options
 	const [selectedRules, setSelectedRules] = useState([]);
 	const [selectedTrainings, setSelectedTrainings] = useState([]);
+	const [selectedBlurbs, setSelectedBlurbs] = useState([]);
 	const [selectedContacts, setSelectedContacts] = useState([]);
 
 	// References
 	const rulesRef = useRef();
 	const trainingsRef = useRef();
+	const blurbsRef = useRef();
 	const contactsRef = useRef();
 
 	// Reset fields w/in form
 	const resetForm = () => {
 		rulesRef.current?.resetRulesForm();
 		trainingsRef.current?.resetTrainingsForm();
+		blurbsRef.current?.resetBlurbsForm();
 		contactsRef.current?.resetContactsForm();
 	};
 
@@ -40,10 +44,10 @@ export default function PharmacyFormModal({ isOpen, onClose, onSubmit, contacts 
 		const formData = new FormData(e.target);
 		const newPharmacy = {
 			name: formData.get('name')?.trim(),
-			communication: formData.get('communication')?.trim(),
+			communication: formData.get('communication'),
 			verbal_orders: formData.get('verbal_orders') === 'on',
-			general_notes: formData.get('general_notes')?.trim(),
-			oncall_prefs: formData.get('oncall_prefs')?.trim(),
+			general_notes: formData.get('general_notes'),
+			oncall_prefs: formData.get('oncall_prefs'),
 		};
 		// Ensure data isn't blank
 		if (!newPharmacy.name) {
@@ -59,6 +63,7 @@ export default function PharmacyFormModal({ isOpen, onClose, onSubmit, contacts 
 		const newPharm = await res.json();
 		await associateRules(newPharm.id, selectedRules);
 		await associateTraining(newPharm.id, selectedTrainings);
+		await associateBlurbs(newPharm.id, selectedBlurbs);
 		await associateContact(newPharm.id, selectedContacts);
 		await onSubmit(e, newPharm);
 		resetForm();
@@ -126,6 +131,13 @@ export default function PharmacyFormModal({ isOpen, onClose, onSubmit, contacts 
 						setSelectedTrainings={setSelectedTrainings}
 					/>
 
+					{/* VN Instructions (Blurbs) */}
+					<ModalBlurbs
+						ref={blurbsRef}
+						selectedBlurbs={selectedBlurbs}
+						setSelectedBlurbs={setSelectedBlurbs}
+					/>
+
 					{/* Pharmacy Contacts */}
 					<ModalContacts
 						ref={contactsRef}
@@ -164,6 +176,17 @@ export default function PharmacyFormModal({ isOpen, onClose, onSubmit, contacts 
 			method: 'POST',
 			headers: { 'Content-Type': 'application/json' },
 			body: JSON.stringify({ pharmacy_id: pharmId, training_ids: trainingIds }),
+		});
+	}
+
+	// Update pharmacy_blurbs db based on selected blurbs
+	async function associateBlurbs(pharmId, blurbIds) {
+		if (blurbIds.length == 0) return;
+		// Send info to db
+		const res = await fetch(`http://${serverIp}:${serverPort}/api/pharmblurbs`, {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify({ pharmacy_id: pharmId, blurb_ids: blurbIds }),
 		});
 	}
 
