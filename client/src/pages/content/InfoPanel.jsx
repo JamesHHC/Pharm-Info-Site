@@ -166,7 +166,6 @@ export default function InfoPanel({ selectedItem, setSelectedItem, editItem }) {
 				<div className="min-h-10 mb-2 bg-white px-3 py-2 rounded-md shadow-sm">
 					<RichViewer deltaString={selectedItem.general_notes} styling="off" />
 				</div>
-				{/*<p className="min-h-10 mb-2 bg-white px-3 py-2 rounded-md shadow-sm">{selectedItem.general_notes}</p>*/}
 
 				{/* Preferences */}
 				<div className="lg:flex space-x-3">
@@ -176,7 +175,6 @@ export default function InfoPanel({ selectedItem, setSelectedItem, editItem }) {
 						<div className="min-h-10 mb-2 bg-white px-3 py-2 rounded-md shadow-sm">
 							<RichViewer deltaString={selectedItem.communication} styling="off" />
 						</div>
-						{/*<p className="min-h-10 mb-2 bg-white px-3 py-2 rounded-md shadow-sm">{selectedItem.communication}</p>*/}
 					</div>
 
 					{/* On-call Preferences */}
@@ -185,7 +183,6 @@ export default function InfoPanel({ selectedItem, setSelectedItem, editItem }) {
 						<div className="min-h-10 mb-2 bg-white px-3 py-2 rounded-md shadow-sm">
 							<RichViewer deltaString={selectedItem.oncall_prefs} styling="off" />
 						</div>
-						{/*<p className="min-h-10 mb-2 bg-white px-3 py-2 rounded-md shadow-sm">{selectedItem.oncall_prefs}</p>*/}
 					</div>
 				</div>
 				
@@ -194,34 +191,7 @@ export default function InfoPanel({ selectedItem, setSelectedItem, editItem }) {
 				<div className="min-h-10 mb-2 bg-white rounded-md shadow-sm overflow-auto scrollbar-thin">
 					{rules.map(rule => (
 						<div key={rule.id} className="py-2 px-3 w-full bg-white outline-1 outline-gray-200">
-							{/*{rule.rule}*/}
 							<RichViewer deltaString={rule.rule} styling="off" />
-						</div>
-					))}
-				</div>
-
-				{/* Training Requirements */}
-				<label className="text-sm">Training Requirements</label>
-				<div className="min-h-10 mb-2 bg-white rounded-md shadow-sm overflow-auto scrollbar-thin">
-					{trainings.map(training => (
-						<div key={training.id}>
-							<div
-								className="cursor-pointer flex py-2 px-3 w-full bg-white outline-1 outline-gray-200"
-								onClick={() => {
-									const desc = document.getElementById(`desc_${training.id}`);
-									const arrw = document.getElementById(`arrow_${training.id}`);
-									arrw.innerHTML = desc.hidden ? '⮟' : '⮜'
-									desc.hidden = !desc.hidden;
-								}}
-							>
-								{/*<div>{training.name}</div>*/}
-								<RichViewer deltaString={training.name} styling="off" />
-								<div id={`arrow_${training.id}`} className="ml-auto my-auto text-sm text-gray-400">⮜</div>
-							</div>
-							<div hidden id={`desc_${training.id}`} className="py-2 pl-5 pr-3 w-full bg-gray-100 text-sm">
-								<RichViewer deltaString={training.description} styling="off" />
-								{/*{training.description}*/}
-							</div>
 						</div>
 					))}
 				</div>
@@ -240,13 +210,35 @@ export default function InfoPanel({ selectedItem, setSelectedItem, editItem }) {
 									desc.hidden = !desc.hidden;
 								}}
 							>
-								{/*<div>{blurb.name}</div>*/}
 								<RichViewer deltaString={blurb.name} styling="off" />
 								<div id={`arrow_${blurb.id}`} className="ml-auto my-auto text-sm text-gray-400">⮜</div>
 							</div>
 							<div hidden id={`desc_${blurb.id}`} className="py-2 pl-5 pr-3 w-full bg-gray-100 text-sm">
 								<RichViewer deltaString={blurb.description} styling="off" />
-								{/*{blurb.description}*/}
+							</div>
+						</div>
+					))}
+				</div>
+
+				{/* Training Requirements */}
+				<label className="text-sm">Training Requirements</label>
+				<div className="min-h-10 mb-2 bg-white rounded-md shadow-sm overflow-auto scrollbar-thin">
+					{trainings.map(training => (
+						<div key={training.id}>
+							<div
+								className="cursor-pointer flex py-2 px-3 w-full bg-white outline-1 outline-gray-200"
+								onClick={() => {
+									const desc = document.getElementById(`desc_${training.id}`);
+									const arrw = document.getElementById(`arrow_${training.id}`);
+									arrw.innerHTML = desc.hidden ? '⮟' : '⮜'
+									desc.hidden = !desc.hidden;
+								}}
+							>
+								<RichViewer deltaString={training.name} styling="off" />
+								<div id={`arrow_${training.id}`} className="ml-auto my-auto text-sm text-gray-400">⮜</div>
+							</div>
+							<div hidden id={`desc_${training.id}`} className="py-2 pl-5 pr-3 w-full bg-gray-100 text-sm">
+								<RichViewer deltaString={training.description} styling="off" />
 							</div>
 						</div>
 					))}
@@ -310,7 +302,6 @@ export default function InfoPanel({ selectedItem, setSelectedItem, editItem }) {
 				<div className="min-h-10 mb-2 bg-white px-3 py-2 rounded-md shadow-sm">
 					<RichViewer deltaString={selectedItem.preferences} styling="off" />
 				</div>
-				{/*<p className="min-h-10 mb-2 bg-white px-3 py-2 rounded-md shadow-sm">{selectedItem.preferences}</p>*/}
 				
 				{/* Pharmacies */}
 				<label className="text-sm">Pharmacies</label>
