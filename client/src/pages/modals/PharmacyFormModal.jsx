@@ -124,18 +124,18 @@ export default function PharmacyFormModal({ isOpen, onClose, onSubmit, contacts 
 						setSelectedRules={setSelectedRules}
 					/>
 
-					{/* Required Training */}
-					<ModalTrainings
-						ref={trainingsRef}
-						selectedTrainings={selectedTrainings}
-						setSelectedTrainings={setSelectedTrainings}
-					/>
-
 					{/* VN Instructions (Blurbs) */}
 					<ModalBlurbs
 						ref={blurbsRef}
 						selectedBlurbs={selectedBlurbs}
 						setSelectedBlurbs={setSelectedBlurbs}
+					/>
+
+					{/* Required Training */}
+					<ModalTrainings
+						ref={trainingsRef}
+						selectedTrainings={selectedTrainings}
+						setSelectedTrainings={setSelectedTrainings}
 					/>
 
 					{/* Pharmacy Contacts */}

@@ -217,7 +217,7 @@ const ModalBlurbs = forwardRef(({selectedBlurbs, setSelectedBlurbs}, ref) => {
 			<div className="flex w-full rounded-md">
 				<button
 					tabIndex='-1' type="button"
-					onClick={() => setSocActive(!socActive)}
+					onClick={() => { setSocActive(!socActive); if (!socActive) setFuActive(false); }}
 					className={
 						`cursor-pointer rounded-l-md w-12 border border-gray-300 border-r-gray-300/50 ${
 							socActive ? 'bg-cyan-500/60 text-white font-bold' : 'bg-gray-100 text-gray-400'
@@ -226,7 +226,7 @@ const ModalBlurbs = forwardRef(({selectedBlurbs, setSelectedBlurbs}, ref) => {
 				>SOC</button>
 				<button
 					tabIndex='-1' type="button"
-					onClick={() => setFuActive(!fuActive)}
+					onClick={() => { setFuActive(!fuActive); if (!fuActive) setSocActive(false); }}
 					className={
 						`cursor-pointer w-12 border-y border-gray-300 ${
 							fuActive ? 'bg-cyan-500/60 text-white font-bold' : 'bg-gray-100 text-gray-400'
