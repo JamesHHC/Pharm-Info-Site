@@ -15,7 +15,10 @@ export default {
 #### Required files:
 `server/.env`
 ```env
-DATABASE_URL=postgresql://user:password@localhost:PORT/pharmacydb
+PORT=XX
+DATABASE_URL=postgresql://user:password@localhost:port/pharmacydb
+JWT_SECRET=XX
+REFRESH_SECRET=XX
 ```
 
 ## Database

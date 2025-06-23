@@ -1,12 +1,17 @@
 // React
 import { useState, useEffect } from 'react';
 
+// Auth
+import { useAuth } from '../auth/AuthContext';
+import { login as doLogin } from '../auth/auth';
+
 // Content
 import PharmacyFormModal from './modals/PharmacyFormModal';
 import ContactFormModal from './modals/ContactFormModal';
 import InfoPanel from './content/InfoPanel';
 import PharmacyEditModal from './modals/PharmacyEditModal';
 import ContactEditModal from './modals/ContactEditModal';
+import UserModal from './modals/UserModal';
 
 // Assets
 import logo from '../assets/logo_bluegray.svg';
@@ -18,19 +23,27 @@ const serverIp = config.server_ip;
 const serverPort = config.server_port;
 
 function Home() {
+	// User/auth stuff
+	const { user, setUser, logout, loading } = useAuth();
+
 	// For tabs/search bar
 	const [activeTab, setActiveTab] = useState('pharmacies');
 	const [searchTerm, setSearchTerm] = useState('');
+
 	// For pharmacy/contact lists
 	const [pharmacies, setPharmacies] = useState([]);
 	const [contacts, setContacts] = useState([]);
+
 	// For modals
 	const [showPharmacyModal, setShowPharmacyModal] = useState(false);
 	const [showContactModal, setShowContactModal] = useState(false);
 	const [showPharmacyEditModal, setShowPharmacyEditModal] = useState(false);
 	const [showContactEditModal, setShowContactEditModal] = useState(false);
+	const [showUserModal, setShowUserModal] = useState(false);
+
 	// Selected list item
 	const [selectedItem, setSelectedItem] = useState(null);
+
 	// Sidebar state
 	const [showSidebar, setShowSidebar] = useState(window.innerWidth > 1024);
 
@@ -113,7 +126,10 @@ function Home() {
 							{/* HHC logo */}
 							<img src={logo} alt="logo" className="h-14"/>
 							{/* Profile icon */}
-							<div className="flex cursor-pointer ml-auto my-auto h-10 w-10 rounded-full hover:bg-gray-200/70 border-2 border-slate-700/70">
+							<div
+								onClick={() => setShowUserModal(true)}
+								className={`${user ? 'bg-cyan-800/30 hover:bg-cyan-800/40' : 'hover:bg-gray-200/70'} flex cursor-pointer ml-auto my-auto h-10 w-10 rounded-full border-2 border-slate-700/70`}
+							>
 								<p className="noselect m-auto text-slate-700/70"><UserIcon/></p>
 							</div>
 						</div>
@@ -154,13 +170,13 @@ function Home() {
 								className="h-full w-full px-4 border border-gray-300 rounded-md focus:outline-cyan-500/60 shadow-sm"
 							/>
 							{/* Create Button */}
-							<button
+							{hasRole(user, ['admin']) && <button
 								tabIndex='-1'
 								onClick={handleAdd}
 								className="cursor-pointer w-12 h-10.5 text-4xl shadow-sm text-teal-600/60 font-medium border-2 border-teal-600/60 rounded-md hover:border-0 hover:text-white hover:bg-teal-600/60"
 							>
 								<span className="relative bottom-[5px]">+</span>
-							</button>
+							</button>}
 						</div>
 						{/* Tab Content */}
 						<div tabIndex='-1' className="flex-1 overflow-auto rounded-md scrollbar-thin p-2 bg-gray-200 border border-gray-200 inset-shadow-sm">
@@ -228,6 +244,17 @@ function Home() {
 				</div>
 			</div>
 		</div>
+
+		{/* User modal */}
+		<UserModal
+			isOpen={showUserModal}
+			user={user}
+			setUser={setUser}
+			onClose={() => {
+				setShowUserModal(false);
+			}}
+		/>
+
 		{/* Edit pharmacy modal */}
 		<PharmacyEditModal
 			isOpen={showPharmacyEditModal}
@@ -293,6 +320,11 @@ function Home() {
 	function handleAdd(){
 		if (activeTab === 'pharmacies') setShowPharmacyModal(true);
 		else if (activeTab === 'contacts') setShowContactModal(true);
+	}
+
+	// Check if user has any listed roles
+	function hasRole(user, roles = []) {
+		return roles.includes(user?.role);
 	}
 }
 

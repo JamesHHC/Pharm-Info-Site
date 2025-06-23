@@ -1,19 +1,19 @@
-import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom'
-import Home from './pages/Home'
+import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
+import { AuthProvider } from './auth/AuthContext';
+import Home from './pages/Home';
+import NotFound from './pages/NotFound';
 
 function App() {
-	/*
-	<div className="nav">
-		<Link to="/">Home</Link> | <Link to="/about">About</Link>
-	</div>
-	*/
 	return (
-		<Router>
-			<Routes>
-				<Route path="/" element={<Home />} />
-			</Routes>
-		</Router>
-	)
+		<AuthProvider>
+			<Router>
+				<Routes>
+					<Route path="/" element={<Home />} />
+					<Route path="*" element={<NotFound />} />
+				</Routes>
+			</Router>
+		</AuthProvider>
+	);
 }
 
-export default App
+export default App;
