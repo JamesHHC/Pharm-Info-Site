@@ -1,4 +1,5 @@
 const db = require('../db');
+const check_role = require('./check_role');
 
 // Get all contacts
 const getContacts = async (req, res) => {
@@ -17,7 +18,7 @@ const newContact = async (req, res) => {
 	const { name, email, phone, title, preferences, dnc, intake_only, contact_type } = req.body;
 	try {
 		// Validate user access level
-		if (req.user.role !== 'admin' && req.user.role !== 'editor')
+		if (check_role(req.user.role, 'editor'))
 			return res.status(403).json({ error: 'Insufficient permissions' });
 
 		const result = await db.query(
@@ -57,7 +58,7 @@ const deleteContact = async (req, res) => {
 	const id = req.query.id;
 	try {
 		// Validate user access level
-		if (req.user.role !== 'admin')
+		if (check_role(req.user.role, 'superadmin'))
 			return res.status(403).json({ error: 'Insufficient permissions' });
 
 		await db.query(`DELETE FROM pharmacy_contacts WHERE contact_id = ($1)`, [id]);
@@ -75,7 +76,7 @@ const updateContact = async (req, res) => {
 	const { id, name, email, phone, title, preferences, dnc, intake_only, contact_type } = req.body;
 	try {
 		// Validate user access level
-		if (req.user.role !== 'admin' && req.user.role !== 'editor')
+		if (check_role(req.user.role, 'editor'))
 			return res.status(403).json({ error: 'Insufficient permissions' });
 		
 		const result = await db.query(
@@ -93,10 +94,33 @@ const updateContact = async (req, res) => {
 	}
 };
 
+// Update contact active status
+const contactActive = async (req, res) => {
+	const { id, active } = req.body;
+	try {
+		// Validate user access level
+		if (check_role(req.user.role, 'editor'))
+			return res.status(403).json({ error: 'Insufficient permissions' });
+
+		const result = await db.query(`
+			UPDATE contacts
+				SET active = $2
+				WHERE id = $1`,
+			[id, active]
+		);
+		res.status(201).send(active ? 'Contact activated' : 'Contact archived');
+	}
+	catch (err) {
+		console.error('Error updating contact active status:', err);
+		res.status(500).send('Server error');
+	}
+};
+
 module.exports = {
 	getContacts,
 	newContact,
 	getSomeContacts,
 	deleteContact,
 	updateContact,
+	contactActive,
 };

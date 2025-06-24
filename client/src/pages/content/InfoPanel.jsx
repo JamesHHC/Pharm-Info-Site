@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 
 // Auth
 import { useAuth } from '../../auth/AuthContext';
+import { hasMinPermission } from '../../auth/checkRole';
 
 // Content
 import RichViewer from '../components/RichViewer';
@@ -161,7 +162,7 @@ export default function InfoPanel({ selectedItem, setSelectedItem, editItem }) {
 				<div className="flex mt-[-6px] mb-[-4px]">
 					<p className="title">{selectedItem.name}</p>
 					{/* Edit button */}
-					{hasRole(user, ['admin', 'editor']) && <span onClick={handleEdit} className="cursor-pointer edit-icon h-full my-auto ml-2 text-[24px]"></span>}
+					{hasMinPermission(user, 'editor') && <span onClick={handleEdit} className="cursor-pointer edit-icon h-full my-auto ml-2 text-[24px]"></span>}
 				</div>
 			</div>
 			{/* Pharmacy Details/Info */}
@@ -325,10 +326,5 @@ export default function InfoPanel({ selectedItem, setSelectedItem, editItem }) {
 				</div>
 			</div>
 		</>);
-	}
-
-	// Check if user has any listed roles
-	function hasRole(user, roles = []) {
-		return roles.includes(user?.role);
 	}
 }

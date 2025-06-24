@@ -1,4 +1,5 @@
 const db = require('../db');
+const check_role = require('./check_role');
 
 // Get all pharmacy rules
 const getPharmRules = async (req, res) => {
@@ -22,7 +23,7 @@ const newPharmRule = async (req, res) => {
 	const { pharmacy_id, rule_ids } = req.body;
 	try {
 		// Validate user access level
-		if (req.user.role !== 'admin' && req.user.role !== 'editor')
+		if (check_role(req.user.role, 'editor'))
 			return res.status(403).json({ error: 'Insufficient permissions' });
 
 		// Construct values in format ($1, $2), ($1, $3), etc...
@@ -47,7 +48,7 @@ const updatePharmRules = async (req, res) => {
 	const { pharmacy_id, rule_ids } = req.body;
 	try {
 		// Validate user access level
-		if (req.user.role !== 'admin' && req.user.role !== 'editor')
+		if (check_role(req.user.role, 'editor'))
 			return res.status(403).json({ error: 'Insufficient permissions' });
 		
 		// Check db for existing id pairs

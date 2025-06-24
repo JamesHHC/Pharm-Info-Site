@@ -3,6 +3,7 @@ import React, { useEffect, useState, useRef } from 'react';
 
 // Auth
 import { useAuth } from '../../auth/AuthContext';
+import { hasMinPermission } from '../../auth/checkRole';
 
 // Content
 import ModalRules from './modal-content/ModalRules';
@@ -135,7 +136,7 @@ export default function PharmacyFormModal({ isOpen, onClose, onSubmit, contacts 
 					/>
 
 					{/* Editable by admin only */}
-					{hasRole(user, ['admin']) && <>
+					{hasMinPermission(user, 'admin') && <>
 						{/* VN Instructions (Blurbs) */}
 						<ModalBlurbs
 							ref={blurbsRef}
@@ -228,10 +229,5 @@ export default function PharmacyFormModal({ isOpen, onClose, onSubmit, contacts 
 			},
 			body: JSON.stringify({ pharmacy_id: pharmId, contact_ids: contactIds }),
 		});
-	}
-
-	// Check if user has any listed roles
-	function hasRole(user, roles = []) {
-		return roles.includes(user?.role);
 	}
 }

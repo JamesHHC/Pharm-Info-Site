@@ -1,6 +1,10 @@
 // React
 import React, { useEffect, useState, useRef, forwardRef, useImperativeHandle } from 'react';
 
+// Auth
+import { useAuth } from '../../../auth/AuthContext';
+import { hasMinPermission } from '../../../auth/checkRole';
+
 // Content
 import TrashIcon from '../../../assets/icons/TrashIcon';
 import RichTextarea from '../../components/RichTextarea';
@@ -15,6 +19,9 @@ const serverIp = config.server_ip;
 const serverPort = config.server_port;
 
 const ModalRules = forwardRef(({selectedRules, setSelectedRules}, ref) => {
+	// User/auth stuff
+	const { user } = useAuth();
+
 	const [loadingRules, setLoadingRules] = useState(false);
 	const [rules, setRules] = useState([]);
 	const [searchedRule, setSearchedRule] = useState('');
@@ -229,9 +236,12 @@ const ModalRules = forwardRef(({selectedRules, setSelectedRules}, ref) => {
 					options="slim"
 				/>
 				<div className="flex justify-end mt-2">
-					<button tabIndex="-1" type="button" onClick={deleteRule} className="cursor-pointer mr-auto px-4 py-2 bg-red-800/20 text-red-900 hover:bg-red-800/30 rounded-md">
-						<TrashIcon className="my-auto"/>
-					</button>
+					{/* Delete button */}
+					{ hasMinPermission(user, 'admin') &&
+						<button tabIndex="-1" type="button" onClick={deleteRule} className="cursor-pointer mr-auto px-4 py-2 bg-red-800/20 text-red-900 hover:bg-red-800/30 rounded-md">
+							<TrashIcon className="my-auto"/>
+						</button>
+					}
 					<button tabIndex="-1" type="button" onClick={cancelEditRule} className="cursor-pointer px-4 py-2 bg-gray-800/10 text-gray-400 hover:bg-gray-800/20 rounded-l-md">Cancel</button>
 					<button tabIndex="-1" type="button" onClick={submitEditRule} className="cursor-pointer px-4 py-2 bg-orange-600/60 hover:bg-orange-600/80 text-white rounded-r-md">Save</button>
 				</div>

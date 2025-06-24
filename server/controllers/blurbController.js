@@ -1,4 +1,5 @@
 const db = require('../db');
+const check_role = require('./check_role');
 
 // Get all blurbs
 const getBlurbs = async (req, res) => {
@@ -17,7 +18,7 @@ const newBlurb = async (req, res) => {
 	const { name, description, type } = req.body;
 	try {
 		// Validate user access level
-		if (req.user.role !== 'admin')
+		if (check_role(req.user.role, 'admin'))
 			return res.status(403).json({ error: 'Insufficient permissions' });
 
 		const result = await db.query(
@@ -56,7 +57,7 @@ const updateBlurb = async (req, res) => {
 	const { name, description, type, id } = req.body;
 	try {
 		// Validate user access level
-		if (req.user.role !== 'admin')
+		if (check_role(req.user.role, 'admin'))
 			return res.status(403).json({ error: 'Insufficient permissions' });
 
 		const result = await db.query(
@@ -78,7 +79,7 @@ const deleteBlurb = async (req, res) => {
 	const id = req.query.id;
 	try {
 		// Validate user access level
-		if (req.user.role !== 'admin')
+		if (check_role(req.user.role, 'superadmin'))
 			return res.status(403).json({ error: 'Insufficient permissions' });
 		
 		await db.query(

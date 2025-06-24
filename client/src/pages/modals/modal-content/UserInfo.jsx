@@ -1,17 +1,11 @@
 import React from 'react';
 import { logout } from '../../../auth/auth';
+import { userAccessString } from '../../../auth/checkRole';
 
 // Assets
 import logo from '../../../assets/logo_bluegray.svg';
 
 export default function UserInfo({ onClose, user, setUser }) {
-
-	function userAccess() {
-		if (user?.role === 'admin') return 'Full edit access';
-		if (user?.role === 'editor') return 'General edit access';
-		return 'No edit access';
-	};
-
 	return (
 		<div className="min-w-70 max-w-150 text-[RGB(99,99,115)]">
 			{/* Header */}
@@ -27,7 +21,7 @@ export default function UserInfo({ onClose, user, setUser }) {
 			</div>
 			{/* Access level */}
 			<div className="flex">
-				<p className="mb-4 m-auto font-light">{userAccess()}</p>
+				<p className="mb-4 m-auto font-light">{userAccessString(user?.role)}</p>
 			</div>
 			{/* Buttons */}
 			<div className="flex-block">

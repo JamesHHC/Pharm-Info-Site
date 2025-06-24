@@ -1,9 +1,14 @@
 // React
 import React, { useEffect, useState, useRef } from 'react';
 
+// Auth
+import { useAuth } from '../../auth/AuthContext';
+import { hasMinPermission } from '../../auth/checkRole';
+
 // Content
 import ModalPharmacies from './modal-content/ModalPharmacies';
 import TrashIcon from '../../assets/icons/TrashIcon';
+import ArchiveIcon from '../../assets/icons/ArchiveIcon';
 import RichTextarea from '../components/RichTextarea';
 
 // Styles
@@ -15,6 +20,9 @@ const serverIp = config.server_ip;
 const serverPort = config.server_port;
 
 export default function ContactFormModal({ isOpen, onClose, onSubmit, pharmacies, openContact, setSelectedItem }) {
+	// User/auth stuff
+	const { user } = useAuth();
+
 	// For tracking form values
 	const [contName, setContName] = useState('');
 	const [contDNC, setContDNC] = useState(false);
@@ -111,6 +119,31 @@ export default function ContactFormModal({ isOpen, onClose, onSubmit, pharmacies
 					'Content-Type': 'application/json',
 					'Authorization': `Bearer ${token}`,
 				},
+			});
+			setSelectedItem(null);
+			resetForm();
+			onClose();
+		}
+	};
+
+	// Archive the contact currently being edited
+	const archiveContact = async() => {
+		const isActive = openContact.active;
+		const conf = confirm(`Are you sure you want to ${isActive ? 'archive' : 'activate'} this contact?\n\n${openContact.name}`);
+		if (conf) {
+			const activeBody = {
+				id: openContact.id,
+				active: !isActive, 
+			}
+			// Call db to update active status
+			const token = localStorage.getItem('token');
+			await fetch(`http://${serverIp}:${serverPort}/api/contacts/active`, {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+					'Authorization': `Bearer ${token}`,
+				},
+				body: JSON.stringify(activeBody),
 			});
 			setSelectedItem(null);
 			resetForm();
@@ -227,15 +260,41 @@ export default function ContactFormModal({ isOpen, onClose, onSubmit, pharmacies
 						pharmacies={pharmacies}
 					/>
 					
-					{/* Cancel/Submit Buttons */}
-					<div className="flex justify-end">
-						<button tabIndex="-1" type="button" onClick={deleteContact} className="cursor-pointer mr-auto px-4 py-2 bg-red-800/20 text-red-900 hover:bg-red-800/30 rounded-md">
-							<TrashIcon className="my-auto"/>
+					{/* Buttons */}
+					<div className="flex">
+						{/* Archive/Delete */}
+						<div className="flex mr-auto">
+							{hasMinPermission(user, 'superadmin') && <button
+								tabIndex="-1"
+								type="button"
+								onClick={deleteContact}
+								className="mr-1 cursor-pointer flex justify-center items-center w-10 py-2 bg-red-800/20 text-red-900 hover:bg-red-800/30 rounded-md"
+							>
+								<TrashIcon className="my-auto"/>
+							</button>}
+							<button
+								tabIndex="-1"
+								type="button"
+								onClick={archiveContact}
+								className="cursor-pointer flex justify-center items-center w-10 py-2 bg-blue-800/20 text-blue-900 hover:bg-blue-800/30 rounded-md"
+							>
+								<ArchiveIcon className="my-auto" />
+							</button>
+						</div>
+						<button
+							type="button"
+							onClick={() => {onClose(); resetForm();}}
+							className="cursor-pointer px-4 py-2 bg-gray-200 text-gray-400 hover:bg-gray-300 rounded-l-md focus:outline-amber-500/60"
+						>
+							Cancel
 						</button>
-						<button type="button" onClick={() => {onClose(); resetForm();}} className="cursor-pointer px-4 py-2 bg-gray-200 text-gray-400 hover:bg-gray-300 rounded-l-md focus:outline-amber-500/60">Cancel</button>
-						<button type="submit" className="cursor-pointer px-4 py-2 bg-orange-600/60 hover:bg-orange-600/80 text-white rounded-r-md focus:outline-amber-500/60">Save</button>
+						<button
+							type="submit"
+							className="cursor-pointer px-4 py-2 bg-orange-600/60 hover:bg-orange-600/80 text-white rounded-r-md focus:outline-amber-500/60"
+						>
+							Save
+						</button>
 					</div>
-
 				</form>
 			</div>
 		</div>

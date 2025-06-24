@@ -1,4 +1,5 @@
 const db = require('../db');
+const check_role = require('./check_role');
 
 // Get all rules
 const getRules = async (req, res) => {
@@ -17,7 +18,7 @@ const newRule = async (req, res) => {
 	const { rule } = req.body;
 	try {
 		// Validate user access level
-		if (req.user.role !== 'admin' && req.user.role !== 'editor')
+		if (check_role(req.user.role, 'editor'))
 			return res.status(403).json({ error: 'Insufficient permissions' });
 
 		const result = await db.query(
@@ -56,7 +57,7 @@ const updateRule = async (req, res) => {
 	const { rule, id } = req.body;
 	try {
 		// Validate user access level
-		if (req.user.role !== 'admin' && req.user.role !== 'editor')
+		if (check_role(req.user.role, 'editor'))
 			return res.status(403).json({ error: 'Insufficient permissions' });
 
 		const result = await db.query(
@@ -78,7 +79,7 @@ const deleteRule = async (req, res) => {
 	const id = req.query.id;
 	try {
 		// Validate user access level
-		if (req.user.role !== 'admin')
+		if (check_role(req.user.role, 'admin'))
 			return res.status(403).json({ error: 'Insufficient permissions' });
 
 		await db.query(

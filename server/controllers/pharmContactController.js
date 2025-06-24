@@ -1,4 +1,5 @@
 const db = require('../db');
+const check_role = require('./check_role');
 
 // PHARMACY-CONTACT //////////////////////////////////////////////////////
 
@@ -24,7 +25,7 @@ const newPharmContacts = async (req, res) => {
 	const { pharmacy_id, contact_ids } = req.body;
 	try {
 		// Validate user access level
-		if (req.user.role !== 'admin' && req.user.role !== 'editor')
+		if (check_role(req.user.role, 'editor'))
 			return res.status(403).json({ error: 'Insufficient permissions' });
 
 		// Construct values in format ($1, $2), ($1, $3), etc...
@@ -49,7 +50,7 @@ const updatePharmContacts = async (req, res) => {
 	const { pharmacy_id, contact_ids } = req.body;
 	try {
 		// Validate user access level
-		if (req.user.role !== 'admin' && req.user.role !== 'editor')
+		if (check_role(req.user.role, 'editor'))
 			return res.status(403).json({ error: 'Insufficient permissions' });
 
 		// Check db for existing id pairs
@@ -121,7 +122,7 @@ const newContactPharms = async (req, res) => {
 	const { contact_id, pharmacy_ids } = req.body;
 	try {
 		// Validate user access level
-		if (req.user.role !== 'admin' && req.user.role !== 'editor')
+		if (check_role(req.user.role, 'editor'))
 			return res.status(403).json({ error: 'Insufficient permissions' });
 
 		// Construct values in format ($1, $2), ($1, $3), etc...
@@ -146,7 +147,7 @@ const updateContactPharms = async (req, res) => {
 	const { contact_id, pharmacy_ids } = req.body;
 	try {
 		// Validate user access level
-		if (req.user.role !== 'admin' && req.user.role !== 'editor')
+		if (check_role(req.user.role, 'editor'))
 			return res.status(403).json({ error: 'Insufficient permissions' });
 		
 		// Check db for existing id pairs

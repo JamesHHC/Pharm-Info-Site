@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 
 // Auth
 import { useAuth } from '../auth/AuthContext';
+import { hasMinPermission } from '../auth/checkRole';
 
 // Content
 import PharmacyFormModal from './modals/PharmacyFormModal';
@@ -169,7 +170,7 @@ function Home() {
 								className="h-full w-full px-4 border border-gray-300 rounded-md focus:outline-cyan-500/60 shadow-sm"
 							/>
 							{/* Create Button */}
-							{hasRole(user, ['admin', 'editor']) && <button
+							{hasMinPermission(user, 'editor') && <button
 								tabIndex='-1'
 								onClick={handleAdd}
 								className="cursor-pointer w-12 h-10.5 text-4xl shadow-sm text-teal-600/60 font-medium border-2 border-teal-600/60 rounded-md hover:border-0 hover:text-white hover:bg-teal-600/60"
@@ -319,11 +320,6 @@ function Home() {
 	function handleAdd(){
 		if (activeTab === 'pharmacies') setShowPharmacyModal(true);
 		else if (activeTab === 'contacts') setShowContactModal(true);
-	}
-
-	// Check if user has any listed roles
-	function hasRole(user, roles = []) {
-		return roles.includes(user?.role);
 	}
 }
 

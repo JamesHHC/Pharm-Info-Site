@@ -109,6 +109,7 @@ export default function UserLogin({ onClose, setUser }) {
 						type="text"
 						placeholder="Enter your username..."
 						className="w-full border border-gray-300 p-2 rounded"
+						autoComplete="off"
 					/>
 				</div>
 				{/* Password input */}
@@ -121,6 +122,7 @@ export default function UserLogin({ onClose, setUser }) {
 						type="password"
 						placeholder="Enter your password..."
 						className="w-full border border-gray-300 p-2 rounded"
+						autoComplete="off"
 					/>
 				</div>
 				{/* Password confirmation input */}
@@ -132,6 +134,7 @@ export default function UserLogin({ onClose, setUser }) {
 						type="password"
 						placeholder="Re-enter your password..."
 						className="w-full border border-gray-300 p-2 rounded"
+						autoComplete="off"
 					/>
 					<p id="newAccError" className="text-sm text-red-500 font-light"></p>
 				</div>}
