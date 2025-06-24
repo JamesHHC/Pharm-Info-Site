@@ -1,6 +1,9 @@
 // React
 import React, { useEffect, useState } from 'react';
 
+// Auth
+import { useAuth } from '../../auth/AuthContext';
+
 // Content
 import RichViewer from '../components/RichViewer';
 
@@ -10,6 +13,9 @@ const serverIp = config.server_ip;
 const serverPort = config.server_port;
 
 export default function InfoPanel({ selectedItem, setSelectedItem, editItem }) {
+	// User/auth stuff
+	const { user } = useAuth();
+
 	const [rules, setRules] = useState([]);
 	const [trainings, setTrainings] = useState([]);
 	const [blurbs, setBlurbs] = useState([]);
@@ -155,7 +161,7 @@ export default function InfoPanel({ selectedItem, setSelectedItem, editItem }) {
 				<div className="flex mt-[-6px] mb-[-4px]">
 					<p className="title">{selectedItem.name}</p>
 					{/* Edit button */}
-					<span onClick={handleEdit} className="cursor-pointer edit-icon h-full my-auto ml-2 text-[24px]"></span>
+					{hasRole(user, ['admin', 'editor']) && <span onClick={handleEdit} className="cursor-pointer edit-icon h-full my-auto ml-2 text-[24px]"></span>}
 				</div>
 			</div>
 			{/* Pharmacy Details/Info */}
@@ -275,7 +281,7 @@ export default function InfoPanel({ selectedItem, setSelectedItem, editItem }) {
 						{selectedItem.name}
 					</p>
 					{/* Edit button */}
-					<p onClick={handleEdit} className="cursor-pointer edit-icon h-full my-auto ml-2 text-[24px]"></p>
+					{hasRole(user, ['admin', 'editor']) && <p onClick={handleEdit} className="cursor-pointer edit-icon h-full my-auto ml-2 text-[24px]"></p>}
 				</div>
 				{/* Title */}
 				<p className="mt-[-8px] mb-[-4px] text-lg font-light">{selectedItem.title}</p>
@@ -319,5 +325,10 @@ export default function InfoPanel({ selectedItem, setSelectedItem, editItem }) {
 				</div>
 			</div>
 		</>);
+	}
+
+	// Check if user has any listed roles
+	function hasRole(user, roles = []) {
+		return roles.includes(user?.role);
 	}
 }

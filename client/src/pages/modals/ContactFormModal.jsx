@@ -46,9 +46,13 @@ export default function ContactFormModal({ isOpen, onClose, onSubmit, pharmacies
 			return;
 		}
 		// Send info to db
+		const token = localStorage.getItem('token');
 		const res = await fetch(`http://${serverIp}:${serverPort}/api/contacts`, {
 			method: 'POST',
-			headers: { 'Content-Type': 'application/json' },
+			headers: {
+				'Content-Type': 'application/json',
+				'Authorization': `Bearer ${token}`,
+			},
 			body: JSON.stringify(newContact),
 		});
 		const newCont = await res.json();
@@ -164,9 +168,13 @@ export default function ContactFormModal({ isOpen, onClose, onSubmit, pharmacies
 	async function associatePharmacy(contactId, pharmacyIds) {
 		if (pharmacyIds.length == 0) return;
 		// Send info to db
+		const token = localStorage.getItem('token');
 		const res = await fetch(`http://${serverIp}:${serverPort}/api/pharmcontacts/pharmacies`, {
 			method: 'POST',
-			headers: { 'Content-Type': 'application/json' },
+			headers: {
+				'Content-Type': 'application/json',
+				'Authorization': `Bearer ${token}`,
+			},
 			body: JSON.stringify({ contact_id: contactId, pharmacy_ids: pharmacyIds }),
 		});
 	}

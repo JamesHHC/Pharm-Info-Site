@@ -8,15 +8,16 @@ const {
 	newContactPharms,
 	updateContactPharms,
 } = require('../controllers/pharmContactController');
+const { authenticate } = require('../middleware/authMiddleware');
 
 // One pharmacy, multiple contacts
 router.get('/contacts', getPharmContacts);
-router.post('/contacts', newPharmContacts);
-router.patch('/contacts', updatePharmContacts);
+router.post('/contacts', authenticate, newPharmContacts);
+router.patch('/contacts', authenticate, updatePharmContacts);
 
 // One contact, multiple pharmacies
 router.get('/pharmacies', getContactPharms);
-router.post('/pharmacies', newContactPharms);
-router.patch('/pharmacies', updateContactPharms);
+router.post('/pharmacies', authenticate, newContactPharms);
+router.patch('/pharmacies', authenticate, updateContactPharms);
 
 module.exports = router;

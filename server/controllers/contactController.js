@@ -16,6 +16,10 @@ const getContacts = async (req, res) => {
 const newContact = async (req, res) => {
 	const { name, email, phone, title, preferences, dnc, intake_only, contact_type } = req.body;
 	try {
+		// Validate user access level
+		if (req.user.role !== 'admin' && req.user.role !== 'editor')
+			return res.status(403).json({ error: 'Insufficient permissions' });
+
 		const result = await db.query(
 			`INSERT INTO contacts (name, email, phone, title, preferences, dnc, intake_only, contact_type)
 				VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
@@ -52,6 +56,10 @@ const getSomeContacts = async (req, res) => {
 const deleteContact = async (req, res) => {
 	const id = req.query.id;
 	try {
+		// Validate user access level
+		if (req.user.role !== 'admin')
+			return res.status(403).json({ error: 'Insufficient permissions' });
+
 		await db.query(`DELETE FROM pharmacy_contacts WHERE contact_id = ($1)`, [id]);
 		await db.query(`DELETE FROM contacts WHERE id = ($1)`, [id]);
 		res.status(201).json('Contact deleted!');
@@ -66,6 +74,10 @@ const deleteContact = async (req, res) => {
 const updateContact = async (req, res) => {
 	const { id, name, email, phone, title, preferences, dnc, intake_only, contact_type } = req.body;
 	try {
+		// Validate user access level
+		if (req.user.role !== 'admin' && req.user.role !== 'editor')
+			return res.status(403).json({ error: 'Insufficient permissions' });
+		
 		const result = await db.query(
 			`UPDATE contacts SET (name, email, phone, title, preferences, dnc, intake_only, contact_type) =
 				($2, $3, $4, $5, $6, $7, $8, $9)

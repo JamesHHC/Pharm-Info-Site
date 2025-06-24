@@ -23,6 +23,10 @@ const getPharmContacts = async (req, res) => {
 const newPharmContacts = async (req, res) => {
 	const { pharmacy_id, contact_ids } = req.body;
 	try {
+		// Validate user access level
+		if (req.user.role !== 'admin' && req.user.role !== 'editor')
+			return res.status(403).json({ error: 'Insufficient permissions' });
+
 		// Construct values in format ($1, $2), ($1, $3), etc...
 		const values = contact_ids.map((_, i) => `($1, $${i + 2})`).join(', ');
 		const ids = [pharmacy_id, ...contact_ids];
@@ -44,6 +48,10 @@ const newPharmContacts = async (req, res) => {
 const updatePharmContacts = async (req, res) => {
 	const { pharmacy_id, contact_ids } = req.body;
 	try {
+		// Validate user access level
+		if (req.user.role !== 'admin' && req.user.role !== 'editor')
+			return res.status(403).json({ error: 'Insufficient permissions' });
+
 		// Check db for existing id pairs
 		const check = await db.query(
 			`SELECT contact_id FROM pharmacy_contacts
@@ -112,6 +120,10 @@ const getContactPharms = async (req, res) => {
 const newContactPharms = async (req, res) => {
 	const { contact_id, pharmacy_ids } = req.body;
 	try {
+		// Validate user access level
+		if (req.user.role !== 'admin' && req.user.role !== 'editor')
+			return res.status(403).json({ error: 'Insufficient permissions' });
+
 		// Construct values in format ($1, $2), ($1, $3), etc...
 		const values = pharmacy_ids.map((_, i) => `($1, $${i + 2})`).join(', ');
 		const ids = [contact_id, ...pharmacy_ids];
@@ -133,6 +145,10 @@ const newContactPharms = async (req, res) => {
 const updateContactPharms = async (req, res) => {
 	const { contact_id, pharmacy_ids } = req.body;
 	try {
+		// Validate user access level
+		if (req.user.role !== 'admin' && req.user.role !== 'editor')
+			return res.status(403).json({ error: 'Insufficient permissions' });
+		
 		// Check db for existing id pairs
 		const check = await db.query(
 			`SELECT pharmacy_id FROM pharmacy_contacts

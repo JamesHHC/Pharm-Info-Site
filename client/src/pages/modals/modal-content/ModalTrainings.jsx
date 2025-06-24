@@ -114,9 +114,13 @@ const ModalTrainings = forwardRef(({selectedTrainings, setSelectedTrainings}, re
 		if (nTrain.name === '' || nTrain.description === '') return;
 		document.getElementById('new-training-form').hidden = true;
 		// Send info to db
+		const token = localStorage.getItem('token');
 		const res = await fetch(`http://${serverIp}:${serverPort}/api/training`, {
 			method: 'POST',
-			headers: { 'Content-Type': 'application/json' },
+			headers: {
+				'Content-Type': 'application/json',
+				'Authorization': `Bearer ${token}`,
+			},
 			body: JSON.stringify(nTrain),
 		});
 		const trainJson = await res.json();
@@ -147,9 +151,13 @@ const ModalTrainings = forwardRef(({selectedTrainings, setSelectedTrainings}, re
 		document.getElementById('edit-training-form').hidden = true;
 
 		// Send info to db
+		const token = localStorage.getItem('token');
 		await fetch(`http://${serverIp}:${serverPort}/api/training`, {
 			method: 'PUT',
-			headers: { 'Content-Type': 'application/json' },
+			headers: {
+				'Content-Type': 'application/json',
+				'Authorization': `Bearer ${token}`,
+			},
 			body: JSON.stringify({name: eName, description: eDesc, id: refTraining.id}),
 		});
 		fetchTrainings();
@@ -174,9 +182,13 @@ const ModalTrainings = forwardRef(({selectedTrainings, setSelectedTrainings}, re
 			// Remove id from selectedTrainings, if present
 			setSelectedTrainings(prevSelected => prevSelected.filter(tid => tid !== id));
 			// Call db to delete data
+			const token = localStorage.getItem('token');
 			await fetch(`http://${serverIp}:${serverPort}/api/training?id=${id}`, {
 				method: 'DELETE',
-				headers: { 'Content-Type': 'application/json' },
+				headers: {
+					'Content-Type': 'application/json',
+					'Authorization': `Bearer ${token}`,
+				},
 			});
 			fetchTrainings();
 		}

@@ -1,6 +1,9 @@
 // React
 import React, { useEffect, useState, useRef } from 'react';
 
+// Auth
+import { useAuth } from '../../auth/AuthContext';
+
 // Content
 import ModalRules from './modal-content/ModalRules';
 import ModalTrainings from './modal-content/ModalTrainings';
@@ -18,6 +21,9 @@ const serverIp = config.server_ip;
 const serverPort = config.server_port;
 
 export default function PharmacyFormModal({ isOpen, onClose, onSubmit, contacts, openPharmacy, setSelectedItem }) {
+	// User/auth stuff
+	const { user } = useAuth();
+
 	// For tracking form values
 	const [pharmName, setPharmName] = useState('');
 	const [pharmVerb, setPharmVerb] = useState(false);
@@ -97,9 +103,13 @@ export default function PharmacyFormModal({ isOpen, onClose, onSubmit, contacts,
 			return;
 		}
 		// Send info to db
+		const token = localStorage.getItem('token');
 		const res = await fetch(`http://${serverIp}:${serverPort}/api/pharmacies`, {
 			method: 'PUT',
-			headers: { 'Content-Type': 'application/json' },
+			headers: {
+				'Content-Type': 'application/json',
+				'Authorization': `Bearer ${token}`,
+			},
 			body: JSON.stringify(updatedPharmacy),
 		});
 		const updatedPharm = await res.json();
@@ -118,9 +128,13 @@ export default function PharmacyFormModal({ isOpen, onClose, onSubmit, contacts,
 		const conf = confirm(`Are you sure you want to delete this pharmacy?\n\n${openPharmacy.name}`);
 		if (conf) {
 			// Call db to delete data
+			const token = localStorage.getItem('token');
 			await fetch(`http://${serverIp}:${serverPort}/api/pharmacies?id=${id}`, {
 				method: 'DELETE',
-				headers: { 'Content-Type': 'application/json' },
+				headers: {
+					'Content-Type': 'application/json',
+					'Authorization': `Bearer ${token}`,
+				},
 			});
 			setSelectedItem(null);
 			resetForm();
@@ -190,19 +204,21 @@ export default function PharmacyFormModal({ isOpen, onClose, onSubmit, contacts,
 						setSelectedRules={setSelectedRules}
 					/>
 
-					{/* VN Instructions (Blurbs) */}
-					<ModalBlurbs
-						ref={blurbsRef}
-						selectedBlurbs={selectedBlurbs}
-						setSelectedBlurbs={setSelectedBlurbs}
-					/>
+					{hasRole(user, ['admin']) && <>
+						{/* VN Instructions (Blurbs) */}
+						<ModalBlurbs
+							ref={blurbsRef}
+							selectedBlurbs={selectedBlurbs}
+							setSelectedBlurbs={setSelectedBlurbs}
+						/>
 
-					{/* Required Training */}
-					<ModalTrainings
-						ref={trainingsRef}
-						selectedTrainings={selectedTrainings}
-						setSelectedTrainings={setSelectedTrainings}
-					/>
+						{/* Required Training */}
+						<ModalTrainings
+							ref={trainingsRef}
+							selectedTrainings={selectedTrainings}
+							setSelectedTrainings={setSelectedTrainings}
+						/>
+					</>}
 
 					{/* Pharmacy Contacts */}
 					<ModalContacts
@@ -229,9 +245,13 @@ export default function PharmacyFormModal({ isOpen, onClose, onSubmit, contacts,
 	// Update pharmacy_rules db based on selected rules
 	async function associateRules(pharmId, ruleIds) {
 		// Send info to db
+		const token = localStorage.getItem('token');
 		const res = await fetch(`http://${serverIp}:${serverPort}/api/pharmrules`, {
 			method: 'PATCH',
-			headers: { 'Content-Type': 'application/json' },
+			headers: {
+				'Content-Type': 'application/json',
+				'Authorization': `Bearer ${token}`,
+			},
 			body: JSON.stringify({ pharmacy_id: pharmId, rule_ids: ruleIds }),
 		});
 	}
@@ -239,9 +259,13 @@ export default function PharmacyFormModal({ isOpen, onClose, onSubmit, contacts,
 	// Update pharmacy_training db based on selected rules
 	async function associateTraining(pharmId, trainingIds) {
 		// Send info to db
+		const token = localStorage.getItem('token');
 		const res = await fetch(`http://${serverIp}:${serverPort}/api/pharmtraining`, {
 			method: 'PATCH',
-			headers: { 'Content-Type': 'application/json' },
+			headers: {
+				'Content-Type': 'application/json',
+				'Authorization': `Bearer ${token}`,
+			},
 			body: JSON.stringify({ pharmacy_id: pharmId, training_ids: trainingIds }),
 		});
 	}
@@ -249,9 +273,13 @@ export default function PharmacyFormModal({ isOpen, onClose, onSubmit, contacts,
 	// Update pharmacy_blurbs db based on selected blurbs
 	async function associateBlurbs(pharmId, blurbIds) {
 		// Send info to db
+		const token = localStorage.getItem('token');
 		const res = await fetch(`http://${serverIp}:${serverPort}/api/pharmblurbs`, {
 			method: 'PATCH',
-			headers: { 'Content-Type': 'application/json' },
+			headers: {
+				'Content-Type': 'application/json',
+				'Authorization': `Bearer ${token}`,
+			},
 			body: JSON.stringify({ pharmacy_id: pharmId, blurb_ids: blurbIds }),
 		});
 	}
@@ -259,9 +287,13 @@ export default function PharmacyFormModal({ isOpen, onClose, onSubmit, contacts,
 	// Update pharmacy_contacts db based on selected contacts
 	async function associateContact(pharmId, contactIds) {
 		// Send info to db
+		const token = localStorage.getItem('token');
 		const res = await fetch(`http://${serverIp}:${serverPort}/api/pharmcontacts/contacts`, {
 			method: 'PATCH',
-			headers: { 'Content-Type': 'application/json' },
+			headers: {
+				'Content-Type': 'application/json',
+				'Authorization': `Bearer ${token}`,
+			},
 			body: JSON.stringify({ pharmacy_id: pharmId, contact_ids: contactIds }),
 		});
 	}
@@ -292,5 +324,10 @@ export default function PharmacyFormModal({ isOpen, onClose, onSubmit, contacts,
 		const res = await fetch(`http://${serverIp}:${serverPort}/api/pharmcontacts/contacts?pharmacy_id=${id}`);
 		const data = await res.json();
 		return data.map(c => c.contact_id);
+	}
+
+	// Check if user has any listed roles
+	function hasRole(user, roles = []) {
+		return roles.includes(user?.role);
 	}
 }

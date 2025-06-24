@@ -8,6 +8,7 @@ export default function UserInfo({ onClose, user, setUser }) {
 
 	function userAccess() {
 		if (user?.role === 'admin') return 'Full edit access';
+		if (user?.role === 'editor') return 'General edit access';
 		return 'No edit access';
 	};
 

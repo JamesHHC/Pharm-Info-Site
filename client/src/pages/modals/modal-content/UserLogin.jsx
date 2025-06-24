@@ -62,6 +62,7 @@ export default function UserLogin({ onClose, setUser }) {
 				}
 				clearSignIn();
 				setNewAccount(false);
+				loadingLogin.hidden = true;
 				return alert('Account successfully created!');
 			}
 			catch (err) {
@@ -80,7 +81,8 @@ export default function UserLogin({ onClose, setUser }) {
 					return loginError.textContent = usrAcc.error;
 				}
 				const userData = await fetchUser();
-				return setUser(userData);
+				setUser(userData);
+				return onClose();
 			}
 			catch (err) {
 				loadingLogin.hidden = false;

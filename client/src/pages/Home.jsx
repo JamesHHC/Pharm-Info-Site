@@ -3,7 +3,6 @@ import { useState, useEffect } from 'react';
 
 // Auth
 import { useAuth } from '../auth/AuthContext';
-import { login as doLogin } from '../auth/auth';
 
 // Content
 import PharmacyFormModal from './modals/PharmacyFormModal';
@@ -24,7 +23,7 @@ const serverPort = config.server_port;
 
 function Home() {
 	// User/auth stuff
-	const { user, setUser, logout, loading } = useAuth();
+	const { user, setUser } = useAuth();
 
 	// For tabs/search bar
 	const [activeTab, setActiveTab] = useState('pharmacies');
@@ -170,7 +169,7 @@ function Home() {
 								className="h-full w-full px-4 border border-gray-300 rounded-md focus:outline-cyan-500/60 shadow-sm"
 							/>
 							{/* Create Button */}
-							{hasRole(user, ['admin']) && <button
+							{hasRole(user, ['admin', 'editor']) && <button
 								tabIndex='-1'
 								onClick={handleAdd}
 								className="cursor-pointer w-12 h-10.5 text-4xl shadow-sm text-teal-600/60 font-medium border-2 border-teal-600/60 rounded-md hover:border-0 hover:text-white hover:bg-teal-600/60"

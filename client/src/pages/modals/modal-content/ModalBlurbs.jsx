@@ -127,9 +127,13 @@ const ModalBlurbs = forwardRef(({selectedBlurbs, setSelectedBlurbs}, ref) => {
 
 		document.getElementById('new-blurb-form').hidden = true;
 		// Send info to db
+		const token = localStorage.getItem('token');
 		const res = await fetch(`http://${serverIp}:${serverPort}/api/blurbs`, {
 			method: 'POST',
-			headers: { 'Content-Type': 'application/json' },
+			headers: {
+				'Content-Type': 'application/json',
+				'Authorization': `Bearer ${token}`,
+			},
 			body: JSON.stringify(nBlurb),
 		});
 		const blurbJson = await res.json();
@@ -170,9 +174,13 @@ const ModalBlurbs = forwardRef(({selectedBlurbs, setSelectedBlurbs}, ref) => {
 
 		document.getElementById('edit-blurb-form').hidden = true;
 		// Send info to db
+		const token = localStorage.getItem('token');
 		await fetch(`http://${serverIp}:${serverPort}/api/blurbs`, {
 			method: 'PUT',
-			headers: { 'Content-Type': 'application/json' },
+			headers: {
+				'Content-Type': 'application/json',
+				'Authorization': `Bearer ${token}`,
+			},
 			body: JSON.stringify(uBody),
 		});
 		fetchBlurbs();
@@ -199,9 +207,13 @@ const ModalBlurbs = forwardRef(({selectedBlurbs, setSelectedBlurbs}, ref) => {
 			// Remove id from selectedBlurbs, if present
 			setSelectedBlurbs(prevSelected => prevSelected.filter(tid => tid !== id));
 			// Call db to delete data
+			const token = localStorage.getItem('token');
 			await fetch(`http://${serverIp}:${serverPort}/api/blurbs?id=${id}`, {
 				method: 'DELETE',
-				headers: { 'Content-Type': 'application/json' },
+				headers: {
+					'Content-Type': 'application/json',
+					'Authorization': `Bearer ${token}`,
+				},
 			});
 			fetchBlurbs();
 		}

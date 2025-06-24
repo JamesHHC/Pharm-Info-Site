@@ -16,6 +16,10 @@ const getRules = async (req, res) => {
 const newRule = async (req, res) => {
 	const { rule } = req.body;
 	try {
+		// Validate user access level
+		if (req.user.role !== 'admin' && req.user.role !== 'editor')
+			return res.status(403).json({ error: 'Insufficient permissions' });
+
 		const result = await db.query(
 			`INSERT INTO rules (rule)
 				VALUES ($1)
@@ -51,6 +55,10 @@ const getSomeRules = async (req, res) => {
 const updateRule = async (req, res) => {
 	const { rule, id } = req.body;
 	try {
+		// Validate user access level
+		if (req.user.role !== 'admin' && req.user.role !== 'editor')
+			return res.status(403).json({ error: 'Insufficient permissions' });
+
 		const result = await db.query(
 			`UPDATE rules
 				SET rule = ($1)
@@ -69,6 +77,10 @@ const updateRule = async (req, res) => {
 const deleteRule = async (req, res) => {
 	const id = req.query.id;
 	try {
+		// Validate user access level
+		if (req.user.role !== 'admin')
+			return res.status(403).json({ error: 'Insufficient permissions' });
+
 		await db.query(
 			`DELETE FROM pharmacy_rules
 				WHERE rules_id = ($1)`,

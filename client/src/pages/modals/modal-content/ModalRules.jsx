@@ -100,9 +100,13 @@ const ModalRules = forwardRef(({selectedRules, setSelectedRules}, ref) => {
 		document.getElementById('new-rule-form').hidden = true;
 
 		// Send info to db
+		const token = localStorage.getItem('token');
 		const res = await fetch(`http://${serverIp}:${serverPort}/api/rules`, {
 			method: 'POST',
-			headers: { 'Content-Type': 'application/json' },
+			headers: {
+				'Content-Type': 'application/json',
+				'Authorization': `Bearer ${token}`,
+			},
 			body: JSON.stringify({ rule: newRule }),
 		});
 		const ruleJson = await res.json();
@@ -126,9 +130,13 @@ const ModalRules = forwardRef(({selectedRules, setSelectedRules}, ref) => {
 		document.getElementById('edit-rule-form').hidden = true;
 
 		// Send info to db
+		const token = localStorage.getItem('token');
 		await fetch(`http://${serverIp}:${serverPort}/api/rules`, {
 			method: 'PUT',
-			headers: { 'Content-Type': 'application/json' },
+			headers: {
+				'Content-Type': 'application/json',
+				'Authorization': `Bearer ${token}`,
+			},
 			body: JSON.stringify({ rule: editedRule, id: refRule.id }),
 		});
 		fetchRules();
@@ -149,9 +157,13 @@ const ModalRules = forwardRef(({selectedRules, setSelectedRules}, ref) => {
 			// Remove id from selectedRules, if present
 			setSelectedRules(prevSelected => prevSelected.filter(rid => rid !== id));
 			// Call db to delete data
+			const token = localStorage.getItem('token');
 			await fetch(`http://${serverIp}:${serverPort}/api/rules?id=${id}`, {
 				method: 'DELETE',
-				headers: { 'Content-Type': 'application/json' },
+				headers: {
+					'Content-Type': 'application/json',
+					'Authorization': `Bearer ${token}`,
+				},
 			});
 			fetchRules();
 		}

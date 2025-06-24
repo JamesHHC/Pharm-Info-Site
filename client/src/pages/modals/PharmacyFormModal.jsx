@@ -1,6 +1,9 @@
 // React
 import React, { useEffect, useState, useRef } from 'react';
 
+// Auth
+import { useAuth } from '../../auth/AuthContext';
+
 // Content
 import ModalRules from './modal-content/ModalRules';
 import ModalTrainings from './modal-content/ModalTrainings';
@@ -17,6 +20,9 @@ const serverIp = config.server_ip;
 const serverPort = config.server_port;
 
 export default function PharmacyFormModal({ isOpen, onClose, onSubmit, contacts }) {
+	// User/auth stuff
+	const { user } = useAuth();
+	
 	// For tracking selected options
 	const [selectedRules, setSelectedRules] = useState([]);
 	const [selectedTrainings, setSelectedTrainings] = useState([]);
@@ -55,9 +61,13 @@ export default function PharmacyFormModal({ isOpen, onClose, onSubmit, contacts 
 			return;
 		}
 		// Send info to db
+		const token = localStorage.getItem('token');
 		const res = await fetch(`http://${serverIp}:${serverPort}/api/pharmacies`, {
 			method: 'POST',
-			headers: { 'Content-Type': 'application/json' },
+			headers: {
+				'Content-Type': 'application/json',
+				'Authorization': `Bearer ${token}`,
+			},
 			body: JSON.stringify(newPharmacy),
 		});
 		const newPharm = await res.json();
@@ -124,19 +134,22 @@ export default function PharmacyFormModal({ isOpen, onClose, onSubmit, contacts 
 						setSelectedRules={setSelectedRules}
 					/>
 
-					{/* VN Instructions (Blurbs) */}
-					<ModalBlurbs
-						ref={blurbsRef}
-						selectedBlurbs={selectedBlurbs}
-						setSelectedBlurbs={setSelectedBlurbs}
-					/>
+					{/* Editable by admin only */}
+					{hasRole(user, ['admin']) && <>
+						{/* VN Instructions (Blurbs) */}
+						<ModalBlurbs
+							ref={blurbsRef}
+							selectedBlurbs={selectedBlurbs}
+							setSelectedBlurbs={setSelectedBlurbs}
+						/>
 
-					{/* Required Training */}
-					<ModalTrainings
-						ref={trainingsRef}
-						selectedTrainings={selectedTrainings}
-						setSelectedTrainings={setSelectedTrainings}
-					/>
+						{/* Required Training */}
+						<ModalTrainings
+							ref={trainingsRef}
+							selectedTrainings={selectedTrainings}
+							setSelectedTrainings={setSelectedTrainings}
+						/>
+					</>}
 
 					{/* Pharmacy Contacts */}
 					<ModalContacts
@@ -161,9 +174,13 @@ export default function PharmacyFormModal({ isOpen, onClose, onSubmit, contacts 
 	async function associateRules(pharmId, ruleIds) {
 		if (ruleIds.length == 0) return;
 		// Send info to db
+		const token = localStorage.getItem('token');
 		const res = await fetch(`http://${serverIp}:${serverPort}/api/pharmrules`, {
 			method: 'POST',
-			headers: { 'Content-Type': 'application/json' },
+			headers: {
+				'Content-Type': 'application/json',
+				'Authorization': `Bearer ${token}`,
+			},
 			body: JSON.stringify({ pharmacy_id: pharmId, rule_ids: ruleIds }),
 		});
 	}
@@ -172,9 +189,13 @@ export default function PharmacyFormModal({ isOpen, onClose, onSubmit, contacts 
 	async function associateTraining(pharmId, trainingIds) {
 		if (trainingIds.length == 0) return;
 		// Send info to db
+		const token = localStorage.getItem('token');
 		const res = await fetch(`http://${serverIp}:${serverPort}/api/pharmtraining`, {
 			method: 'POST',
-			headers: { 'Content-Type': 'application/json' },
+			headers: {
+				'Content-Type': 'application/json',
+				'Authorization': `Bearer ${token}`,
+			},
 			body: JSON.stringify({ pharmacy_id: pharmId, training_ids: trainingIds }),
 		});
 	}
@@ -183,9 +204,13 @@ export default function PharmacyFormModal({ isOpen, onClose, onSubmit, contacts 
 	async function associateBlurbs(pharmId, blurbIds) {
 		if (blurbIds.length == 0) return;
 		// Send info to db
+		const token = localStorage.getItem('token');
 		const res = await fetch(`http://${serverIp}:${serverPort}/api/pharmblurbs`, {
 			method: 'POST',
-			headers: { 'Content-Type': 'application/json' },
+			headers: {
+				'Content-Type': 'application/json',
+				'Authorization': `Bearer ${token}`,
+			},
 			body: JSON.stringify({ pharmacy_id: pharmId, blurb_ids: blurbIds }),
 		});
 	}
@@ -194,10 +219,19 @@ export default function PharmacyFormModal({ isOpen, onClose, onSubmit, contacts 
 	async function associateContact(pharmId, contactIds) {
 		if (contactIds.length == 0) return;
 		// Send info to db
+		const token = localStorage.getItem('token');
 		const res = await fetch(`http://${serverIp}:${serverPort}/api/pharmcontacts/contacts`, {
 			method: 'POST',
-			headers: { 'Content-Type': 'application/json' },
+			headers: {
+				'Content-Type': 'application/json',
+				'Authorization': `Bearer ${token}`,
+			},
 			body: JSON.stringify({ pharmacy_id: pharmId, contact_ids: contactIds }),
 		});
+	}
+
+	// Check if user has any listed roles
+	function hasRole(user, roles = []) {
+		return roles.includes(user?.role);
 	}
 }

@@ -16,6 +16,10 @@ const getBlurbs = async (req, res) => {
 const newBlurb = async (req, res) => {
 	const { name, description, type } = req.body;
 	try {
+		// Validate user access level
+		if (req.user.role !== 'admin')
+			return res.status(403).json({ error: 'Insufficient permissions' });
+
 		const result = await db.query(
 			`INSERT INTO vn_blurbs (name, description, type)
 				VALUES ($1, $2, $3)
@@ -51,6 +55,10 @@ const getSomeBlurbs = async (req, res) => {
 const updateBlurb = async (req, res) => {
 	const { name, description, type, id } = req.body;
 	try {
+		// Validate user access level
+		if (req.user.role !== 'admin')
+			return res.status(403).json({ error: 'Insufficient permissions' });
+
 		const result = await db.query(
 			`UPDATE vn_blurbs
 				SET (name, description, type) = ($1, $2, $3)
@@ -69,6 +77,10 @@ const updateBlurb = async (req, res) => {
 const deleteBlurb = async (req, res) => {
 	const id = req.query.id;
 	try {
+		// Validate user access level
+		if (req.user.role !== 'admin')
+			return res.status(403).json({ error: 'Insufficient permissions' });
+		
 		await db.query(
 			`DELETE FROM pharmacy_blurbs
 				WHERE blurb_id = ($1)`,

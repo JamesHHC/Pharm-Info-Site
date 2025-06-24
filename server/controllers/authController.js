@@ -82,8 +82,16 @@ const refresh = async (req, res) => {
 
 	try {
 		const payload = jwt.verify(token, REFRESH_SECRET);
+
+		// Get role from db
+		const result = await db.query(`
+			SELECT role FROM users
+				WHERE id = $1
+		`, [payload.id]);
+
+		// Sign new access token
 		const accessToken = jwt.sign(
-			{ id: payload.id },
+			{ id: payload.id, role: result.rows[0].role },
 			process.env.JWT_SECRET,
 			{ expiresIn: '15m' },
 		);

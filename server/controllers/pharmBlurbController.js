@@ -21,6 +21,10 @@ const getPharmBlurbs = async (req, res) => {
 const newPharmBlurb = async (req, res) => {
 	const { pharmacy_id, blurb_ids } = req.body;
 	try {
+		// Validate user access level
+		if (req.user.role !== 'admin')
+			return res.status(403).json({ error: 'Insufficient permissions' });
+
 		// Construct values in format ($1, $2), ($1, $3), etc...
 		const values = blurb_ids.map((_, i) => `($1, $${i + 2})`).join(', ');
 		const ids = [pharmacy_id, ...blurb_ids];
@@ -42,6 +46,10 @@ const newPharmBlurb = async (req, res) => {
 const updatePharmBlurbs = async (req, res) => {
 	const { pharmacy_id, blurb_ids } = req.body;
 	try {
+		// Validate user access level
+		if (req.user.role !== 'admin')
+			return res.status(403).json({ error: 'Insufficient permissions' });
+
 		// Check db for existing id pairs
 		const check = await db.query(
 			`SELECT blurb_id FROM pharmacy_blurbs

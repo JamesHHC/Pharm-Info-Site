@@ -16,6 +16,10 @@ const getTrainings = async (req, res) => {
 const newTraining = async (req, res) => {
 	const { name, description } = req.body;
 	try {
+		// Validate user access level
+		if (req.user.role !== 'admin')
+			return res.status(403).json({ error: 'Insufficient permissions' });
+
 		const result = await db.query(
 			`INSERT INTO training (name, description)
 				VALUES ($1, $2)
@@ -51,6 +55,10 @@ const getSomeTrainings = async (req, res) => {
 const updateTraining = async (req, res) => {
 	const { name, description, id } = req.body;
 	try {
+		// Validate user access level
+		if (req.user.role !== 'admin')
+			return res.status(403).json({ error: 'Insufficient permissions' });
+
 		const result = await db.query(
 			`UPDATE training
 				SET (name, description) = ($1, $2)
@@ -69,6 +77,10 @@ const updateTraining = async (req, res) => {
 const deleteTraining = async (req, res) => {
 	const id = req.query.id;
 	try {
+		// Validate user access level
+		if (req.user.role !== 'admin')
+			return res.status(403).json({ error: 'Insufficient permissions' });
+
 		await db.query(
 			`DELETE FROM pharmacy_training
 				WHERE training_id = ($1)`,

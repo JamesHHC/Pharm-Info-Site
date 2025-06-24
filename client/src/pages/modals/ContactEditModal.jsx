@@ -82,9 +82,13 @@ export default function ContactFormModal({ isOpen, onClose, onSubmit, pharmacies
 			return;
 		}
 		// Send info to db
+		const token = localStorage.getItem('token');
 		const res = await fetch(`http://${serverIp}:${serverPort}/api/contacts`, {
 			method: 'PUT',
-			headers: { 'Content-Type': 'application/json' },
+			headers: {
+				'Content-Type': 'application/json',
+				'Authorization': `Bearer ${token}`,
+			},
 			body: JSON.stringify(updatedContact),
 		});
 		const updatedCont = await res.json();
@@ -100,9 +104,13 @@ export default function ContactFormModal({ isOpen, onClose, onSubmit, pharmacies
 		const conf = confirm(`Are you sure you want to delete this contact?\n\n${openContact.name}`);
 		if (conf) {
 			// Call db to delete data
+			const token = localStorage.getItem('token');
 			await fetch(`http://${serverIp}:${serverPort}/api/contacts?id=${id}`, {
 				method: 'DELETE',
-				headers: { 'Content-Type': 'application/json' },
+				headers: {
+					'Content-Type': 'application/json',
+					'Authorization': `Bearer ${token}`,
+				},
 			});
 			setSelectedItem(null);
 			resetForm();
@@ -236,9 +244,13 @@ export default function ContactFormModal({ isOpen, onClose, onSubmit, pharmacies
 	// Update pharmacy_contacts db based on selected pharmacies
 	async function associatePharmacy(contactId, pharmacyIds) {
 		// Send info to db
+		const token = localStorage.getItem('token');
 		const res = await fetch(`http://${serverIp}:${serverPort}/api/pharmcontacts/pharmacies`, {
 			method: 'PATCH',
-			headers: { 'Content-Type': 'application/json' },
+			headers: {
+				'Content-Type': 'application/json',
+				'Authorization': `Bearer ${token}`,
+			},
 			body: JSON.stringify({ contact_id: contactId, pharmacy_ids: pharmacyIds }),
 		});
 	}
