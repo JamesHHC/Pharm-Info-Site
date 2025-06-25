@@ -282,7 +282,7 @@ export default function InfoPanel({ selectedItem, setSelectedItem, editItem }) {
 						{selectedItem.name}
 					</p>
 					{/* Edit button */}
-					{hasRole(user, ['admin', 'editor']) && <p onClick={handleEdit} className="cursor-pointer edit-icon h-full my-auto ml-2 text-[24px]"></p>}
+					{hasMinPermission(user, 'editor') && <p onClick={handleEdit} className="cursor-pointer edit-icon h-full my-auto ml-2 text-[24px]"></p>}
 				</div>
 				{/* Title */}
 				<p className="mt-[-8px] mb-[-4px] text-lg font-light">{selectedItem.title}</p>

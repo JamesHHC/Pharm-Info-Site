@@ -8,6 +8,7 @@ import LoadingIcon from '../../../assets/icons/LoadingIcon';
 export default function UserLogin({ onClose, setUser }) {
 	// Indicates if new account is being created
 	const [newAccount, setNewAccount] = useState(false);
+	const [loadingLogin, setLoadingLogin] = useState(false);
 
 	// Clears usr/pwd from login form
 	const clearSignIn = async () => {
@@ -37,7 +38,6 @@ export default function UserLogin({ onClose, setUser }) {
 		// Form messages
 		const newAccError = document.getElementById('newAccError');
 		const loginError = document.getElementById('loginError');
-		const loadingLogin = document.getElementById('loadingLogin');
 		// Validate inputs
 		if (usr === '' || pwd === '') {
 			if (newAccount) return newAccError.textContent = "Your username/password cannot be blank!";
@@ -54,19 +54,19 @@ export default function UserLogin({ onClose, setUser }) {
 				return;
 			}
 			try {
-				loadingLogin.hidden = false;
+				setLoadingLogin(true);
 				const newAcc = await register(usr, pwd);
 				if (newAcc.error) {
-					loadingLogin.hidden = false;
+					setLoadingLogin(false);
 					return newAccError.textContent = newAcc.error;
 				}
 				clearSignIn();
 				setNewAccount(false);
-				loadingLogin.hidden = true;
+				setLoadingLogin(false);
 				return alert('Account successfully created!');
 			}
 			catch (err) {
-				loadingLogin.hidden = false;
+				setLoadingLogin(false);
 				newAccError.textContent = 'Login error!';
 				return console.error(err);
 			}
@@ -74,10 +74,10 @@ export default function UserLogin({ onClose, setUser }) {
 		// Sign in
 		else {
 			try {
-				loadingLogin.hidden = false;
+				setLoadingLogin(true);
 				const usrAcc = await login(usr, pwd);
 				if (usrAcc.error) {
-					loadingLogin.hidden = false;
+					setLoadingLogin(false);
 					return loginError.textContent = usrAcc.error;
 				}
 				const userData = await fetchUser();
@@ -85,7 +85,7 @@ export default function UserLogin({ onClose, setUser }) {
 				return onClose();
 			}
 			catch (err) {
-				loadingLogin.hidden = false;
+				setLoadingLogin(false);
 				loginError.textContent = 'Login error!';
 				return console.error(err);
 			}
@@ -149,7 +149,9 @@ export default function UserLogin({ onClose, setUser }) {
 					>
 						<div className="flex w-full">
 							<div className="flex mx-auto">
-								<div hidden id="loadingLogin" className="my-auto"><LoadingIcon /></div>
+								<div hidden={!loadingLogin} className="my-auto">
+									<LoadingIcon fill="fill-cyan-400" text="text-cyan-700"/>
+								</div>
 								<p className="">{newAccount ? 'Register' : 'Sign in'}</p>
 							</div>
 						</div>

@@ -1,19 +1,19 @@
-export function hasMinPermission(user, minRole) {
-	// List of available roles
-	const roles = [
-		'user',
-		'editor',
-		'admin',
-		'superadmin',
-	];
+// List of available roles
+export const roleList = [
+	'user',
+	'editor',
+	'admin',
+	'superadmin',
+];
 
+export function hasMinPermission(user, minRole) {
 	// Ensure user has a role
 	const usrRole = user?.role;
 	if (!usrRole) return false;
 
 	// Get index
-	const userIndex = roles.indexOf(usrRole);
-	const chckIndex = roles.indexOf(minRole);
+	const userIndex = roleList.indexOf(usrRole);
+	const chckIndex = roleList.indexOf(minRole);
 	if (chckIndex === -1) return false;
 
 	// Compares user role to hierarchy of role list
@@ -28,4 +28,4 @@ export function userAccessString(role) {
 		case 'superadmin': return 'Total access';
 		default: return 'No edit access';
 	}
-};
+}
