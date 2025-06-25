@@ -85,7 +85,7 @@ export default function PharmacyFormModal({ isOpen, onClose, onSubmit, contacts 
 
 	return (
 		<div className="fixed inset-0 bg-black/30 backdrop-blur-[5px] flex items-center justify-center z-40">
-			<div className="bg-white p-6 rounded-lg shadow-2xl w-150 max-h-[90vh] overflow-y-auto scrollbar-thin">
+			<div className="bg-white p-6 rounded-lg shadow-2xl w-150 max-h-[90vh] overflow-y-auto scrollbar-hidden">
 				<p className="modal-title mb-4">Add New Pharmacy</p>
 				<form onSubmit={handleSubmit}>
 

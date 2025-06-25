@@ -27,14 +27,14 @@ export default function UserInfoDisplay({ onClose, user, setUser, setUserManager
 		<div className="flex-block">
 			<button
 				type="button"
-				onClick={() => {logout(); setUser(null);}}
+				onClick={() => {logout(); setUser(null); onClose(true);}}
 				className="block mt-2 my-auto text-lg m-auto cursor-pointer p-2 w-full bg-red-400 text-white hover:bg-red-500 rounded"
 			>
 				Sign Out
 			</button>
 			<button 
 				type="button"
-				onClick={() => onClose()}
+				onClick={() => onClose(false)}
 				className="block mt-2 text-lg m-auto cursor-pointer p-2 w-full bg-gray-200 text-gray-400 hover:bg-gray-300 rounded"
 			>
 				Close

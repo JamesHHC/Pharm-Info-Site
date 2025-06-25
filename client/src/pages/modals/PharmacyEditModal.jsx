@@ -12,6 +12,7 @@ import ModalBlurbs from './modal-content/ModalBlurbs';
 import ModalContacts from './modal-content/ModalContacts';
 import TrashIcon from '../../assets/icons/TrashIcon';
 import ArchiveIcon from '../../assets/icons/ArchiveIcon';
+import UnarchiveIcon from '../../assets/icons/UnarchiveIcon';
 import RichTextarea from '../components/RichTextarea';
 
 // Styles
@@ -173,7 +174,7 @@ export default function PharmacyFormModal({ isOpen, onClose, onSubmit, contacts,
 
 	return (
 		<div className="fixed inset-0 bg-black/30 backdrop-blur-[5px] flex items-center justify-center z-40">
-			<div className="bg-white outline-3 outline-amber-500/60 p-6 rounded-lg shadow-2xl w-150 max-h-[90vh] overflow-y-auto scrollbar-thin">
+			<div className="bg-white outline-3 outline-amber-500/60 p-6 rounded-lg shadow-2xl w-150 max-h-[90vh] overflow-y-auto scrollbar-hidden">
 				<p className="text-3xl font-bold mb-4 text-orange-900/70">Edit Pharmacy</p>
 				<form onSubmit={handleSubmit}>
 
@@ -273,7 +274,7 @@ export default function PharmacyFormModal({ isOpen, onClose, onSubmit, contacts,
 								onClick={archivePharmacy}
 								className="cursor-pointer flex justify-center items-center w-10 py-2 bg-blue-800/20 text-blue-900 hover:bg-blue-800/30 rounded-md"
 							>
-								<ArchiveIcon className="my-auto" />
+								{openPharmacy?.active && <ArchiveIcon className="my-auto"/> || <UnarchiveIcon className="my-auto"/>}
 							</button>
 						</div>
 						<button

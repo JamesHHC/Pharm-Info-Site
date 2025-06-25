@@ -82,7 +82,7 @@ export default function UserLogin({ onClose, setUser }) {
 				}
 				const userData = await fetchUser();
 				setUser(userData);
-				return onClose();
+				return onClose(true);
 			}
 			catch (err) {
 				setLoadingLogin(false);
@@ -158,7 +158,7 @@ export default function UserLogin({ onClose, setUser }) {
 					</button>
 					<button 
 						type="button"
-						onClick={() => onClose()}
+						onClick={() => onClose(false)}
 						className="block text-lg m-auto cursor-pointer p-2 w-full bg-gray-200 text-gray-400 hover:bg-gray-300 rounded"
 					>
 						Cancel

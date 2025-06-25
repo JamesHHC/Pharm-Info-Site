@@ -42,9 +42,9 @@ div {
 	color: rgba(100, 100, 100, 1);
 }
 
-/* Custom scrollbar */
+/* Custom scrollbar 1 */
 .scrollbar-thin::-webkit-scrollbar {
-	width: 6px;
+	width: 14px;
 }
 .scrollbar-thin::-webkit-scrollbar-track {
 	background: transparent;
@@ -52,6 +52,16 @@ div {
 .scrollbar-thin::-webkit-scrollbar-thumb {
 	background-color: rgba(198, 203, 211, 1);
 	border-radius: 9999px;
+	border: 4px solid transparent;
+	background-clip: content-box;
+}
+
+/* Custom scrollbar 2 */
+.scrollbar-hidden::-webkit-scrollbar {
+	width: 0px;
+}
+.scrollbar-hidden::-webkit-scrollbar-track {
+	background: transparent;
 }
 
 /* Edit icon */

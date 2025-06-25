@@ -79,7 +79,7 @@ export default function UserManagement({ onClose, user, setUser, setUserManager 
 					const noChange = !hasMinPermission(user, account.role) || account.username === user.username;
 					return (
 						<div key={account.id} className="my-2">
-							<div className="flex bg-white p-2 rounded shadow-sm">
+							<div className="flex bg-white p-2 rounded shadow-sm outline outline-gray-300">
 								<div className="my-auto mr-3">
 									{account.username}
 								</div>
@@ -92,7 +92,7 @@ export default function UserManagement({ onClose, user, setUser, setUserManager 
 										defaultValue={account.role}
 										id={`roles_${account.id}`}
 										disabled={noChange || loadingChange}
-										className={`${noChange ? 'bg-gray-200 text-gray-400' : ''} cursor-pointer ml-auto py-1 px-2 rounded-md outline outline-gray-200`}
+										className={`${noChange ? 'bg-gray-200 text-gray-400 outline-gray-300' : 'outline-gray-200'} cursor-pointer ml-auto py-1 px-2 rounded-md outline`}
 										onChange={(e) => updateRole(account.id, e.target.value, `loading_${account.id}`)}
 									>
 										{roleList.map(listedRole => {
@@ -127,7 +127,7 @@ export default function UserManagement({ onClose, user, setUser, setUserManager 
 		<div className="flex-block">
 			<button 
 				type="button"
-				onClick={() => onClose()}
+				onClick={() => onClose(false)}
 				className="block mt-2 text-lg m-auto cursor-pointer p-2 w-full bg-gray-200 text-gray-400 hover:bg-gray-300 rounded"
 			>
 				Close

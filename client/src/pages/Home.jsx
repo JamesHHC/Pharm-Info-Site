@@ -15,7 +15,8 @@ import UserModal from './modals/UserModal';
 
 // Assets
 import logo from '../assets/logo_bluegray.svg';
-import UserIcon from '../assets/icons/UserIcon'
+import UserIcon from '../assets/icons/UserIcon';
+import ArchiveFilledIcon from '../assets/icons/ArchiveFilledIcon';
 
 // Config
 import config from '../config.js';
@@ -141,7 +142,7 @@ function Home() {
 								className={`cursor-pointer py-2 rounded-md w-1/2 ${
 									activeTab === 'pharmacies'
 										? 'bg-cyan-900/70 text-white font-bold shadow-sm'
-										: 'bg-gray-100 text-gray-400 shadow-sm'
+										: 'bg-gray-100 text-gray-400 shadow-sm outline outline-gray-300'
 								}`}
 							>
 								Pharmacies
@@ -152,7 +153,7 @@ function Home() {
 								className={`cursor-pointer py-2 rounded-md w-1/2 ${
 									activeTab === 'contacts'
 										? 'bg-cyan-900/70 text-white font-bold shadow-sm'
-										: 'bg-gray-100 text-gray-400 shadow-sm'
+										: 'bg-gray-100 text-gray-400 shadow-sm outline outline-gray-300'
 								}`}
 							>
 								Contacts
@@ -179,49 +180,69 @@ function Home() {
 							</button>}
 						</div>
 						{/* Tab Content */}
-						<div tabIndex='-1' className="flex-1 overflow-auto rounded-md scrollbar-thin p-2 bg-gray-200 border border-gray-200 inset-shadow-sm">
+						<div tabIndex='-1' className="flex-1 overflow-auto rounded-md scrollbar-hidden p-2 bg-gray-200/70 border border-gray-300 inset-shadow-sm">
 							{/* Pharmacy list */}
 							{ activeTab === 'pharmacies' &&
 								<ul className="space-y-2">
-									{filteredPharmacies.map((pharmacy) => (
-										<li
-											key={pharmacy.id}
-											className="p-2 bg-white rounded-md hover:bg-white/70 cursor-pointer shadow-sm"
-											onClick={() => {
-												setSelectedItem({ ...pharmacy, type: 'pharmacy' });
-												if (window.innerWidth <= 1024) setShowSidebar(false);
-											}}
-										>
-											<p className="light-small">{pharmacy.verbal_orders ? '' : '⚠️NO VERBAL ORDERS'}</p>
-											<p className="item-title">{pharmacy.name}</p>
-										</li>
-									))}
+									{filteredPharmacies.map((pharmacy) => {
+										const isActive = pharmacy.active;
+										const thisPharmacy = selectedItem?.type === 'pharmacy' && selectedItem?.id === pharmacy.id;
+										if (!isActive && !hasMinPermission(user, 'editor')) return;
+										return (
+											<li
+												key={pharmacy.id}
+												className={`${thisPharmacy ? 'outline-gray-700/40 outline-2' : 'outline-gray-300'} ${isActive || 'opacity-30'} p-2 bg-white hover:bg-white/50 rounded-md cursor-pointer shadow-sm outline`}
+												onClick={() => {
+													setSelectedItem({ ...pharmacy, type: 'pharmacy' });
+													if (window.innerWidth <= 1024) setShowSidebar(false);
+												}}
+											>	
+												<div className="flex">
+													<div>
+														<p className="light-small">{pharmacy.verbal_orders ? '' : '⚠️NO VERBAL ORDERS'}</p>
+														<p className="item-title">{pharmacy.name}</p>
+													</div>
+													{isActive || <div className="my-auto ml-auto mr-2"><ArchiveFilledIcon/></div>}
+												</div>
+											</li>
+										);
+									})}
 								</ul>
 							}
 							{/* Contact list */}
 							{ activeTab === 'contacts' &&
 								<ul className="space-y-2">
-									{filteredContacts.map((contact) => (
-										<li
-											key={contact.id}
-											className="p-2 bg-white rounded-md hover:bg-white/70 cursor-pointer shadow-sm"
-											onClick={() => {
-												setSelectedItem({ ...contact, type: 'contact' });
-												if (window.innerWidth <= 1024) setShowSidebar(false);
-											}}
-										>
-											<p className="light-small">{contact.dnc ? '❌DNC ' : ''}{contact.intake_only ? '⚠️INTAKE ONLY' : ''}</p>
-											<p className="item-title" style={contact.dnc ? {color: 'rgba(200, 80, 80, 1)'} : contact.intake_only ? {color: 'rgba(210, 150, 20, 1)'} : {}}>{contact.name}</p>
-											<p className="mt-[-4px]">{contact.title}</p>
-											{contact.contact_type.length > 0 &&
-												<div className="text-gray-400 text-sm flex flex-wrap gap-2 mt-1.5 mt-0.5">
-													{(contact.contact_type).map((type) => (
-														<div className="bg-gray-100 outline outline-gray-400 px-2 py-1 rounded-full shadow-sm" key={type}>{type}</div>
-													))}
+									{filteredContacts.map((contact) => {
+										const isActive = contact.active;
+										const thisContact = selectedItem?.type === 'contact' && selectedItem?.id === contact.id;
+										if (!isActive && !hasMinPermission(user, 'editor')) return;
+										return (
+											<li
+												key={contact.id}
+												className={`${thisContact ? 'outline-gray-700/40 outline-2' : 'outline-gray-300'} ${isActive || 'opacity-30'} p-2 bg-white hover:bg-white/50 rounded-md cursor-pointer shadow-sm outline`}
+												onClick={() => {
+													setSelectedItem({ ...contact, type: 'contact' });
+													if (window.innerWidth <= 1024) setShowSidebar(false);
+												}}
+											>
+												<div className="flex">
+													<div>
+														<p className="light-small">{contact.dnc ? '❌DNC ' : ''}{contact.intake_only ? '⚠️INTAKE ONLY' : ''}</p>
+														<p className="item-title" style={contact.dnc ? {color: 'rgba(200, 80, 80, 1)'} : contact.intake_only ? {color: 'rgba(210, 150, 20, 1)'} : {}}>{contact.name}</p>
+														<p className="mt-[-4px]">{contact.title}</p>
+														{contact.contact_type.length > 0 &&
+															<div className="text-gray-400 text-sm flex flex-wrap gap-2 mt-1.5 mt-0.5">
+																{(contact.contact_type).map((type) => (
+																	<div className="bg-gray-100 outline outline-gray-400 px-2 py-1 rounded-full shadow-sm" key={type}>{type}</div>
+																))}
+															</div>
+														}
+													</div>
+													{isActive || <div className="my-auto ml-auto mr-2"><ArchiveFilledIcon/></div>}
 												</div>
-											}
-										</li>
-									))}
+											</li>
+										);
+									})}
 								</ul>
 							}
 						</div>
@@ -230,7 +251,7 @@ function Home() {
 			)}
 			{/* Right Column */}
 			<div className={`${showSidebar ? 'hidden lg:block lg:w-3/4' : 'w-full'} m-1`}>
-				<div className="p-4 rounded-xl shadow-lg h-full bg-white overflow-auto scrollbar-thin">
+				<div className="p-4 rounded-xl shadow-lg h-full bg-white">
 					{/* Information for pharmacy/contact */}
 					<InfoPanel
 						selectedItem={selectedItem}
@@ -250,8 +271,10 @@ function Home() {
 			isOpen={showUserModal}
 			user={user}
 			setUser={setUser}
-			onClose={() => {
+			onClose={(clearSelected) => {
 				setShowUserModal(false);
+				// Remove selected item in case of change in user
+				if (clearSelected) setSelectedItem(null);
 			}}
 		/>
 
