@@ -177,7 +177,7 @@ export default function InfoPanel({ selectedItem, setSelectedItem, editItem }) {
 				<div className="flex-1 bg-gray-200/70 px-3 py-2 rounded-xl mt-3 text-xl shadow-sm outline outline-gray-300 overflow-auto scrollbar-thin">
 					
 					{/* General Notes */}
-					<label className="text-sm">General Notes</label>
+					<span className="text-sm">General Notes</span>
 					<div className="min-h-10 mb-2 bg-white px-3 py-2 rounded-md outline outline-gray-300">
 						<RichViewer deltaString={selectedItem.general_notes} styling="off" />
 					</div>
@@ -186,7 +186,7 @@ export default function InfoPanel({ selectedItem, setSelectedItem, editItem }) {
 					<div className="lg:flex space-x-3">
 						{/* Communication Preferences */}
 						<div className="w-full">
-							<label className="text-sm">Communication Preferences</label>
+							<span className="text-sm">Communication Preferences</span>
 							<div className="min-h-10 mb-2 bg-white px-3 py-2 rounded-md outline outline-gray-300">
 								<RichViewer deltaString={selectedItem.communication} styling="off" />
 							</div>
@@ -194,7 +194,7 @@ export default function InfoPanel({ selectedItem, setSelectedItem, editItem }) {
 
 						{/* On-call Preferences */}
 						<div className="w-full">
-							<label className="text-sm">On-call Preferences</label>
+							<span className="text-sm">On-call Preferences</span>
 							<div className="min-h-10 mb-2 bg-white px-3 py-2 rounded-md outline outline-gray-300">
 								<RichViewer deltaString={selectedItem.oncall_prefs} styling="off" />
 							</div>
@@ -202,7 +202,7 @@ export default function InfoPanel({ selectedItem, setSelectedItem, editItem }) {
 					</div>
 					
 					{/* Rules */}
-					<label className="text-sm">Rules</label>
+					<span className="text-sm">Rules</span>
 					<div className="min-h-10 mb-2 bg-white rounded-md overflow-auto scrollbar-thin outline outline-gray-300">
 						{rules.map(rule => (
 							<div key={rule.id} className="py-2 px-3 w-full bg-white outline-1 outline-gray-200">
@@ -213,7 +213,7 @@ export default function InfoPanel({ selectedItem, setSelectedItem, editItem }) {
 
 					{/* VN Instructions (Blurbs) */}
 					<div className="flex mt-4 mb-[1px]">
-						<label className="text-sm">VN Instructions</label>
+						<span className="text-sm">VN Instructions</span>
 						<button
 							className="text-sm ml-auto cursor-pointer hover:underline opacity-30"
 							onClick={() => {
@@ -250,7 +250,7 @@ export default function InfoPanel({ selectedItem, setSelectedItem, editItem }) {
 
 					{/* Training Requirements */}
 					<div className="flex mt-4 mb-[1px]">
-						<label className="text-sm">Training Requirements</label>
+						<span className="text-sm">Training Requirements</span>
 						<button
 							className="text-sm ml-auto cursor-pointer hover:underline opacity-30"
 							onClick={() => {
@@ -286,7 +286,7 @@ export default function InfoPanel({ selectedItem, setSelectedItem, editItem }) {
 					</div>
 
 					{/* Contacts */}
-					<label className="text-sm">Contacts</label>
+					<span className="text-sm">Contacts</span>
 					<div className="flex flex-wrap gap-2 mt-1 mb-2">
 						{contacts.length > 0 && contacts.map(contact => (
 								<div
@@ -346,13 +346,13 @@ export default function InfoPanel({ selectedItem, setSelectedItem, editItem }) {
 				{/* Details */}
 				<div className="flex-1 bg-gray-200/70 px-3 py-2 rounded-xl mt-3 text-xl shadow-sm outline outline-gray-300 overflow-auto scrollbar-thin">
 					{/* Preferences */}
-					<label className="text-sm">Preferences</label>
+					<span className="text-sm">Preferences</span>
 					<div className="min-h-10 mb-2 bg-white px-3 py-2 rounded-md outline outline-gray-300">
 						<RichViewer deltaString={selectedItem.preferences} styling="off" />
 					</div>
 					
 					{/* Pharmacies */}
-					<label className="text-sm">Pharmacies</label>
+					<span className="text-sm">Pharmacies</span>
 					<div className="flex flex-wrap gap-2 mt-1 mb-2">
 						{pharmacies.length > 0 && pharmacies.map(pharmacy => (
 								<div

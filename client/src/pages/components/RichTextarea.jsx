@@ -89,7 +89,7 @@ export default function RichTextarea({ id, name, label, initialDelta, onChange, 
 				className="w-full border border-gray-200 rounded-b focus:outline-cyan-500/60 scrollbar-thin"
 			/>
 			{/* Hidden input to hook into <form> submission */}
-			<input ref={hiddenInputRef} type="hidden" name={name} />
+			<input id={`hiddenInput_${id}`} ref={hiddenInputRef} type="hidden" name={name} />
 		</div>
 	);
 }
