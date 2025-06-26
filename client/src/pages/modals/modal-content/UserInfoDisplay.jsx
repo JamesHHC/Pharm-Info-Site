@@ -19,7 +19,7 @@ export default function UserInfoDisplay({ onClose, user, setUser, setUserManager
 					onClick={() => setUserManager(true)}
 					className="block text-sm m-auto cursor-pointer mt-1 text-blue-900 hover:text-blue-900/50"
 				>
-					Manage User Roles
+					Manage Users
 				</button>
 			}
 		</div>

@@ -45,7 +45,40 @@ const updateRole = async (req, res) => {
 	}
 };
 
+// Delete given user
+const deleteUser = async (req, res) => {
+	const id = req.query.id;
+	try {
+		// Validate user access level
+		if (check_role(req.user.role, 'admin'))
+			return res.status(403).json({ error: 'Insufficient permissions' });
+
+		// Get target prior to delete for logging
+		const user = await logger.getUser(req.user.id);
+		const target = await logger.getUser(id);
+		
+		await db.query(
+			`DELETE FROM users
+				WHERE id = $1`,
+			[id]
+		);
+		res.status(201).send('User deleted!');
+
+		// Logging
+		logger.info({
+			actingUser: user,
+			targetUser: target,
+			action: `Deleted user`,
+		});
+	}
+	catch (err) {
+		console.error('Error deleting user:', err);
+		res.status(500).send('Server error');
+	}
+};
+
 module.exports = {
 	getUsers,
 	updateRole,
+	deleteUser,
 };

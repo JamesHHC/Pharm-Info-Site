@@ -109,7 +109,7 @@ const deleteRule = async (req, res) => {
 				WHERE id = ($1)`,
 			[id]
 		);
-		res.status(201).json('Rule deleted!');
+		res.status(201).send('Rule deleted!');
 
 		// Logging
 		const user = await logger.getUser(req.user.id);

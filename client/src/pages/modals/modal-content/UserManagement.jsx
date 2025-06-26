@@ -6,6 +6,7 @@ import { hasMinPermission, roleList } from '../../../auth/checkRole';
 
 // Assets
 import LoadingIcon from '../../../assets/icons/LoadingIcon';
+import TrashIcon from '../../../assets/icons/TrashIcon';
 
 // Config
 import config from '../../../config.js';
@@ -17,17 +18,18 @@ export default function UserManagement({ onClose, user, setUser, setUserManager 
 	const [searchedUser, setSearchedUser] = useState('');
 	const [loadingChange, setLoadingChange] = useState(false);
 
-	useEffect(() => {
-		const fetchUsers = async () => {
-			try {
-				const res = await fetch(`http://${serverIp}:${serverPort}/api/users`);
-				const data = await res.json();
-				setAccounts(data);
-			}
-			catch (err) {
-				console.error('Failed to fetch users', err);
-			}
+	const fetchUsers = async () => {
+		try {
+			const res = await fetch(`http://${serverIp}:${serverPort}/api/users`);
+			const data = await res.json();
+			setAccounts(data);
 		}
+		catch (err) {
+			console.error('Failed to fetch users', err);
+		}
+	}
+
+	useEffect(() => {
 		fetchUsers();
 	}, []);
 
@@ -41,7 +43,7 @@ export default function UserManagement({ onClose, user, setUser, setUserManager 
 	// Update given user ID with selected role
 	const updateRole = async (id, newRole, loadingId) => {
 		const spinner = document.getElementById(loadingId);
-		spinner.hidden = false;
+		spinner.setAttribute('data-invisible', 'false');
 		setLoadingChange(true);
 
 		const token = localStorage.getItem('token');
@@ -59,7 +61,7 @@ export default function UserManagement({ onClose, user, setUser, setUserManager 
 			alert('Failed to update user role!');
 			console.error(response.error);
 		}
-		spinner.hidden = true;
+		spinner.setAttribute('data-invisible', 'true');
 		setLoadingChange(false);
 	};
 
@@ -80,19 +82,20 @@ export default function UserManagement({ onClose, user, setUser, setUserManager 
 					return (
 						<div key={account.id} className="my-2">
 							<div className="flex bg-white p-2 rounded shadow-sm outline outline-gray-300">
-								<div className="my-auto mr-3">
+								<div className="my-auto mr-4">
 									{account.username}
 								</div>
 								<div className="flex ml-auto">
-									<div hidden id={`loading_${account.id}`} className="my-auto">
+									<div data-invisible="true" id={`loading_${account.id}`} className="my-auto">
 										<LoadingIcon fill="fill-blue-900/50" text="text-gray-200"/>
 									</div>
+									{/* Role selection */}
 									<select
 										name="roles"
 										defaultValue={account.role}
 										id={`roles_${account.id}`}
 										disabled={noChange || loadingChange}
-										className={`${noChange ? 'bg-gray-200 text-gray-400 outline-gray-300' : 'outline-gray-200'} cursor-pointer ml-auto py-1 px-2 rounded-md outline`}
+										className={`${noChange ? 'bg-gray-200 text-gray-400 outline-gray-300' : 'outline-gray-200 cursor-pointer'} ml-auto py-1 px-2 rounded-md outline`}
 										onChange={(e) => updateRole(account.id, e.target.value, `loading_${account.id}`)}
 									>
 										{roleList.map(listedRole => {
@@ -109,6 +112,28 @@ export default function UserManagement({ onClose, user, setUser, setUserManager 
 											);
 										})}
 									</select>
+									{/* Delete button */}
+									<button
+										disabled={noChange}
+										type="button"
+										className={`${noChange ? 'opacity-50' : 'hover:bg-red-800/30 cursor-pointer'} flex text-red-700 bg-red-800/20 my-auto ml-2 p-1 rounded-full`}
+										onClick={async () => {
+											const conf = confirm(`Delete ${account.username}?\n\nWARNING: This action cannot be undone`)
+											if (conf) {
+												const token = localStorage.getItem('token');
+												await fetch(`http://${serverIp}:${serverPort}/api/users?id=${account.id}`, {
+													method: 'DELETE',
+													headers: {
+														'Content-Type': 'application/json',
+														'Authorization': `Bearer ${token}`,
+													},
+												});
+												fetchUsers();
+											}
+										}}
+									>
+										<TrashIcon/>
+									</button>
 								</div>
 							</div>
 						</div>
