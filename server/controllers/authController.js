@@ -1,6 +1,7 @@
 const db = require('../db');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const logger = require('../utils/logger');
 
 const REFRESH_SECRET = process.env.REFRESH_SECRET || 'fallback_refresh_secret';
 
@@ -32,6 +33,13 @@ const register = async (req, res) => {
 			[username, hash, 'user']
 		);
 		res.status(201).json({ conf: 'User created' });
+
+		// Logging
+		logger.info({
+			actingUser: username,
+			originIP: req.ip,
+			action: `Registered user`,
+		});
 	}
 	catch (err) {
 		res.status(400).json({ error: 'Username may already exist' });

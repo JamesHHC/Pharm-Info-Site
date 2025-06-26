@@ -354,7 +354,7 @@ export default function InfoPanel({ selectedItem, setSelectedItem, editItem }) {
 					{/* Pharmacies */}
 					<label className="text-sm">Pharmacies</label>
 					<div className="flex flex-wrap gap-2 mt-1 mb-2">
-						{pharmacies.map(pharmacy => (
+						{pharmacies.length > 0 && pharmacies.map(pharmacy => (
 								<div
 									key={pharmacy.id}
 									className={`${pharmacy.active || 'opacity-30'} cursor-pointer text-base py-2 px-4 bg-white rounded-full shadow-sm outline outline-gray-300`}
@@ -363,7 +363,7 @@ export default function InfoPanel({ selectedItem, setSelectedItem, editItem }) {
 									<p>{pharmacy.name}</p>
 								</div>
 							)
-						)}
+						) || <div className="text-base font-light">No pharmacies</div>}
 					</div>
 				</div>
 			</div>

@@ -1,5 +1,6 @@
 const db = require('../db');
 const check_role = require('./check_role');
+const logger = require('../utils/logger');
 
 // Get all users
 const getUsers = async (req, res) => {
@@ -28,6 +29,15 @@ const updateRole = async (req, res) => {
 			[id, role]
 		);
 		res.status(201).json({ conf: role });
+
+		// Logging
+		const user = await logger.getUser(req.user.id);
+		const target = await logger.getUser(id);
+		logger.info({
+			actingUser: user,
+			targetUser: target,
+			action: `Changed role to ${role}`,
+		});
 	}
 	catch (err) {
 		console.error('Error updating user role:', err);

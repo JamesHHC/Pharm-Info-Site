@@ -1,5 +1,6 @@
 const db = require('../db');
 const check_role = require('./check_role');
+const logger = require('../utils/logger');
 
 // Get all pharmacies
 const getPharmacies = async (req, res) => {
@@ -28,6 +29,14 @@ const newPharmacy = async (req, res) => {
 			[name, communication, verbal_orders, general_notes, oncall_prefs]
 		);
 		res.status(201).json(result.rows[0]);
+
+		// Logging
+		const user = await logger.getUser(req.user.id);
+		logger.info({
+			actingUser: user,
+			targetID: result.rows[0]?.id,
+			action: `Created new pharmacy`,
+		});
 	}
 	catch (err) {
 		console.error('Error creating pharmacy:', err);
@@ -67,6 +76,14 @@ const deletePharmacy = async (req, res) => {
 		await db.query(`DELETE FROM pharmacy_contacts WHERE pharmacy_id = ($1)`, [id]);
 		await db.query(`DELETE FROM pharmacies WHERE id = ($1)`, [id]);
 		res.status(201).json('Pharmacy deleted!');
+
+		// Logging
+		const user = await logger.getUser(req.user.id);
+		logger.info({
+			actingUser: user,
+			targetID: id,
+			action: `Deleted pharmacy`,
+		});
 	}
 	catch (err) {
 		console.error('Error deleting pharmacy:', err);
@@ -90,6 +107,14 @@ const updatePharmacy = async (req, res) => {
 			[id, name, communication, verbal_orders, general_notes, oncall_prefs]
 		);
 		res.status(201).json(result.rows[0]);
+
+		// Logging
+		const user = await logger.getUser(req.user.id);
+		logger.info({
+			actingUser: user,
+			targetID: id,
+			action: `Updated pharmacy`,
+		});
 	}
 	catch (err) {
 		console.error('Error updating pharmacy:', err);
@@ -112,6 +137,14 @@ const pharmacyActive = async (req, res) => {
 			[id, active]
 		);
 		res.status(201).send(active ? 'Pharmacy activated' : 'Pharmacy archived');
+
+		// Logging
+		const user = await logger.getUser(req.user.id);
+		logger.info({
+			actingUser: user,
+			targetID: id,
+			action: `${active? 'Activated' : 'Archived'} pharmacy`,
+		});
 	}
 	catch (err) {
 		console.error('Error updating pharmacy active status:', err);

@@ -1,5 +1,6 @@
 const db = require('../db');
 const check_role = require('./check_role');
+const logger = require('../utils/logger');
 
 // Get all trainings
 const getTrainings = async (req, res) => {
@@ -28,6 +29,14 @@ const newTraining = async (req, res) => {
 			[name, description]
 		);
 		res.status(201).json(result.rows[0]);
+
+		// Logging
+		const user = await logger.getUser(req.user.id);
+		logger.info({
+			actingUser: user,
+			targetID: result.rows[0]?.id,
+			action: `Created new training`,
+		});
 	}
 	catch (err) {
 		console.error('Error creating training:', err);
@@ -67,6 +76,14 @@ const updateTraining = async (req, res) => {
 			[name, description, id]
 		);
 		res.status(201).json(result.rows[0]);
+
+		// Logging
+		const user = await logger.getUser(req.user.id);
+		logger.info({
+			actingUser: user,
+			targetID: id,
+			action: `Updated training`,
+		});
 	}
 	catch (err) {
 		console.error('Error updating training:', err);
@@ -93,6 +110,14 @@ const deleteTraining = async (req, res) => {
 			[id]
 		);
 		res.status(201).json('Training deleted!');
+
+		// Logging
+		const user = await logger.getUser(req.user.id);
+		logger.info({
+			actingUser: user,
+			targetID: id,
+			action: `Deleted training`,
+		});
 	}
 	catch (err) {
 		console.error('Error deleting training:', err);

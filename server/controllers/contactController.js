@@ -1,5 +1,6 @@
 const db = require('../db');
 const check_role = require('./check_role');
+const logger = require('../utils/logger');
 
 // Get all contacts
 const getContacts = async (req, res) => {
@@ -28,6 +29,14 @@ const newContact = async (req, res) => {
 			[name, email, phone, title, preferences, dnc, intake_only, contact_type]
 		);
 		res.status(201).json(result.rows[0]);
+
+		// Logging
+		const user = await logger.getUser(req.user.id);
+		logger.info({
+			actingUser: user,
+			targetID: result.rows[0]?.id,
+			action: `Created new contact`,
+		});
 	}
 	catch (err) {
 		console.error('Error creating contact:', err);
@@ -64,6 +73,14 @@ const deleteContact = async (req, res) => {
 		await db.query(`DELETE FROM pharmacy_contacts WHERE contact_id = ($1)`, [id]);
 		await db.query(`DELETE FROM contacts WHERE id = ($1)`, [id]);
 		res.status(201).json('Contact deleted!');
+
+		// Logging
+		const user = await logger.getUser(req.user.id);
+		logger.info({
+			actingUser: user,
+			targetID: id,
+			action: `Deleted contact`,
+		});
 	}
 	catch (err) {
 		console.error('Error deleting contact:', err);
@@ -87,6 +104,14 @@ const updateContact = async (req, res) => {
 			[id, name, email, phone, title, preferences, dnc, intake_only, contact_type]
 		);
 		res.status(201).json(result.rows[0]);
+
+		// Logging
+		const user = await logger.getUser(req.user.id);
+		logger.info({
+			actingUser: user,
+			targetID: id,
+			action: `Updated contact`,
+		});
 	}
 	catch (err) {
 		console.error('Error updating contact:', err);
@@ -109,6 +134,14 @@ const contactActive = async (req, res) => {
 			[id, active]
 		);
 		res.status(201).send(active ? 'Contact activated' : 'Contact archived');
+
+		// Logging
+		const user = await logger.getUser(req.user.id);
+		logger.info({
+			actingUser: user,
+			targetID: id,
+			action: `${active ? 'Activated' : 'Archived'} contact`,
+		});
 	}
 	catch (err) {
 		console.error('Error updating contact active status:', err);

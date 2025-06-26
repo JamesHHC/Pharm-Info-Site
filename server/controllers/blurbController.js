@@ -1,5 +1,6 @@
 const db = require('../db');
 const check_role = require('./check_role');
+const logger = require('../utils/logger');
 
 // Get all blurbs
 const getBlurbs = async (req, res) => {
@@ -28,6 +29,14 @@ const newBlurb = async (req, res) => {
 			[name, description, type]
 		);
 		res.status(201).json(result.rows[0]);
+
+		// Logging
+		const user = await logger.getUser(req.user.id);
+		logger.info({
+			actingUser: user,
+			targetID: result.rows[0]?.id,
+			action: `Created new blurb`,
+		});
 	}
 	catch (err) {
 		console.error('Error creating blurb:', err);
@@ -67,6 +76,14 @@ const updateBlurb = async (req, res) => {
 			[name, description, type, id]
 		);
 		res.status(201).json(result.rows[0]);
+
+		// Logging
+		const user = await logger.getUser(req.user.id);
+		logger.info({
+			actingUser: user,
+			targetID: id,
+			action: `Updated VN blurb`,
+		});
 	}
 	catch (err) {
 		console.error('Error updating blurb:', err);
@@ -93,6 +110,15 @@ const deleteBlurb = async (req, res) => {
 			[id]
 		);
 		res.status(201).json('Blurb deleted!');
+
+		// Logging
+		const user = await logger.getUser(req.user.id);
+		const target = await logger.getUser(id);
+		logger.info({
+			actingUser: user,
+			targetID: id,
+			action: `Deleted VN blurb`,
+		});
 	}
 	catch (err) {
 		console.error('Error deleting blurb:', err);

@@ -1,5 +1,6 @@
 const db = require('../db');
 const check_role = require('./check_role');
+const logger = require('../utils/logger');
 
 // Get all rules
 const getRules = async (req, res) => {
@@ -28,6 +29,14 @@ const newRule = async (req, res) => {
 			[rule]
 		);
 		res.status(201).json(result.rows[0]);
+
+		// Logging
+		const user = await logger.getUser(req.user.id);
+		logger.info({
+			actingUser: user,
+			targetID: result.rows[0]?.id,
+			action: `Created new rule`,
+		});
 	}
 	catch (err) {
 		console.error('Error creating rule:', err);
@@ -67,6 +76,14 @@ const updateRule = async (req, res) => {
 			[rule, id]
 		);
 		res.status(201).json(result.rows[0]);
+
+		// Logging
+		const user = await logger.getUser(req.user.id);
+		logger.info({
+			actingUser: user,
+			targetID: id,
+			action: `Updated rule`,
+		});
 	}
 	catch (err) {
 		console.error('Error updating rule:', err);
@@ -93,6 +110,14 @@ const deleteRule = async (req, res) => {
 			[id]
 		);
 		res.status(201).json('Rule deleted!');
+
+		// Logging
+		const user = await logger.getUser(req.user.id);
+		logger.info({
+			actingUser: user,
+			targetID: id,
+			action: `Deleted rule`,
+		});
 	}
 	catch (err) {
 		console.error('Error deleting rule:', err);
