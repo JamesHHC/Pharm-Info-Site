@@ -20,6 +20,7 @@ const ModalBlurbs = forwardRef(({selectedBlurbs, setSelectedBlurbs}, ref) => {
 	const [searchedBlurb, setSearchedBlurb] = useState('');
 	const [socActive, setSocActive] = useState(false);
 	const [fuActive, setFuActive] = useState(false);
+	const [selectedOnly, setSelectedOnly] = useState(false);
 
 	// New blurb
 	const [newBlurbName, setNewBlurbName] = useState('');
@@ -98,6 +99,7 @@ const ModalBlurbs = forwardRef(({selectedBlurbs, setSelectedBlurbs}, ref) => {
 		.slice()
 		.sort((a, b) => a.name.localeCompare(b.name))
 		.filter((blurb) => {
+			if (selectedOnly && !selectedBlurbs.includes(blurb.id)) return false;
 			if (socActive && blurb.type !== 'soc' && !fuActive) return false;
 			if (fuActive && blurb.type !== 'fu' && !socActive) return false;
 			return blurb.name.toLowerCase().includes(searchedBlurb.toLowerCase()) ||
@@ -251,9 +253,17 @@ const ModalBlurbs = forwardRef(({selectedBlurbs, setSelectedBlurbs}, ref) => {
 					placeholder="Search blurbs..."
 					value={searchedBlurb}
 					onChange={(e) => setSearchedBlurb(e.target.value)}
-					className="h-10.5 w-full px-4 rounded-r-md focus:outline-cyan-500/60 border border-gray-300"
+					className="h-10.5 w-full px-4 focus:outline-cyan-500/60 border border-gray-300"
 					autoComplete="off"
 				/>
+				<button
+					id="selected-only"
+					type="button"
+					onClick={() => setSelectedOnly(!selectedOnly)}
+					className={`${selectedOnly ? 'bg-cyan-500/60 text-white font-bold' : 'bg-gray-100 text-gray-400'} border-y border-r border-gray-300 rounded-r-md h-10.5 px-2`}
+				>
+					✓
+				</button>
 			</div>
 			{/* New blurb button */}
 			<button

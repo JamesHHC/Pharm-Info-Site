@@ -18,6 +18,7 @@ const ModalTrainings = forwardRef(({selectedTrainings, setSelectedTrainings}, re
 	const [loadingTrainings, setLoadingTrainings] = useState(false);
 	const [trainings, setTrainings] = useState([]);
 	const [searchedTraining, setSearchedTraining] = useState('');
+	const [selectedOnly, setSelectedOnly] = useState(false);
 
 	// New training
 	const [newTrainingName, setNewTrainingName] = useState('');
@@ -91,10 +92,11 @@ const ModalTrainings = forwardRef(({selectedTrainings, setSelectedTrainings}, re
 	const filteredTrainings = trainings
 		.slice()
 		.sort((a, b) => a.name.localeCompare(b.name))
-		.filter((training) =>
-			training.name.toLowerCase().includes(searchedTraining.toLowerCase()) ||
-			deltaToText(training.description).toLowerCase().includes(searchedTraining.toLowerCase())
-		);
+		.filter((training) => {
+			if (selectedOnly && !selectedTrainings.includes(training.id)) return false;
+			return training.name.toLowerCase().includes(searchedTraining.toLowerCase()) ||
+				deltaToText(training.description).toLowerCase().includes(searchedTraining.toLowerCase());
+		});
 
 	// Reset newTraining when New Training subform cancelled
 	const cancelNewTraining = () => {
@@ -201,15 +203,25 @@ const ModalTrainings = forwardRef(({selectedTrainings, setSelectedTrainings}, re
 		{/* Search/add bar */}
 		<div className="flex mb-1 space-x-1">
 			{/* Training search bar */}
-			<input
-				id="training-search-bar"
-				type="text"
-				placeholder="Search trainings..."
-				value={searchedTraining}
-				onChange={(e) => setSearchedTraining(e.target.value)}
-				className="h-10.5 w-full px-4 border border-gray-300 rounded-md focus:outline-cyan-500/60"
-				autoComplete="off"
-			/>
+			<div className="flex w-full">
+				<input
+					id="training-search-bar"
+					type="text"
+					placeholder="Search trainings..."
+					value={searchedTraining}
+					onChange={(e) => setSearchedTraining(e.target.value)}
+					className="h-10.5 w-full px-4 border border-gray-300 rounded-l-md focus:outline-cyan-500/60"
+					autoComplete="off"
+				/>
+				<button
+					id="selected-only"
+					type="button"
+					onClick={() => setSelectedOnly(!selectedOnly)}
+					className={`${selectedOnly ? 'bg-cyan-500/60 text-white font-bold' : 'bg-gray-100 text-gray-400'} border-y border-r border-gray-300 rounded-r-md h-10.5 px-2`}
+				>
+					✓
+				</button>
+			</div>
 			{/* New training button */}
 			<button
 				tabIndex="-1"

@@ -25,6 +25,7 @@ const ModalRules = forwardRef(({selectedRules, setSelectedRules}, ref) => {
 	const [loadingRules, setLoadingRules] = useState(false);
 	const [rules, setRules] = useState([]);
 	const [searchedRule, setSearchedRule] = useState('');
+	const [selectedOnly, setSelectedOnly] = useState(false);
 
 	// New rule
 	const [newRule, setNewRule] = useState('');
@@ -90,9 +91,10 @@ const ModalRules = forwardRef(({selectedRules, setSelectedRules}, ref) => {
 	const filteredRules = rules
 		.slice()
 		.sort((a, b) => deltaToText(a.rule).localeCompare(deltaToText(b.rule)))
-		.filter((rule) =>
-			deltaToText(rule.rule).toLowerCase().includes(searchedRule.toLowerCase())
-		);
+		.filter((rule) => {
+			if (selectedOnly && !selectedRules.includes(rule.id)) return false;
+			return deltaToText(rule.rule).toLowerCase().includes(searchedRule.toLowerCase());
+		});
 
 	// Reset newRule when New Rule subform cancelled
 	const cancelNewRule = () => {
@@ -183,15 +185,25 @@ const ModalRules = forwardRef(({selectedRules, setSelectedRules}, ref) => {
 		{/* Search/add bar */}
 		<div className="flex mb-1 space-x-1">
 			{/* Rule search bar */}
-			<input
-				id="rules-search-bar"
-				type="text"
-				placeholder="Search rules..."
-				value={searchedRule}
-				onChange={(e) => setSearchedRule(e.target.value)}
-				className="h-10.5 w-full px-4 border border-gray-300 rounded-md focus:outline-cyan-500/60"
-				autoComplete="off"
-			/>
+			<div className="flex w-full">
+				<input
+					id="rules-search-bar"
+					type="text"
+					placeholder="Search rules..."
+					value={searchedRule}
+					onChange={(e) => setSearchedRule(e.target.value)}
+					className="h-10.5 w-full px-4 border border-gray-300 rounded-l-md focus:outline-cyan-500/60"
+					autoComplete="off"
+				/>
+				<button
+					id="selected-only"
+					type="button"
+					onClick={() => setSelectedOnly(!selectedOnly)}
+					className={`${selectedOnly ? 'bg-cyan-500/60 text-white font-bold' : 'bg-gray-100 text-gray-400'} border-y border-r border-gray-300 rounded-r-md h-10.5 px-2`}
+				>
+					✓
+				</button>
+			</div>
 			{/* New rule button */}
 			<button
 				tabIndex="-1"

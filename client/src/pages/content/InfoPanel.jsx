@@ -163,18 +163,15 @@ export default function InfoPanel({ selectedItem, setSelectedItem, editItem }) {
 		return (
 			<div className="flex flex-col h-full">	
 				{/* Header Section */}
-				<div className="flex bg-gray-200/70 p-3 rounded-xl shadow-sm outline outline-gray-300">
-					<div>
-						<p>{selectedItem.verbal_orders ? '' : '⚠️NO VERBAL ORDERS'}</p>
-						<div className="flex mt-[-6px] mb-[-4px]">
-							<p className="title">{selectedItem.name}</p>
-							{/* Edit button */}
-							{hasMinPermission(user, 'editor') && <span onClick={handleEdit} className="cursor-pointer edit-icon h-full my-auto ml-2 text-[24px]"></span>}
-						</div>
+				<div className="bg-gray-200/70 p-3 rounded-xl shadow-sm outline outline-gray-300">
+					<p>{selectedItem.verbal_orders ? '' : '⚠️NO VERBAL ORDERS'}</p>
+					<div className="flex mt-[-6px] mb-[-4px]">
+						{/* Archived icon */}
+						{selectedItem?.active || <div className="my-auto mr-3 text-red-600"><ArchiveFilledIcon w="26" h="26"/></div>}
+						<p className={`${selectedItem?.active || 'line-through'} title mb-1`}>{selectedItem.name}</p>
+						{/* Edit button */}
+						{hasMinPermission(user, 'editor') && <span onClick={handleEdit} className="cursor-pointer edit-icon h-full my-auto ml-2 text-[24px]"></span>}
 					</div>
-					{selectedItem?.active || <div className="my-auto ml-auto mr-2 text-red-600">
-						<ArchiveFilledIcon w="24" h="24"/>
-					</div>}
 				</div>
 				{/* Pharmacy Details/Info */}
 				<div className="flex-1 bg-gray-200/70 px-3 py-2 rounded-xl mt-3 text-xl shadow-sm outline outline-gray-300 overflow-auto scrollbar-thin">
@@ -312,38 +309,38 @@ export default function InfoPanel({ selectedItem, setSelectedItem, editItem }) {
 		return (
 			<div className="flex flex-col h-full">	
 				{/* Header Section */}
-				<div className="flex bg-gray-200/70 p-3 rounded-xl shadow-sm outline outline-gray-300">
-					<div>
-						{/* DNC/Intake-only */}
-						<p>{selectedItem.dnc ? '❌DNC ' : ''}{selectedItem.intake_only ? '⚠️INTAKE ONLY' : ''}</p>
-						{/* Name */}
-						<div className="mt-[-6px] flex">
-							<p style={selectedItem.dnc ? {color: 'rgba(200, 80, 80, 1)'} : selectedItem.intake_only ? {color: 'rgba(210, 150, 20, 1)'} : {}} className="title">
-								{selectedItem.name}
-							</p>
-							{/* Edit button */}
-							{hasMinPermission(user, 'editor') && <p onClick={handleEdit} className="cursor-pointer edit-icon h-full my-auto ml-2 text-[24px]"></p>}
-						</div>
-						{/* Title */}
-						<p className="mt-[-8px] mb-[-4px] text-lg font-light">{selectedItem.title}</p>
-						{/* Contact Type(s) */}
-						{selectedItem.contact_type.length > 0 &&
-							<div className="text-gray-400 text-sm flex flex-wrap gap-2 mt-3">
-								{(selectedItem.contact_type).map((type) => (
-									<div className="bg-gray-100 outline outline-gray-400 px-2 py-1 rounded-full shadow-sm" key={type}>{type}</div>
-								))}
-							</div>
-						}
-						{/* Email/Phone */}
-						<div className="w-min mt-4 min-h-10 min-w-80 bg-white px-3 py-2 rounded-md outline outline-gray-300">
-							{selectedItem.email && <div className="inline-flex"><span className="noselect mr-2">🖃</span>{selectedItem.email}</div>}
-							<div className="my-1"></div>
-							{selectedItem.phone && <div className="inline-flex"><span className="noselect mr-2">🕾</span>{selectedItem.phone}</div>}
-						</div>
+				<div className="bg-gray-200/70 p-3 rounded-xl shadow-sm outline outline-gray-300">
+					{/* DNC/Intake-only */}
+					<p>{selectedItem.dnc ? '❌DNC ' : ''}{selectedItem.intake_only ? '⚠️INTAKE ONLY' : ''}</p>
+					{/* Name */}
+					<div className="mt-[-6px] flex">
+						{/* Archived icon */}
+						{selectedItem?.active || <div className="my-auto mr-3 text-red-600"><ArchiveFilledIcon w="26" h="26"/></div>}
+						<p
+							style={selectedItem.dnc ? {color: 'rgba(200, 80, 80, 1)'} : selectedItem.intake_only ? {color: 'rgba(210, 150, 20, 1)'} : {}}
+							className={`${selectedItem?.active || 'line-through'} title mb-1`}
+						>
+							{selectedItem.name}
+						</p>
+						{/* Edit button */}
+						{hasMinPermission(user, 'editor') && <p onClick={handleEdit} className="cursor-pointer edit-icon h-full my-auto ml-2 text-[24px]"></p>}
 					</div>
-					{selectedItem?.active || <div className="my-auto ml-auto mr-2 text-red-600">
-						<ArchiveFilledIcon w="24" h="24"/>
-					</div>}
+					{/* Title */}
+					<p className="mt-[-8px] mb-[-4px] text-lg font-light">{selectedItem.title}</p>
+					{/* Contact Type(s) */}
+					{selectedItem.contact_type.length > 0 &&
+						<div className="text-gray-400 text-sm flex flex-wrap gap-2 mt-3">
+							{(selectedItem.contact_type).map((type) => (
+								<div className="bg-gray-100 outline outline-gray-400 px-2 py-1 rounded-full shadow-sm" key={type}>{type}</div>
+							))}
+						</div>
+					}
+					{/* Email/Phone */}
+					<div className="w-min mt-4 min-h-10 min-w-80 bg-white px-3 py-2 rounded-md outline outline-gray-300">
+						{selectedItem.email && <div className="inline-flex"><span className="noselect mr-2">🖃</span>{selectedItem.email}</div>}
+						<div className="my-1"></div>
+						{selectedItem.phone && <div className="inline-flex"><span className="noselect mr-2">🕾</span>{selectedItem.phone}</div>}
+					</div>
 				</div>
 
 				{/* Details */}
