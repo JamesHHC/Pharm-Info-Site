@@ -4,6 +4,7 @@ const preventAccess = (usrRole, minRole) => {
 		'user',
 		'editor',
 		'admin',
+		'admin creator',
 		'superadmin',
 	];
 

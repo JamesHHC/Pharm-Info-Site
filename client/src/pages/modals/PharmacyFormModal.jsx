@@ -127,30 +127,27 @@ export default function PharmacyFormModal({ isOpen, onClose, onSubmit, contacts 
 						name="oncall_prefs"
 						label="On-call Preferences"
 					/>
-					
+
 					{/* Rules */}
 					<ModalRules
 						ref={rulesRef}
 						selectedRules={selectedRules}
 						setSelectedRules={setSelectedRules}
 					/>
+				
+					{/* VN Instructions (Blurbs) */}
+					<ModalBlurbs
+						ref={blurbsRef}
+						selectedBlurbs={selectedBlurbs}
+						setSelectedBlurbs={setSelectedBlurbs}
+					/>
 
-					{/* Editable by admin only */}
-					{hasMinPermission(user, 'admin') && <>
-						{/* VN Instructions (Blurbs) */}
-						<ModalBlurbs
-							ref={blurbsRef}
-							selectedBlurbs={selectedBlurbs}
-							setSelectedBlurbs={setSelectedBlurbs}
-						/>
-
-						{/* Required Training */}
-						<ModalTrainings
-							ref={trainingsRef}
-							selectedTrainings={selectedTrainings}
-							setSelectedTrainings={setSelectedTrainings}
-						/>
-					</>}
+					{/* Required Training */}
+					<ModalTrainings
+						ref={trainingsRef}
+						selectedTrainings={selectedTrainings}
+						setSelectedTrainings={setSelectedTrainings}
+					/>
 
 					{/* Pharmacy Contacts */}
 					<ModalContacts

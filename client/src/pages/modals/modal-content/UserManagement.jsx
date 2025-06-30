@@ -2,7 +2,7 @@
 import { useEffect, useState } from 'react';
 
 // Auth
-import { hasMinPermission, roleList } from '../../../auth/checkRole';
+import { hasMinPermission, aboveRole, roleList } from '../../../auth/checkRole';
 
 // Assets
 import LoadingIcon from '../../../assets/icons/LoadingIcon';
@@ -78,7 +78,7 @@ export default function UserManagement({ onClose, user, setUser, setUserManager 
 			/>
 			<div className="bg-gray-100 rounded-md px-2 py-1 outline outline-gray-300 overflow-y-auto scrollbar-thin">
 				{filteredAccounts.map(account => {
-					const noChange = !hasMinPermission(user, account.role) || account.username === user.username;
+					const noChange = !aboveRole(user, account.role) || account.username === user.username;
 					return (
 						<div key={account.id} className="my-2">
 							<div className="flex bg-white p-2 rounded shadow-sm outline outline-gray-300">
@@ -99,7 +99,7 @@ export default function UserManagement({ onClose, user, setUser, setUserManager 
 										onChange={(e) => updateRole(account.id, e.target.value, `loading_${account.id}`)}
 									>
 										{roleList.map(listedRole => {
-											const aboveUser = !hasMinPermission(user, listedRole);
+											const aboveUser = !aboveRole(user, listedRole);
 											return (
 												<option
 													key={listedRole}
@@ -112,9 +112,10 @@ export default function UserManagement({ onClose, user, setUser, setUserManager 
 											);
 										})}
 									</select>
-									{/* Delete button */}
+									{/* Delete button ('admin creator' and above) */}
 									<button
 										disabled={noChange}
+										hidden={!hasMinPermission(user, 'admin creator')}
 										type="button"
 										className={`${noChange ? 'opacity-50' : 'hover:bg-red-800/30 cursor-pointer'} flex text-red-700 bg-red-800/20 my-auto ml-2 p-1 rounded-full`}
 										onClick={async () => {

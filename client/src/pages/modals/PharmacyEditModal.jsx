@@ -172,6 +172,8 @@ export default function PharmacyFormModal({ isOpen, onClose, onSubmit, contacts,
 
 	if (!isOpen || openPharmacy.type !== 'pharmacy') return null;
 
+	const isAdminCreator = hasMinPermission(user, 'admin creator');
+	const isAdmin = hasMinPermission(user, 'admin');
 	return (
 		<div className="fixed inset-0 bg-black/30 backdrop-blur-[5px] flex items-center justify-center z-40">
 			<div className="bg-white outline-3 outline-amber-500/60 p-6 rounded-lg shadow-2xl w-150 max-h-[90vh] overflow-y-auto scrollbar-hidden">
@@ -180,23 +182,28 @@ export default function PharmacyFormModal({ isOpen, onClose, onSubmit, contacts,
 
 					{/* Pharmacy Name */}
 					<label htmlFor="name" className="block text-sm font-light text-gray-700 mb-1">
-						Pharmacy Name <span className="text-red-500">*</span>
+						Pharmacy Name{!isAdminCreator || <span className="text-red-500"> *</span>}
 					</label>
 					<input
+						disabled={!isAdminCreator}
 						value={pharmName} onChange={(e) => setPharmName(e.target.value)}
 						required id="name" name="name" type="text" placeholder="Type here..." autoComplete="off"
-						className="w-full mb-3 border border-gray-300 p-2 rounded focus:outline-cyan-500/60"
+						className={`${!isAdminCreator ? 'border-0' : 'p-2'} w-full mb-3 border border-gray-300 rounded focus:outline-cyan-500/60`}
 					/>
 
-					{/* Verbal Orders */}
-					<div className="flex items-center mb-1.5">
-						<input
-							checked={pharmVerb} onChange={(e) => setPharmVerb(e.target.checked)}
-							tabIndex="-1" id="verbal_orders" name="verbal_orders" type="checkbox"
-							className="appearance-none custom-chk transition border-1 border-gray-300 w-5 h-5 focus:outline-cyan-500/60 checked:border-0 checked:bg-cyan-800 rounded-full"
-						/>
-						<label htmlFor="verbal_orders" className="block text-sm p-2 items">Verbal Orders Allowed</label>
-					</div>
+					{isAdmin && <>
+
+						{/* Verbal Orders */}
+						<div className="flex items-center mb-1.5">
+							<input
+								checked={pharmVerb} onChange={(e) => setPharmVerb(e.target.checked)}
+								tabIndex="-1" id="verbal_orders" name="verbal_orders" type="checkbox"
+								className="appearance-none custom-chk transition border-1 border-gray-300 w-5 h-5 focus:outline-cyan-500/60 checked:border-0 checked:bg-cyan-800 rounded-full"
+							/>
+							<label htmlFor="verbal_orders" className="block text-sm p-2 items">Verbal Orders Allowed</label>
+						</div>
+
+					</>}
 
 					{/* General Notes */}
 					<RichTextarea 
@@ -224,15 +231,16 @@ export default function PharmacyFormModal({ isOpen, onClose, onSubmit, contacts,
 						ref={callRef}
 						onChange={(e) => setPharmCall(e)}
 					/>
-					
-					{/* Rules */}
-					<ModalRules
-						ref={rulesRef}
-						selectedRules={selectedRules}
-						setSelectedRules={setSelectedRules}
-					/>
 
-					{hasMinPermission(user, 'admin') && <>
+					{isAdmin && <>
+					
+						{/* Rules */}
+						<ModalRules
+							ref={rulesRef}
+							selectedRules={selectedRules}
+							setSelectedRules={setSelectedRules}
+						/>
+
 						{/* VN Instructions (Blurbs) */}
 						<ModalBlurbs
 							ref={blurbsRef}
@@ -246,6 +254,7 @@ export default function PharmacyFormModal({ isOpen, onClose, onSubmit, contacts,
 							selectedTrainings={selectedTrainings}
 							setSelectedTrainings={setSelectedTrainings}
 						/>
+					
 					</>}
 
 					{/* Pharmacy Contacts */}
@@ -268,14 +277,14 @@ export default function PharmacyFormModal({ isOpen, onClose, onSubmit, contacts,
 							>
 								<TrashIcon className="my-auto" />
 							</button>}
-							<button
+							{isAdminCreator && <button
 								tabIndex="-1"
 								type="button"
 								onClick={archivePharmacy}
 								className="cursor-pointer flex justify-center items-center w-10 py-2 bg-blue-800/20 text-blue-900 hover:bg-blue-800/30 rounded-md"
 							>
 								{openPharmacy?.active && <ArchiveIcon className="my-auto"/> || <UnarchiveIcon className="my-auto"/>}
-							</button>
+							</button>}
 						</div>
 						<button
 							type="button"
@@ -299,6 +308,10 @@ export default function PharmacyFormModal({ isOpen, onClose, onSubmit, contacts,
 
 	// Update pharmacy_rules db based on selected rules
 	async function associateRules(pharmId, ruleIds) {
+
+		// Check user access
+		if (!hasMinPermission(user, 'admin')) return;
+
 		// Send info to db
 		const token = localStorage.getItem('token');
 		const res = await fetch(`http://${serverIp}:${serverPort}/api/pharmrules`, {
@@ -313,6 +326,10 @@ export default function PharmacyFormModal({ isOpen, onClose, onSubmit, contacts,
 
 	// Update pharmacy_training db based on selected rules
 	async function associateTraining(pharmId, trainingIds) {
+
+		// Check user access
+		if (!hasMinPermission(user, 'admin')) return;
+
 		// Send info to db
 		const token = localStorage.getItem('token');
 		const res = await fetch(`http://${serverIp}:${serverPort}/api/pharmtraining`, {
@@ -327,6 +344,10 @@ export default function PharmacyFormModal({ isOpen, onClose, onSubmit, contacts,
 
 	// Update pharmacy_blurbs db based on selected blurbs
 	async function associateBlurbs(pharmId, blurbIds) {
+
+		// Check user access
+		if (!hasMinPermission(user, 'admin')) return;
+
 		// Send info to db
 		const token = localStorage.getItem('token');
 		const res = await fetch(`http://${serverIp}:${serverPort}/api/pharmblurbs`, {

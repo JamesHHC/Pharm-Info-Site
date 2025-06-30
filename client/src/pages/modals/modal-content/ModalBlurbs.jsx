@@ -1,6 +1,10 @@
 // React
 import React, { useEffect, useState, useRef, forwardRef, useImperativeHandle } from 'react';
 
+// Auth
+import { useAuth } from '../../../auth/AuthContext';
+import { hasMinPermission } from '../../../auth/checkRole';
+
 // Content
 import TrashIcon from '../../../assets/icons/TrashIcon';
 import RichTextarea from '../../components/RichTextarea';
@@ -15,6 +19,9 @@ const serverIp = config.server_ip;
 const serverPort = config.server_port;
 
 const ModalBlurbs = forwardRef(({selectedBlurbs, setSelectedBlurbs}, ref) => {
+	// User/auth stuff
+	const { user } = useAuth();
+
 	const [loadingBlurbs, setLoadingBlurbs] = useState(false);
 	const [blurbs, setBlurbs] = useState([]);
 	const [searchedBlurb, setSearchedBlurb] = useState('');

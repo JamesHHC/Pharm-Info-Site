@@ -19,7 +19,7 @@ const newPharmacy = async (req, res) => {
 	const { name, communication, verbal_orders, general_notes, oncall_prefs } = req.body;
 	try {
 		// Validate user access level
-		if (check_role(req.user.role, 'editor'))
+		if (check_role(req.user.role, 'admin creator'))
 			return res.status(403).json({ error: 'Insufficient permissions' });
 
 		const result = await db.query(
@@ -127,7 +127,7 @@ const pharmacyActive = async (req, res) => {
 	const { id, active } = req.body;
 	try {
 		// Validate user access level
-		if (check_role(req.user.role, 'editor'))
+		if (check_role(req.user.role, 'admin creator'))
 			return res.status(403).json({ error: 'Insufficient permissions' });
 
 		const result = await db.query(`

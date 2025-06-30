@@ -1,10 +1,6 @@
 // React
 import React, { useEffect, useState, forwardRef, useImperativeHandle } from 'react';
 
-// Auth
-import { useAuth } from '../../../auth/AuthContext';
-import { hasMinPermission } from '../../../auth/checkRole';
-
 // Styles
 import '../ModalStyles.css';
 
@@ -17,9 +13,6 @@ const serverIp = config.server_ip;
 const serverPort = config.server_port;
 
 const ModalPharmacies = forwardRef(({selectedPharmacies, setSelectedPharmacies, pharmacies}, ref) => {
-	// User/auth stuff
-	const { user } = useAuth();
-
 	const [searchedPharmacy, setSearchedPharmacy] = useState('');
 	const [selectedOnly, setSelectedOnly] = useState(false);
 
@@ -78,7 +71,7 @@ const ModalPharmacies = forwardRef(({selectedPharmacies, setSelectedPharmacies, 
 		{/* Pharmacy List */}
 		<div tabIndex="-1" className="resize-y mb-4 border bg-gray-100 border-gray-300 p-2 rounded h-40 w-full overflow-y-auto overflow-x-hidden space-y-2 space-x-2 scrollbar-thin">
 			{filteredPharmacies.map((pharmacy) => {
-				if (!pharmacy?.active && !hasMinPermission(user, 'editor')) return;
+				const isActive = pharmacy?.active;
 				return (
 					<div
 						className="bg-white flex w-full items-center justify-between rounded-md shadow-sm"
@@ -88,6 +81,7 @@ const ModalPharmacies = forwardRef(({selectedPharmacies, setSelectedPharmacies, 
 							<div className="flex items-center">
 								<input
 									tabIndex="-1"
+									disabled={!isActive}
 									type="checkbox"
 									id={`pharmacy_${pharmacy.id}`}
 									name="pharmacy"

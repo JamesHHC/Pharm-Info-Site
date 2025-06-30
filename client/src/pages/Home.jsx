@@ -171,7 +171,7 @@ function Home() {
 								className="h-full w-full px-4 border border-gray-300 rounded-md focus:outline-cyan-500/60 shadow-sm"
 							/>
 							{/* Create Button */}
-							{hasMinPermission(user, 'editor') && <button
+							{(hasMinPermission(user, 'admin creator') || ( hasMinPermission(user, 'editor') && activeTab === 'contacts')) && <button
 								tabIndex='-1'
 								onClick={handleAdd}
 								className="cursor-pointer w-12 h-10.5 text-4xl shadow-sm text-teal-600/60 font-medium border-2 border-teal-600/60 rounded-md hover:border-0 hover:text-white hover:bg-teal-600/60"
@@ -187,7 +187,7 @@ function Home() {
 									{filteredPharmacies.map((pharmacy) => {
 										const isActive = pharmacy.active;
 										const thisPharmacy = selectedItem?.type === 'pharmacy' && selectedItem?.id === pharmacy.id;
-										if (!isActive && !hasMinPermission(user, 'editor')) return;
+										// if (!isActive && !hasMinPermission(user, 'editor')) return;
 										return (
 											<li
 												key={pharmacy.id}
@@ -215,7 +215,7 @@ function Home() {
 									{filteredContacts.map((contact) => {
 										const isActive = contact.active;
 										const thisContact = selectedItem?.type === 'contact' && selectedItem?.id === contact.id;
-										if (!isActive && !hasMinPermission(user, 'editor')) return;
+										// if (!isActive && !hasMinPermission(user, 'editor')) return;
 										return (
 											<li
 												key={contact.id}
@@ -257,9 +257,12 @@ function Home() {
 						selectedItem={selectedItem}
 						setSelectedItem={setSelectedItem}
 						editItem={ async () => {
-							selectedItem.type === 'pharmacy' ? 
-								setShowPharmacyEditModal(true) :
-								setShowContactEditModal(true);
+							if (selectedItem.type === 'pharmacy') {
+								// Double check archive status/permissions
+								if (!selectedItem?.active && !hasMinPermission(user, 'admin creator')) return;
+								setShowPharmacyEditModal(true);
+							}
+							else setShowContactEditModal(true);
 						}}
 					/>
 				</div>
@@ -341,8 +344,16 @@ function Home() {
 
 	// Determine which modal to display
 	function handleAdd(){
-		if (activeTab === 'pharmacies') setShowPharmacyModal(true);
-		else if (activeTab === 'contacts') setShowContactModal(true);
+		if (activeTab === 'pharmacies') {
+			// Double-check access
+			if (!hasMinPermission(user, 'admin creator')) return;
+			else setShowPharmacyModal(true);
+		}
+		else if (activeTab === 'contacts') {
+			// Double-check access
+			if (!hasMinPermission(user, 'editor')) return;
+			else setShowContactModal(true);
+		}
 	}
 }
 

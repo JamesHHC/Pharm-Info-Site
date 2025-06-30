@@ -121,8 +121,7 @@ export default function InfoPanel({ selectedItem, setSelectedItem, editItem }) {
 			body: JSON.stringify({ ids: idArr }),
 		});
 		const contactJson = await res.json();
-		if (hasMinPermission(user, 'editor')) setContacts(contactJson);
-		else setContacts(contactJson.filter((cont) => cont?.active));
+		setContacts(contactJson);
 	};
 	const fetchSomePharmacies = async (idArr) => {
 		const res = await fetch(`http://${serverIp}:${serverPort}/api/pharmacies/some`, {
@@ -131,8 +130,7 @@ export default function InfoPanel({ selectedItem, setSelectedItem, editItem }) {
 			body: JSON.stringify({ ids: idArr }),
 		});
 		const pharmacyJson = await res.json();
-		if (hasMinPermission(user, 'editor')) setPharmacies(pharmacyJson);
-		else setPharmacies(pharmacyJson.filter((pharm) => pharm?.active));
+		setPharmacies(pharmacyJson);
 	};
 
 	// Run whenever selectedItem changes
@@ -170,7 +168,8 @@ export default function InfoPanel({ selectedItem, setSelectedItem, editItem }) {
 						{selectedItem?.active || <div className="my-auto mr-3 text-red-600"><ArchiveFilledIcon w="26" h="26"/></div>}
 						<p className={`${selectedItem?.active || 'line-through'} title mb-1`}>{selectedItem.name}</p>
 						{/* Edit button */}
-						{hasMinPermission(user, 'editor') && <span onClick={handleEdit} className="cursor-pointer edit-icon h-full my-auto ml-2 text-[24px]"></span>}
+						{((hasMinPermission(user, 'editor') && selectedItem?.active) || hasMinPermission(user, 'admin creator')) &&
+							<span onClick={handleEdit} className="cursor-pointer edit-icon h-full my-auto ml-2 text-[24px]"></span>}
 					</div>
 				</div>
 				{/* Pharmacy Details/Info */}
