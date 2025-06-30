@@ -120,10 +120,7 @@ REFRESH_SECRET=XX
 
 ## 🧭 Database Diagram
 
-<p align="center">
-  <img src="docs/db_diagram.png" alt="db diagram" width=800><br>
-  <b>PostgreSQL</b> and <b>pgAdmin 4</b> were used to set up the required tables.
-</p>
+<p align="center"><img src="docs/db_diagram.png" alt="db diagram" width=800><br></p>
 
 ---
 
