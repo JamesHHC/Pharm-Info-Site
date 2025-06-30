@@ -61,18 +61,23 @@ A responsive internal web application designed to streamline access to pharmacy 
 
 ```md
 client/
-├── src/
-│ ├── components/
-│ ├── pages/
-│ ├── hooks/
-│ └── config.js ← add server IP + port
+└── src/
+    ├── assets/
+    ├── auth/
+    ├── pages/
+    │   ├── components/
+    │   ├── content/
+    │   └── modals/
+    │       └── modal-content/
+    └── config.js     ← add server IP + port
 
 server/
 ├── controllers/
 ├── routes/
 ├── middleware/
-├── database/
-└── .env ← set DB URL, PORT, JWT_SECRET, REFRESH_SECRET
+├── db/
+├── utils/
+└── .env             ← set DB URL, PORT, JWT_SECRET, REFRESH_SECRET
 ```
 
 ---
