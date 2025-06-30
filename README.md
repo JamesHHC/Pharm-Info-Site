@@ -1,9 +1,94 @@
-# Pharmacy Info | Helms Home Care
-A web application for displaying information related to pharmacies. Built using **Vite** and the **React.js** framework.
+# Pharmacy Info | Helms Home Care 🏥
 
-## Client
-#### Required files:
-`client/src/config.js`
+A responsive internal web application designed to streamline access to pharmacy and contact information. Built with **React**, **Node.js**, and **PostgreSQL**, the app features a minimalist UI paired with robust backend logic, authentication, and dynamic data relationships.
+
+---
+
+## 🔧 Tech Stack
+
+- **Frontend:** React + Vite + Tailwind CSS
+- **Backend:** Node.js + Express
+- **Database:** PostgreSQL (with pgAdmin 4)
+- **Authentication:** JWTs with refresh token support + bcrypt
+- **Deployment:** Planned production deployment will use a reverse proxy such as NGINX to serve the frontend and proxy backend API requests.
+
+---
+
+## 💡 Key Features
+
+- 🔐 **Role-Based Authentication**  
+  JWT-secured login system with refresh tokens and dynamic access control.
+
+- 🧠 **Smart Data Editing**  
+  Modals for editing/viewing pharmacy and contact records with rich text formatting (Quill).
+
+- 🔍 **Dynamic Filtering**  
+  Real-time search and filter functionality for large datasets.
+
+- 🧩 **Many-to-Many Relationships**  
+  Pharmacies and contacts can be linked in both directions, with logic handling sync and display.
+
+- 📱 **Mobile Responsive UI**  
+  Designed with clean layouts and adaptive components.
+
+- 🛠️ **Admin Tools**  
+  Custom-built user management interface for assigning and removing roles.
+
+---
+
+## 🖼️ Screenshots
+
+### Main Interface
+<img src="docs/screenshots/main_page.png" alt="Main page" width="700"/>
+
+> *Searchable, collapsible pharmacy view with dynamic sections and scrollable containers.*
+
+### Edit Modal
+<img src="docs/screenshots/edit_pharm.png" alt="Edit Pharmacy" width="700"/>
+
+> *Full-featured modal for updating pharmacy data using Quill editors and structured inputs.*
+
+### Admin View
+<img src="docs/screenshots/user_management.png" alt="User management panel" width="500"/>
+
+> *Role management panel accessible only to admins, featuring role assignment and deletion.*
+
+> 📂 **More UI previews available in the [`/screenshots`](./docs/screenshots) folder.**
+
+---
+
+## 🗃️ Project Structure
+
+```md
+client/
+├── src/
+│ ├── components/
+│ ├── pages/
+│ ├── hooks/
+│ └── config.js ← add server IP + port
+
+server/
+├── controllers/
+├── routes/
+├── middleware/
+├── database/
+└── .env ← set DB URL, PORT, JWT_SECRET, REFRESH_SECRET
+```
+
+---
+
+## 🧪 Local Setup
+
+**This project consists of two separate apps: the frontend (`client`) and the backend (`server`).** Each must be installed and run independently.
+
+### 🔹 Client Setup (React frontend)
+
+```bash
+cd client
+npm install
+npm run dev
+```
+> Make sure to create `client/src/config.js`:
 ```js
 export default {
     server_ip: 'XX',
@@ -11,9 +96,14 @@ export default {
 };
 ```
 
-## Server
-#### Required files:
-`server/.env`
+### 🔹 Server Setup (Node.js backend)
+
+```bash
+cd server
+npm install
+npm run start
+```
+> You'll also need a `.env` file in `server/`:
 ```env
 PORT=XX
 DATABASE_URL=postgresql://user:password@localhost:port/pharmacydb
@@ -21,9 +111,24 @@ JWT_SECRET=XX
 REFRESH_SECRET=XX
 ```
 
-## Database
+---
+
+## 🧭 Database Diagram
 
 <p align="center">
   <img src="docs/db_diagram.png" alt="db diagram" width=800><br>
   <b>PostgreSQL</b> and <b>pgAdmin 4</b> were used to set up the required tables.
 </p>
+
+---
+
+## 📝 Notes
+
+This app is deployed internally and used by staff members at Helms Home Care. Due to the sensitive nature of the data and its intranet-only deployment, a live demo is unavailable. However, the screenshots and repo reflect the structure, functionality, and scope of the tool.
+
+---
+
+## 👋 Author
+
+**James Kent** [GitHub](https://github.com/Jamesrkiv) \
+Software / IT Lead @ Helms Home Care
