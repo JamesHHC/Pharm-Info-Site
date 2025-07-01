@@ -291,9 +291,12 @@ const ModalTrainings = forwardRef(({selectedTrainings, setSelectedTrainings}, re
 				/>
 				<div>
 					<div className="flex justify-end mt-2">
-						<button tabIndex="-1" type="button" onClick={deleteTraining} className="cursor-pointer mr-auto px-4 py-2 bg-red-800/20 text-red-900 hover:bg-red-800/30 rounded-md">
-							<TrashIcon className="my-auto"/>
-						</button>
+						{/* Delete button */}
+						{ hasMinPermission(user, 'superadmin') &&
+							<button tabIndex="-1" type="button" onClick={deleteTraining} className="cursor-pointer mr-auto px-4 py-2 bg-red-800/20 text-red-900 hover:bg-red-800/30 rounded-md">
+								<TrashIcon className="my-auto"/>
+							</button>
+						}
 						<button tabIndex="-1" type="button" onClick={cancelEditTraining} className="cursor-pointer px-4 py-2 bg-gray-800/10 text-gray-400 hover:bg-gray-800/20 rounded-l-md">Cancel</button>
 						<button tabIndex="-1" type="button" onClick={submitEditTraining} className="cursor-pointer px-4 py-2 bg-orange-600/60 hover:bg-orange-600/80 text-white rounded-r-md">Save</button>
 					</div>

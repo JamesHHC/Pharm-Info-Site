@@ -249,7 +249,7 @@ const ModalRules = forwardRef(({selectedRules, setSelectedRules}, ref) => {
 				/>
 				<div className="flex justify-end mt-2">
 					{/* Delete button */}
-					{ hasMinPermission(user, 'admin') &&
+					{ hasMinPermission(user, 'superadmin') &&
 						<button tabIndex="-1" type="button" onClick={deleteRule} className="cursor-pointer mr-auto px-4 py-2 bg-red-800/20 text-red-900 hover:bg-red-800/30 rounded-md">
 							<TrashIcon className="my-auto"/>
 						</button>

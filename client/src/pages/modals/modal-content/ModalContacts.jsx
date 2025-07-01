@@ -1,6 +1,10 @@
 // React
 import React, { useEffect, useState, forwardRef, useImperativeHandle } from 'react';
 
+// Auth
+import { useAuth } from '../../../auth/AuthContext';
+import { hasMinPermission } from '../../../auth/checkRole';
+
 // Styles
 import '../ModalStyles.css';
 
@@ -13,6 +17,9 @@ const serverIp = config.server_ip;
 const serverPort = config.server_port;
 
 const ModalContacts = forwardRef(({selectedContacts, setSelectedContacts, contacts}, ref) => {
+	// User/auth stuff
+	const { user } = useAuth();
+
 	const [searchedContact, setSearchedContact] = useState('');
 	const [selectedOnly, setSelectedOnly] = useState(false);
 
@@ -81,7 +88,7 @@ const ModalContacts = forwardRef(({selectedContacts, setSelectedContacts, contac
 							<div className="flex items-center">
 								<input
 									tabIndex="-1"
-									disabled={!isActive}
+									disabled={!isActive && !hasMinPermission(user, 'admin creator')}
 									type="checkbox"
 									id={`contact_${contact.id}`}
 									name="contact"
