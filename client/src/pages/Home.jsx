@@ -17,6 +17,7 @@ import UserModal from './modals/UserModal';
 import logo from '../assets/logo_bluegray.svg';
 import UserIcon from '../assets/icons/UserIcon';
 import ArchiveFilledIcon from '../assets/icons/ArchiveFilledIcon';
+import CrownIcon from '../assets/icons/CrownIcon';
 
 // Config
 import config from '../config.js';
@@ -183,13 +184,14 @@ function Home() {
 						<div tabIndex='-1' className="flex-1 overflow-auto rounded-md scrollbar-hidden p-2 bg-gray-200/70 border border-gray-300 inset-shadow-sm">
 							{/* Pharmacy list */}
 							{ activeTab === 'pharmacies' &&
-								<ul className="space-y-2">
+								<ul className="space-y-2" tabIndex="-1">
 									{filteredPharmacies.map((pharmacy) => {
 										const isActive = pharmacy.active;
 										const thisPharmacy = selectedItem?.type === 'pharmacy' && selectedItem?.id === pharmacy.id;
 										// if (!isActive && !hasMinPermission(user, 'editor')) return;
 										return (
 											<li
+												tabIndex="-1"
 												key={pharmacy.id}
 												className={`${thisPharmacy ? 'outline-gray-700/40 outline-2' : 'outline-gray-300'} ${isActive || 'opacity-30'} p-2 bg-white hover:bg-white/50 rounded-md cursor-pointer shadow-sm outline`}
 												onClick={() => {
@@ -211,13 +213,14 @@ function Home() {
 							}
 							{/* Contact list */}
 							{ activeTab === 'contacts' &&
-								<ul className="space-y-2">
+								<ul className="space-y-2" tabIndex="-1">
 									{filteredContacts.map((contact) => {
 										const isActive = contact.active;
 										const thisContact = selectedItem?.type === 'contact' && selectedItem?.id === contact.id;
 										// if (!isActive && !hasMinPermission(user, 'editor')) return;
 										return (
 											<li
+												tabIndex="-1"
 												key={contact.id}
 												className={`${thisContact ? 'outline-gray-700/40 outline-2' : 'outline-gray-300'} ${isActive || 'opacity-30'} p-2 bg-white hover:bg-white/50 rounded-md cursor-pointer shadow-sm outline`}
 												onClick={() => {
@@ -228,7 +231,25 @@ function Home() {
 												<div className="flex">
 													<div>
 														<p className="light-small">{contact.dnc ? '❌DNC ' : ''}{contact.intake_only ? '⚠️INTAKE ONLY' : ''}</p>
-														<p className="item-title" style={contact.dnc ? {color: 'rgba(200, 80, 80, 1)'} : contact.intake_only ? {color: 'rgba(210, 150, 20, 1)'} : {}}>{contact.name}</p>
+														<p
+															className="item-title"
+															style={contact.dnc ? {color: 'rgba(200, 80, 80, 1)'} : contact.intake_only ? {color: 'rgba(210, 150, 20, 1)'} : {}}
+														>
+															{contact.name}
+															{contact.vip &&
+																<span
+																	className="ml-1"
+																	style={{
+																		display: 'inline-block',
+																        width: '1em',
+																        height: '1em',
+																        verticalAlign: 'text-center',
+																	}}
+																>
+																	<CrownIcon w='24px' h='24px'/>
+																</span>
+															}
+														</p>
 														<p className="mt-[-4px]">{contact.title}</p>
 														{contact.contact_type.length > 0 &&
 															<div className="text-gray-400 text-sm flex flex-wrap gap-2 mt-1.5 mt-0.5">

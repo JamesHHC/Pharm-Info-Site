@@ -10,6 +10,7 @@ import '../ModalStyles.css';
 
 // Assets
 import ArchiveFilledIcon from '../../../assets/icons/ArchiveFilledIcon';
+import CrownIcon from '../../../assets/icons/CrownIcon';
 
 // Config
 import config from '../../../config.js';
@@ -88,7 +89,7 @@ const ModalContacts = forwardRef(({selectedContacts, setSelectedContacts, contac
 							<div className="flex items-center">
 								<input
 									tabIndex="-1"
-									disabled={!isActive && !hasMinPermission(user, 'admin creator')}
+									disabled={(!isActive && !hasMinPermission(user, 'admin creator')) || (contact.vip && !hasMinPermission(user, 'admin'))}
 									type="checkbox"
 									id={`contact_${contact.id}`}
 									name="contact"
@@ -100,7 +101,22 @@ const ModalContacts = forwardRef(({selectedContacts, setSelectedContacts, contac
 								{/* Contact info */}
 								<div className="flex w-full">
 									<div>
-										<p className={`${contact?.active || 'opacity-30 line-through'} text-sm`}>{contact.name}</p>
+										<p className={`${contact?.active || 'opacity-30 line-through'} text-sm`}>
+											{contact.name}
+											{contact.vip &&
+												<span
+													className="ml-1 mr-3 mt-[-4px]"
+													style={{
+														display: 'inline-block',
+												        width: '1em',
+												        height: '1em',
+												        verticalAlign: 'text-center',
+													}}
+												>
+													<CrownIcon w='18px' h='18px'/>
+												</span>
+											}
+										</p>
 										<p className={`${contact?.active || 'opacity-30'} text-sm font-light`}>{contact.title}</p>
 									</div>
 									{contact?.active || <div className="my-auto ml-auto mr-2 text-red-600"><ArchiveFilledIcon w="16" h="16"/></div>}

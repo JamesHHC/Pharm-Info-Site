@@ -28,6 +28,7 @@ export default function ContactFormModal({ isOpen, onClose, onSubmit, pharmacies
 	const [contName, setContName] = useState('');
 	const [contDNC, setContDNC] = useState(false);
 	const [contIntake, setContIntake] = useState(false);
+	const [contVip, setContVip] = useState(false);
 	const [contTypes, setContTypes] = useState([]);
 	const [contTitle, setContTitle] = useState('');
 	const [contEmail, setContEmail] = useState('');
@@ -46,6 +47,7 @@ export default function ContactFormModal({ isOpen, onClose, onSubmit, pharmacies
 			setContName(openContact.name);
 			setContDNC(openContact?.dnc || false);
 			setContIntake(openContact?.intake_only || false);
+			setContVip(openContact?.vip || false);
 			setContTypes(openContact?.contact_type || []);
 			setContTitle(openContact?.title || '');
 			setContEmail(openContact?.email || '');
@@ -83,6 +85,7 @@ export default function ContactFormModal({ isOpen, onClose, onSubmit, pharmacies
 			preferences: contPrefs,
 			dnc: contDNC,
 			intake_only: contIntake,
+			vip: contVip,
 			contact_type: contTypes,
 		}
 		// Ensure data isn't blank
@@ -178,20 +181,32 @@ export default function ContactFormModal({ isOpen, onClose, onSubmit, pharmacies
 						className="w-full mb-3 border border-gray-300 p-2 rounded focus:outline-cyan-500/60"
 					/>
 
-					{/* DNC/Intake-Only */}
-					<div className="flex items-center mb-1.5">
-						<input
-							checked={contDNC} onChange={(e) => setContDNC(e.target.checked)}
-							tabIndex="-1" id="dnc" name="dnc" type="checkbox"
-							className="appearance-none flex-none custom-chk transition border-1 border-gray-300 w-5 h-5 focus:outline-cyan-500/60 checked:border-0 checked:bg-cyan-800 rounded-full"
-						/>
-						<label htmlFor="dnc" className="block text-sm p-2 items mr-4">❌DNC</label>
-						<input
-							checked={contIntake} onChange={(e) => setContIntake(e.target.checked)}
-							tabIndex="-1" id="intake_only" name="intake_only" type="checkbox"
-							className="appearance-none flex-none custom-chk transition border-1 border-gray-300 w-5 h-5 focus:outline-cyan-500/60 checked:border-0 checked:bg-cyan-800 rounded-full"
-						/>
-						<label htmlFor="intake_only" className="block text-sm p-2 items">⚠️Intake Only</label>
+					{/* DNC/Intake-Only/VIP */}
+					<div className="flex flex-wrap space-x-6 items-center mb-1.5">
+						<div className="flex py-2">
+							<input
+								checked={contDNC} onChange={(e) => setContDNC(e.target.checked)}
+								tabIndex="-1" id="dnc" name="dnc" type="checkbox"
+								className="appearance-none custom-chk transition border-1 border-gray-300 w-5 h-5 focus:outline-cyan-500/60 checked:border-0 checked:bg-cyan-800 rounded-full"
+							/>
+							<label htmlFor="dnc" className="text-sm items">❌DNC</label>
+						</div>
+						<div className="flex py-2">
+							<input
+								checked={contIntake} onChange={(e) => setContIntake(e.target.checked)}
+								tabIndex="-1" id="intake_only" name="intake_only" type="checkbox"
+								className="appearance-none custom-chk transition border-1 border-gray-300 w-5 h-5 focus:outline-cyan-500/60 checked:border-0 checked:bg-cyan-800 rounded-full"
+							/>
+							<label htmlFor="intake_only" className="text-sm items">⚠️Intake Only</label>
+						</div>
+						{hasMinPermission(user, 'admin') && <div className="flex py-2">
+							<input
+								checked={contVip} onChange={(e) => setContVip(e.target.checked)}
+								tabIndex="-1" id="vip_person" name="vip_person" type="checkbox"
+								className="appearance-none custom-chk transition border-1 border-gray-300 w-5 h-5 focus:outline-cyan-500/60 checked:border-0 checked:bg-cyan-800 rounded-full"
+							/>
+							<label htmlFor="vip_person" className="text-sm items">👑VIP</label>
+						</div>}
 					</div>
 
 					{/* Contact Type */}

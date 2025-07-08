@@ -1,6 +1,10 @@
 // React
 import React, { useState, useRef } from 'react';
 
+// Auth
+import { useAuth } from '../../auth/AuthContext';
+import { hasMinPermission } from '../../auth/checkRole';
+
 // Content
 import ModalPharmacies from './modal-content/ModalPharmacies';
 import RichTextarea from '../components/RichTextarea';
@@ -14,6 +18,9 @@ const serverIp = config.server_ip;
 const serverPort = config.server_port;
 
 export default function ContactFormModal({ isOpen, onClose, onSubmit, pharmacies }) {
+	// User/auth stuff
+	const { user } = useAuth();
+
 	// For tracking selected options
 	const [selectedPharmacies, setSelectedPharmacies] = useState([]);
 
@@ -39,6 +46,7 @@ export default function ContactFormModal({ isOpen, onClose, onSubmit, pharmacies
 			dnc: formData.get('dnc') === 'on',
 			intake_only: formData.get('intake_only') === 'on',
 			contact_type: formData.getAll('contact_type'),
+			vip: formData.get('vip_person') === 'on',
 		}
 		// Ensure data isn't blank
 		if (!newContact.name) {
@@ -79,18 +87,29 @@ export default function ContactFormModal({ isOpen, onClose, onSubmit, pharmacies
 						className="w-full mb-3 border border-gray-300 p-2 rounded focus:outline-cyan-500/60"
 					/>
 
-					{/* DNC/Intake-Only */}
-					<div className="flex items-center mb-1.5">
-						<input 
-							tabIndex="-1" id="dnc" name="dnc" type="checkbox"
-							className="appearance-none flex-none custom-chk transition border-1 border-gray-300 w-5 h-5 focus:outline-cyan-500/60 checked:border-0 checked:bg-cyan-800 rounded-full"
-						/>
-						<label htmlFor="dnc" className="block text-sm p-2 items mr-4">❌DNC</label>
-						<input 
-							tabIndex="-1" id="intake_only" name="intake_only" type="checkbox"
-							className="appearance-none flex-none custom-chk transition border-1 border-gray-300 w-5 h-5 focus:outline-cyan-500/60 checked:border-0 checked:bg-cyan-800 rounded-full"
-						/>
-						<label htmlFor="intake_only" className="block text-sm p-2 items">⚠️Intake Only</label>
+					{/* DNC/Intake-Only/VIP */}
+					<div className="flex flex-wrap space-x-6 items-center mb-1.5">
+						<div className="flex py-2">
+							<input 
+								tabIndex="-1" id="dnc" name="dnc" type="checkbox"
+								className="appearance-none custom-chk transition border-1 border-gray-300 w-5 h-5 focus:outline-cyan-500/60 checked:border-0 checked:bg-cyan-800 rounded-full"
+							/>
+							<label htmlFor="dnc" className="text-sm items">❌DNC</label>
+						</div>
+						<div className="flex py-2">
+							<input 
+								tabIndex="-1" id="intake_only" name="intake_only" type="checkbox"
+								className="appearance-none custom-chk transition border-1 border-gray-300 w-5 h-5 focus:outline-cyan-500/60 checked:border-0 checked:bg-cyan-800 rounded-full"
+							/>
+							<label htmlFor="intake_only" className="text-sm items">⚠️Intake Only</label>
+						</div>
+						{hasMinPermission(user, 'admin') && <div className="flex py-2">
+							<input 
+								tabIndex="-1" id="vip_person" name="vip_person" type="checkbox"
+								className="appearance-none custom-chk transition border-1 border-gray-300 w-5 h-5 focus:outline-cyan-500/60 checked:border-0 checked:bg-cyan-800 rounded-full"
+							/>
+							<label htmlFor="vip_person" className="text-sm items">👑VIP</label>
+						</div>}
 					</div>
 
 					{/* Contact Type */}

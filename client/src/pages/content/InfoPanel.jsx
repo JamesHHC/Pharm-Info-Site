@@ -10,6 +10,7 @@ import RichViewer from '../components/RichViewer';
 
 // Assets
 import ArchiveFilledIcon from '../../assets/icons/ArchiveFilledIcon';
+import CrownIcon from '../../assets/icons/CrownIcon';
 
 // Config
 import config from '../../config.js';
@@ -293,7 +294,22 @@ export default function InfoPanel({ selectedItem, setSelectedItem, editItem }) {
 									className={`${contact.active || 'opacity-30'} cursor-pointer py-2 px-5 bg-white rounded-full shadow-sm outline outline-gray-300`}
 									onClick={() => { setSelectedItem({ ...contact, type: 'contact' }); }}
 								>
-									<p className="text-base">{contact.name}</p>
+									<p className="text-base">
+										{contact.name}
+										{contact.vip &&
+											<span
+												className="ml-1 mr-3 mt-[-4px]"
+												style={{
+													display: 'inline-block',
+											        width: '1em',
+											        height: '1em',
+											        verticalAlign: 'text-center',
+												}}
+											>
+												<CrownIcon w='20px' h='20px'/>
+											</span>
+										}
+									</p>
 									<p className="text-sm font-light">{contact.title}</p>
 								</div>
 							)
@@ -320,9 +336,24 @@ export default function InfoPanel({ selectedItem, setSelectedItem, editItem }) {
 							className={`${selectedItem?.active || 'line-through'} title mb-1`}
 						>
 							{selectedItem.name}
+							{selectedItem.vip &&
+								<span
+									className="ml-2 mr-3 mt-[-4px]"
+									style={{
+										display: 'inline-block',
+								        width: '1em',
+								        height: '1em',
+								        verticalAlign: 'text-center',
+									}}
+								>
+									<CrownIcon w='40px' h='40px'/>
+								</span>
+							}
 						</p>
 						{/* Edit button */}
-						{hasMinPermission(user, 'editor') && <p onClick={handleEdit} className="cursor-pointer edit-icon h-full my-auto ml-2 text-[24px]"></p>}
+						{(hasMinPermission(user, 'editor') && !selectedItem.vip || hasMinPermission(user, 'admin')) && 
+							<p onClick={handleEdit} className="cursor-pointer edit-icon h-full my-auto ml-2 text-[24px]"></p>
+						}
 					</div>
 					{/* Title */}
 					<p className="mt-[-8px] mb-[-4px] text-lg font-light">{selectedItem.title}</p>

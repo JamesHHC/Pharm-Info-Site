@@ -16,17 +16,17 @@ const getContacts = async (req, res) => {
 
 // Insert a new contact
 const newContact = async (req, res) => {
-	const { name, email, phone, title, preferences, dnc, intake_only, contact_type } = req.body;
+	const { name, email, phone, title, preferences, dnc, intake_only, contact_type, vip } = req.body;
 	try {
 		// Validate user access level
 		if (check_role(req.user.role, 'editor'))
 			return res.status(403).json({ error: 'Insufficient permissions' });
 
 		const result = await db.query(
-			`INSERT INTO contacts (name, email, phone, title, preferences, dnc, intake_only, contact_type)
-				VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+			`INSERT INTO contacts (name, email, phone, title, preferences, dnc, intake_only, contact_type, vip)
+				VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
 				RETURNING *`,
-			[name, email, phone, title, preferences, dnc, intake_only, contact_type]
+			[name, email, phone, title, preferences, dnc, intake_only, contact_type, vip]
 		);
 		res.status(201).json(result.rows[0]);
 
@@ -90,18 +90,18 @@ const deleteContact = async (req, res) => {
 
 // Overwrite values of existing contact for given id
 const updateContact = async (req, res) => {
-	const { id, name, email, phone, title, preferences, dnc, intake_only, contact_type } = req.body;
+	const { id, name, email, phone, title, preferences, dnc, intake_only, contact_type, vip } = req.body;
 	try {
 		// Validate user access level
 		if (check_role(req.user.role, 'editor'))
 			return res.status(403).json({ error: 'Insufficient permissions' });
 		
 		const result = await db.query(
-			`UPDATE contacts SET (name, email, phone, title, preferences, dnc, intake_only, contact_type) =
-				($2, $3, $4, $5, $6, $7, $8, $9)
+			`UPDATE contacts SET (name, email, phone, title, preferences, dnc, intake_only, contact_type, vip) =
+				($2, $3, $4, $5, $6, $7, $8, $9, $10)
 				WHERE id = ($1)
 				RETURNING *`,
-			[id, name, email, phone, title, preferences, dnc, intake_only, contact_type]
+			[id, name, email, phone, title, preferences, dnc, intake_only, contact_type, vip]
 		);
 		res.status(201).json(result.rows[0]);
 
