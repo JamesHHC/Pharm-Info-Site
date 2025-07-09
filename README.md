@@ -34,6 +34,9 @@ A responsive internal web application designed to streamline access to pharmacy 
 - 🛠️ **Admin Tools**  
   Custom-built user management interface for assigning and removing roles.
 
+Want a deeper technical look at how these features are implemented?
+📂 **More detailed descriptions of features available in the [`/docs`](./docs) folder.**
+
 ---
 
 ## 🖼️ Screenshots
@@ -53,7 +56,7 @@ A responsive internal web application designed to streamline access to pharmacy 
 
 > *Role management panel accessible only to admins, featuring role assignment and deletion.*
 
-> 📂 **More UI previews available in the [`/screenshots`](./docs/screenshots) folder.**
+📂 **More UI previews available in the [`/docs/screenshots`](./docs/screenshots) folder.**
 
 ---
 
