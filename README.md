@@ -10,7 +10,7 @@ A responsive internal web application designed to streamline access to pharmacy 
 - **Backend:** Node.js + Express
 - **Database:** PostgreSQL (with pgAdmin 4)
 - **Authentication:** JWTs with refresh token support + bcrypt
-- **Deployment:** Planned production deployment will use a reverse proxy such as NGINX to serve the frontend and proxy backend API requests.
+- **Deployment:** The production deployment runs on Windows Server, using NGINX to serve the built Vite frontend and reverse proxy API requests to the Node.js backend. The backend is managed with PM2, which ensures automatic restarts and state restoration on reboot via `pm2 resurrect`. Both NGINX and the backend are launched at system startup using PowerShell scripts registered in the Windows Startup folder.
 
 ---
 
