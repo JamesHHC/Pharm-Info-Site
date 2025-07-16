@@ -47,12 +47,12 @@ Want a deeper technical look at how these features are implemented? \
 > *Searchable, collapsible pharmacy view with dynamic sections and scrollable containers.*
 
 ### Edit Modal
-<img src="docs/screenshots/edit_pharm.png" alt="Edit Pharmacy" width="700"/>
+<img src="docs/screenshots/edit_pharm.png" alt="Edit Pharmacy" width="400"/>
 
 > *Full-featured modal for updating pharmacy data using Quill editors and structured inputs.*
 
 ### Admin View
-<img src="docs/screenshots/user_management.png" alt="User management panel" width="500"/>
+<img src="docs/screenshots/user_management.png" alt="User management panel" width="200"/>
 
 > *Role management panel accessible only to admins, featuring role assignment and deletion.*
 
@@ -123,7 +123,7 @@ REFRESH_SECRET=XX
 
 ## 🧭 Database Diagram
 
-<p align="center"><img src="docs/db_diagram.png" alt="db diagram" width=800><br></p>
+<p align="center"><img src="docs/db_diagram.png" alt="db diagram"><br></p>
 
 📂 **Schema available in the [`/server/db`](./server/db/schema.sql) folder.**
 
