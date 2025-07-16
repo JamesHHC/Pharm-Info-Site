@@ -125,6 +125,8 @@ REFRESH_SECRET=XX
 
 <p align="center"><img src="docs/db_diagram.png" alt="db diagram" width=800><br></p>
 
+📂 **Schema available in the [`/server/db`](./server/db/schema.sql) folder.**
+
 ---
 
 ## 📝 Notes
