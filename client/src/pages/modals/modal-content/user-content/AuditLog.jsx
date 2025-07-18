@@ -15,6 +15,7 @@ const serverPort = config.server_port;
 export default function UserInfoDisplay({ onClose, user, setUser, setInfoScreen }) {
 	// Logs
 	const [logs, setLogs] = useState([]);
+	const [lastUpdated, setLastUpdated] = useState('');
 
 	// Search tools
 	const [search, setSearch] = useState('');
@@ -40,8 +41,12 @@ export default function UserInfoDisplay({ onClose, user, setUser, setInfoScreen 
 					'Authorization': `Bearer ${token}`,
 				},
 			});
+			// Update data
 			const data = await res.json();
 			setLogs(data);
+			// Set timestamp
+			const timeStamp = new Date().toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+			setLastUpdated(timeStamp);
 		}
 		catch (err) {
 			console.error('Failed to fetch logs', err);
@@ -99,7 +104,10 @@ export default function UserInfoDisplay({ onClose, user, setUser, setInfoScreen 
 
 	return(<>
 		<div className="mb-4">
-			<span className="flex mb-2 font-bold text-xl text-[#636373]">Search Logs</span>
+			<div className="mb-2">
+				<span className="flex text-xs">Last Updated: {lastUpdated}</span>
+				<span className="flex font-bold text-xl text-[#636373]">Search Activity Log</span>
+			</div>
 			{/* Toolbar */}
 			<div className="flex mb-2 w-full">
 				{/* Search bar */}
@@ -128,9 +136,9 @@ export default function UserInfoDisplay({ onClose, user, setUser, setInfoScreen 
 					tabIndex='-1'
 					disabled={refreshCooldown}
 					onClick={() => refreshLogs()}
-					className="ml-2 outline outline-gray-300 enabled:cursor-pointer rounded-md p-2 h-8.5 w-8.5 flex items-center justify-center bg-gray-200 hover:bg-gray-300 disabled:bg-gray-100 disabled:text-gray-400"
+					className="group ml-2 outline outline-gray-300 enabled:cursor-pointer rounded-md p-2 h-8.5 w-8.5 flex items-center justify-center bg-gray-200 hover:bg-gray-300 disabled:bg-gray-100 disabled:text-gray-400"
 				>
-					<span className={refreshCooldown ? 'animate-spin' : ''}>⟳</span>
+					<span className={refreshCooldown ? '' : 'group-hover:animate-spin'}>⟳</span>
 				</button>
 			</div>
 			<div className="h-[40vh] bg-white rounded-md outline outline-gray-300 overflow-y-auto scrollbar-lborder scrollbar-thin resize-y" ref={tableRef} style={{minWidth}}>
