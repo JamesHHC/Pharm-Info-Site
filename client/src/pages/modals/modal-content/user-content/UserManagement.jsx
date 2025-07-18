@@ -74,6 +74,7 @@ export default function UserManagement({ onClose, user, setUser, setInfoScreen }
 
 	return (<>
 		<div className="mb-4">
+			<span className="flex mb-2 font-bold text-xl text-[#636373]">Manage Users</span>
 			<input
 				className="flex h-8.5 outline outline-gray-300 rounded-md w-full mb-2 py-1 px-2"
 				type="text"

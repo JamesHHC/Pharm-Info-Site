@@ -13,12 +13,21 @@ const serverIp = config.server_ip;
 const serverPort = config.server_port;
 
 export default function UserInfoDisplay({ onClose, user, setUser, setInfoScreen }) {
+	// Logs
 	const [logs, setLogs] = useState([]);
+
+	// Search tools
 	const [search, setSearch] = useState('');
-	const [minWidth, setMinWidth] = useState(0);
 	const [sortDesc, setSortDesc] = useState(true);
 	const [sortBy, setSortBy] = useState('time');
 	const [refreshCooldown, setRefreshCooldown] = useState(false);
+
+	// Pagination
+	const [page, setPage] = useState(0);
+	const pageSize = 100;
+
+	// Stablized modal width
+	const [minWidth, setMinWidth] = useState(0);
 	const tableRef = useRef();
 
 	const fetchLogs = async () => {
@@ -39,14 +48,16 @@ export default function UserInfoDisplay({ onClose, user, setUser, setInfoScreen 
 		}
 	}
 
+	// Get logs on load
 	useEffect(() => {
 		fetchLogs();
 	}, []);
 
+	// Set minimum width on log load/page change
 	useEffect(() => {
 		if (tableRef.current)
 			setMinWidth(tableRef.current.offsetWidth);
-	}, [logs.length]);
+	}, [logs.length, page]);
 
 	const filteredLogs = logs
 		.slice()
@@ -66,11 +77,16 @@ export default function UserInfoDisplay({ onClose, user, setUser, setInfoScreen 
 			}
 		})
 		.filter((log) => {
-			const txt = search.trim().toLowerCase();
-			return log.acting_user.toLowerCase().includes(txt) ||
-				log.action.toLowerCase().includes(txt) ||
-				(log.target && log.target.toLowerCase().includes(txt));
+			const terms = search
+				.split(';')
+				.map(term => term.trim().toLowerCase());
+			return terms.every(term =>
+				(log.acting_user?.toLowerCase() || '').includes(term) ||
+				(log.action?.toLowerCase() || '').includes(term) ||
+				(log.target?.toLowerCase() || '').includes(term)
+			);
 		});
+	const paginatedLogs = filteredLogs.slice(page * pageSize, (page + 1) * pageSize);
 
 	const refreshLogs = () => {
 		if (refreshCooldown) return;
@@ -83,6 +99,7 @@ export default function UserInfoDisplay({ onClose, user, setUser, setInfoScreen 
 
 	return(<>
 		<div className="mb-4">
+			<span className="flex mb-2 font-bold text-xl text-[#636373]">Search Logs</span>
 			{/* Toolbar */}
 			<div className="flex mb-2 w-full">
 				{/* Search bar */}
@@ -94,17 +111,17 @@ export default function UserInfoDisplay({ onClose, user, setUser, setInfoScreen 
 						id="user-search-bar"
 						value={search}
 						onChange={(e) => setSearch(e.target.value)}
-						placeholder="Search logs..."
+						placeholder="Use a semicolon to separate queries... (e.g. John;Deleted rule)"
 					/>
 					{/* Filter Button */}
-					{/* TODO */}
-					<button
+					{/* TODO: Depending on need */}
+					{/*<button
 						tabIndex='-1'
 						onClick={() => {null}}
 						className="cursor-pointer rounded-r-md p-2 h-8.5 w-8.5 flex items-center justify-center bg-gray-200 hover:bg-gray-300"
 					>
 						<FilterIcon w="16" h="16" />
-					</button>
+					</button>*/}
 				</div>
 				{/* Refresh Button */}
 				<button
@@ -167,7 +184,7 @@ export default function UserInfoDisplay({ onClose, user, setUser, setInfoScreen 
 						</tr>
 					</thead>
 					<tbody>
-						{filteredLogs.map((log) => {
+						{paginatedLogs.map((log) => {
 							const target = log.target || '';
 							const longTarget = target.length > 40;
 							return (<tr key={log.id} className="bg-white">
@@ -180,15 +197,37 @@ export default function UserInfoDisplay({ onClose, user, setUser, setInfoScreen 
 					</tbody>
 				</table>
 			</div>
+			{/* Pagination */}
+			<div className="flex justify-center mt-1 gap-x-2">
+				{/* Prev Page */}
+				<button
+					disabled={page === 0}
+					onClick={() => setPage(p => p - 1)}
+					className="enabled:cursor-pointer text-blue-900 disabled:text-blue-900/30 enabled:hover:text-blue-900/50"
+				>Prev</button>
+				{/* Page Indicator */}
+				<span className="font-bold text-[#636373]">{
+					filteredLogs.length > 0
+					? `Page ${page + 1} of ${Math.ceil(filteredLogs.length / pageSize)}`
+					: 'No results'
+				}</span>
+				{/* Next Page */}
+				<button
+					disabled={(page + 1) * pageSize >= filteredLogs.length}
+					onClick={() => setPage(p => p + 1)}
+					className="enabled:cursor-pointer text-blue-900 disabled:text-blue-900/30 enabled:hover:text-blue-900/50"
+				>Next</button>
+			</div>
+			{/* Back Button */}
 			<button
 				type="button"
 				onClick={() => setInfoScreen('')}
-				className="block text-sm m-auto cursor-pointer mt-1 text-blue-900 hover:text-blue-900/50"
+				className="block text-sm m-auto mt-1 cursor-pointer text-blue-900 hover:text-blue-900/50"
 			>
 				Back
 			</button>
 		</div>
-		{/* Buttons */}
+		{/* Close Button */}
 		<div className="flex-block">
 			<button 
 				type="button"
