@@ -2,8 +2,8 @@
 import { useState, useEffect } from 'react';
 
 // Auth
-import { useAuth } from '../auth/AuthContext';
-import { hasMinPermission } from '../auth/checkRole';
+import { useAuth } from '@/auth/AuthContext';
+import { hasMinPermission } from '@/auth/checkRole';
 
 // Content
 import PharmacyFormModal from './modals/PharmacyFormModal';
@@ -14,13 +14,13 @@ import ContactEditModal from './modals/ContactEditModal';
 import UserModal from './modals/UserModal';
 
 // Assets
-import logo from '../assets/logo_bluegray.svg';
-import UserIcon from '../assets/icons/UserIcon';
-import ArchiveFilledIcon from '../assets/icons/ArchiveFilledIcon';
-import CrownIcon from '../assets/icons/CrownIcon';
+import logo from '@/assets/logo_bluegray.svg';
+import UserIcon from '@/assets/icons/UserIcon';
+import ArchiveFilledIcon from '@/assets/icons/ArchiveFilledIcon';
+import CrownIcon from '@/assets/icons/CrownIcon';
 
 // Config
-import config from '../config.js';
+import config from '@/config.js';
 const serverIp = config.server_ip;
 const serverPort = config.server_port;
 
@@ -169,7 +169,7 @@ function Home() {
 								placeholder={`Search ${activeTab}...`}
 								value={searchTerm}
 								onChange={(e) => setSearchTerm(e.target.value)}
-								className="h-full w-full px-4 border border-gray-300 rounded-md focus:outline-cyan-500/60 shadow-sm"
+								className="h-full w-full px-4 border border-gray-300 rounded-md outline-0 shadow-sm"
 							/>
 							{/* Create Button */}
 							{(hasMinPermission(user, 'admin creator') || ( hasMinPermission(user, 'editor') && activeTab === 'contacts')) && <button

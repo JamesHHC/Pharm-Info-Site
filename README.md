@@ -72,6 +72,7 @@ client/
     │   ├── content/
     │   └── modals/
     │       └── modal-content/
+    │           └── user-content/
     └── config.js     ← add server IP + port
 
 server/

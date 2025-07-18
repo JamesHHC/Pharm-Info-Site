@@ -35,7 +35,7 @@ const updateRole = async (req, res) => {
 		const target = await logger.getUser(id);
 		logger.info({
 			actingUser: user,
-			targetUser: target,
+			target: target,
 			action: `Changed role to ${role}`,
 		});
 	}
@@ -67,7 +67,7 @@ const deleteUser = async (req, res) => {
 		// Logging
 		logger.info({
 			actingUser: user,
-			targetUser: target,
+			target: target,
 			action: `Deleted user`,
 		});
 	}

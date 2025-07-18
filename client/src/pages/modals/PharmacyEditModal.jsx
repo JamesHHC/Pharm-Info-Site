@@ -2,24 +2,24 @@
 import React, { useEffect, useState, useRef } from 'react';
 
 // Auth
-import { useAuth } from '../../auth/AuthContext';
-import { hasMinPermission } from '../../auth/checkRole';
+import { useAuth } from '@/auth/AuthContext';
+import { hasMinPermission } from '@/auth/checkRole';
 
 // Content
 import ModalRules from './modal-content/ModalRules';
 import ModalTrainings from './modal-content/ModalTrainings';
 import ModalBlurbs from './modal-content/ModalBlurbs';
 import ModalContacts from './modal-content/ModalContacts';
-import TrashIcon from '../../assets/icons/TrashIcon';
-import ArchiveIcon from '../../assets/icons/ArchiveIcon';
-import UnarchiveIcon from '../../assets/icons/UnarchiveIcon';
-import RichTextarea from '../components/RichTextarea';
+import TrashIcon from '@/assets/icons/TrashIcon';
+import ArchiveIcon from '@/assets/icons/ArchiveIcon';
+import UnarchiveIcon from '@/assets/icons/UnarchiveIcon';
+import RichTextarea from '@/pages/components/RichTextarea';
 
 // Styles
 import './ModalStyles.css'
 
 // Config
-import config from '../../config.js';
+import config from '@/config.js';
 const serverIp = config.server_ip;
 const serverPort = config.server_port;
 

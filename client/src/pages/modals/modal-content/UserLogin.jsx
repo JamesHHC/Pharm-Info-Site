@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import { register, login, fetchUser } from '../../../auth/auth';
+import { register, login, fetchUser } from '@/auth/auth';
 
 // Assets
-import logo from '../../../assets/logo_bluegray.svg';
-import LoadingIcon from '../../../assets/icons/LoadingIcon';
+import logo from '@/assets/logo_bluegray.svg';
+import LoadingIcon from '@/assets/icons/LoadingIcon';
 
 export default function UserLogin({ onClose, setUser }) {
 	// Indicates if new account is being created

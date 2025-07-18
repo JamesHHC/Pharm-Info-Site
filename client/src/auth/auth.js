@@ -1,5 +1,5 @@
 // Config
-import config from '../config.js';
+import config from '@/config.js';
 const serverIp = config.server_ip;
 const serverPort = config.server_port;
 

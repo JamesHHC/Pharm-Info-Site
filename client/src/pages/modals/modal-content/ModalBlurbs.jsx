@@ -2,19 +2,19 @@
 import React, { useEffect, useState, useRef, forwardRef, useImperativeHandle } from 'react';
 
 // Auth
-import { useAuth } from '../../../auth/AuthContext';
-import { hasMinPermission } from '../../../auth/checkRole';
+import { useAuth } from '@/auth/AuthContext';
+import { hasMinPermission } from '@/auth/checkRole';
 
 // Content
-import TrashIcon from '../../../assets/icons/TrashIcon';
-import RichTextarea from '../../components/RichTextarea';
-import RichViewer from '../../components/RichViewer';
+import TrashIcon from '@/assets/icons/TrashIcon';
+import RichTextarea from '@/pages/components/RichTextarea';
+import RichViewer from '@/pages/components/RichViewer';
 
 // Styles
-import '../ModalStyles.css';
+import '@/pages/modals/ModalStyles.css';
 
 // Config
-import config from '../../../config.js';
+import config from '@/config.js';
 const serverIp = config.server_ip;
 const serverPort = config.server_port;
 

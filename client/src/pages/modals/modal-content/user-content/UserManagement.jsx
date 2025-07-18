@@ -1,22 +1,24 @@
 // React
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 
 // Auth
-import { hasMinPermission, aboveRole, roleList } from '../../../auth/checkRole';
+import { hasMinPermission, aboveRole, roleList } from '@/auth/checkRole';
 
 // Assets
-import LoadingIcon from '../../../assets/icons/LoadingIcon';
-import TrashIcon from '../../../assets/icons/TrashIcon';
+import LoadingIcon from '@/assets/icons/LoadingIcon';
+import TrashIcon from '@/assets/icons/TrashIcon';
 
 // Config
-import config from '../../../config.js';
+import config from '@/config.js';
 const serverIp = config.server_ip;
 const serverPort = config.server_port;
 
-export default function UserManagement({ onClose, user, setUser, setUserManager }) {
+export default function UserManagement({ onClose, user, setUser, setInfoScreen }) {
 	const [accounts, setAccounts] = useState([]);
 	const [searchedUser, setSearchedUser] = useState('');
 	const [loadingChange, setLoadingChange] = useState(false);
+	const [minWidth, setMinWidth] = useState(0);
+	const usersRef = useRef();
 
 	const fetchUsers = async () => {
 		try {
@@ -32,6 +34,11 @@ export default function UserManagement({ onClose, user, setUser, setUserManager 
 	useEffect(() => {
 		fetchUsers();
 	}, []);
+
+	useEffect(() => {
+		if (usersRef.current)
+			setMinWidth(usersRef.current.offsetWidth);
+	}, [accounts.length]);
 
 	const filteredAccounts = accounts
 		.slice()
@@ -68,7 +75,7 @@ export default function UserManagement({ onClose, user, setUser, setUserManager 
 	return (<>
 		<div className="mb-4">
 			<input
-				className="flex outline outline-gray-300 rounded-md w-full mb-2 py-1 px-2"
+				className="flex h-8.5 outline outline-gray-300 rounded-md w-full mb-2 py-1 px-2"
 				type="text"
 				tabIndex='-1'
 				id="user-search-bar"
@@ -76,26 +83,26 @@ export default function UserManagement({ onClose, user, setUser, setUserManager 
 				onChange={(e) => setSearchedUser(e.target.value)}
 				placeholder="Search for a user..."
 			/>
-			<div className="bg-gray-100 rounded-md px-2 py-1 outline outline-gray-300 overflow-y-auto scrollbar-thin">
+			<div ref={usersRef} style={{minWidth}} className="h-[40vh] bg-gray-100 rounded-md px-2 py-1 outline outline-gray-300 overflow-y-auto scrollbar-thin resize-y">
 				{filteredAccounts.map(account => {
 					const noChange = !aboveRole(user, account.role) || account.username === user.username;
 					return (
 						<div key={account.id} className="my-2">
-							<div className="flex bg-white p-2 rounded shadow-sm outline outline-gray-300">
-								<div className="my-auto mr-4">
+							<div className="flex flex-wrap bg-white p-2 rounded shadow-sm outline outline-gray-300">
+								<div className="my-auto break-words mr-auto">
 									{account.username}
 								</div>
-								<div className="flex ml-auto">
-									<div data-invisible="true" id={`loading_${account.id}`} className="my-auto">
-										<LoadingIcon fill="fill-blue-900/50" text="text-gray-200"/>
-									</div>
+								<div data-invisible="true" id={`loading_${account.id}`} className="my-auto ml-1">
+									<LoadingIcon fill="fill-blue-900/50" text="text-gray-200"/>
+								</div>
+								<div className="flex">
 									{/* Role selection */}
 									<select
 										name="roles"
 										defaultValue={account.role}
 										id={`roles_${account.id}`}
 										disabled={noChange || loadingChange}
-										className={`${noChange ? 'bg-gray-200 text-gray-400 outline-gray-300' : 'outline-gray-200 cursor-pointer'} ml-auto py-1 px-2 rounded-md outline`}
+										className={`${noChange ? 'bg-gray-200 text-gray-400 outline-gray-300' : 'outline-gray-200 cursor-pointer'} py-1 px-2 rounded-md outline`}
 										onChange={(e) => updateRole(account.id, e.target.value, `loading_${account.id}`)}
 									>
 										{roleList.map(listedRole => {
@@ -143,7 +150,7 @@ export default function UserManagement({ onClose, user, setUser, setUserManager 
 			</div>
 			<button
 				type="button"
-				onClick={() => setUserManager(false)}
+				onClick={() => setInfoScreen('')}
 				className="block text-sm m-auto cursor-pointer mt-1 text-blue-900 hover:text-blue-900/50"
 			>
 				Back

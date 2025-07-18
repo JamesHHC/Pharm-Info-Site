@@ -34,7 +34,7 @@ const newContact = async (req, res) => {
 		const user = await logger.getUser(req.user.id);
 		logger.info({
 			actingUser: user,
-			targetID: result.rows[0]?.id,
+			target: name,
 			action: `Created new contact`,
 		});
 	}
@@ -70,15 +70,24 @@ const deleteContact = async (req, res) => {
 		if (check_role(req.user.role, 'superadmin'))
 			return res.status(403).json({ error: 'Insufficient permissions' });
 
-		await db.query(`DELETE FROM pharmacy_contacts WHERE contact_id = ($1)`, [id]);
-		await db.query(`DELETE FROM contacts WHERE id = ($1)`, [id]);
+		await db.query(`
+			DELETE FROM pharmacy_contacts
+				WHERE contact_id = ($1)`,
+			[id]
+		);
+		const result = await db.query(`
+			DELETE FROM contacts
+				WHERE id = ($1)
+				RETURNING name`,
+			[id]
+		);
 		res.status(201).json('Contact deleted!');
 
 		// Logging
 		const user = await logger.getUser(req.user.id);
 		logger.info({
 			actingUser: user,
-			targetID: id,
+			target: result.rows[0]?.name,
 			action: `Deleted contact`,
 		});
 	}
@@ -109,7 +118,7 @@ const updateContact = async (req, res) => {
 		const user = await logger.getUser(req.user.id);
 		logger.info({
 			actingUser: user,
-			targetID: id,
+			target: name,
 			action: `Updated contact`,
 		});
 	}
@@ -130,7 +139,8 @@ const contactActive = async (req, res) => {
 		const result = await db.query(`
 			UPDATE contacts
 				SET active = $2
-				WHERE id = $1`,
+				WHERE id = $1
+				RETURNING name`,
 			[id, active]
 		);
 		res.status(201).send(active ? 'Contact activated' : 'Contact archived');
@@ -139,7 +149,7 @@ const contactActive = async (req, res) => {
 		const user = await logger.getUser(req.user.id);
 		logger.info({
 			actingUser: user,
-			targetID: id,
+			target: result.rows[0]?.name,
 			action: `${active ? 'Activated' : 'Archived'} contact`,
 		});
 	}

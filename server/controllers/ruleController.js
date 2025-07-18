@@ -2,6 +2,22 @@ const db = require('../db');
 const check_role = require('./check_role');
 const logger = require('../utils/logger');
 
+// Helper function to convert delta JSONs to something readable
+function ruleToText(delta, id) {
+	try {
+		const dJson = JSON.parse(delta);
+		if (!dJson.ops || !Array.isArray(dJson.ops)) return 'ID-' + id;
+		return dJson.ops
+			.map(op => typeof op.insert === 'string' ? op.insert.replace(/\n/g, ' ') : '')
+			.join('')
+			.trim();
+	}
+	catch (err) {
+		console.error('Failed to parse delta!', err);
+		return 'ID-' + id;
+	}
+}
+
 // Get all rules
 const getRules = async (req, res) => {
 	try {
@@ -34,7 +50,7 @@ const newRule = async (req, res) => {
 		const user = await logger.getUser(req.user.id);
 		logger.info({
 			actingUser: user,
-			targetID: result.rows[0]?.id,
+			target: ruleToText(rule, result.rows[0]?.id),
 			action: `Created new rule`,
 		});
 	}
@@ -81,7 +97,7 @@ const updateRule = async (req, res) => {
 		const user = await logger.getUser(req.user.id);
 		logger.info({
 			actingUser: user,
-			targetID: id,
+			target: ruleToText(rule, id),
 			action: `Updated rule`,
 		});
 	}
@@ -104,9 +120,10 @@ const deleteRule = async (req, res) => {
 				WHERE rules_id = ($1)`,
 			[id]
 		);
-		await db.query(
+		const result = await db.query(
 			`DELETE FROM rules
-				WHERE id = ($1)`,
+				WHERE id = ($1)
+				RETURNING rule`,
 			[id]
 		);
 		res.status(201).send('Rule deleted!');
@@ -115,7 +132,7 @@ const deleteRule = async (req, res) => {
 		const user = await logger.getUser(req.user.id);
 		logger.info({
 			actingUser: user,
-			targetID: id,
+			target: ruleToText(result.rows[0]?.rule, id),
 			action: `Deleted rule`,
 		});
 	}

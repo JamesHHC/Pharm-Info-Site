@@ -34,7 +34,7 @@ const newBlurb = async (req, res) => {
 		const user = await logger.getUser(req.user.id);
 		logger.info({
 			actingUser: user,
-			targetID: result.rows[0]?.id,
+			target: name,
 			action: `Created new blurb`,
 		});
 	}
@@ -81,7 +81,7 @@ const updateBlurb = async (req, res) => {
 		const user = await logger.getUser(req.user.id);
 		logger.info({
 			actingUser: user,
-			targetID: id,
+			target: name,
 			action: `Updated VN blurb`,
 		});
 	}
@@ -104,19 +104,19 @@ const deleteBlurb = async (req, res) => {
 				WHERE blurb_id = ($1)`,
 			[id]
 		);
-		await db.query(
+		const result = await db.query(
 			`DELETE FROM vn_blurbs
-				WHERE id = ($1)`,
+				WHERE id = ($1)
+				RETURNING name`,
 			[id]
 		);
 		res.status(201).json('Blurb deleted!');
 
 		// Logging
 		const user = await logger.getUser(req.user.id);
-		const target = await logger.getUser(id);
 		logger.info({
 			actingUser: user,
-			targetID: id,
+			target: result.rows[0]?.name,
 			action: `Deleted VN blurb`,
 		});
 	}

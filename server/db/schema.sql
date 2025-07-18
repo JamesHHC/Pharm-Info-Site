@@ -74,8 +74,7 @@ CREATE TABLE public.logs (
     level text NOT NULL,
     acting_user text NOT NULL,
     action text NOT NULL,
-    target_id text,
-    target_user text,
+    target text,
     origin_ip text,
     "timestamp" timestamp with time zone DEFAULT now() NOT NULL
 );

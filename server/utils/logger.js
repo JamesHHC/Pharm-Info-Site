@@ -1,12 +1,13 @@
 const db = require('../db');
 const winston = require('winston');
+const DBTransport = require('./DBTransport');
 require('winston-daily-rotate-file');
 
 const transport = new winston.transports.DailyRotateFile({
 	filename: 'logs/%DATE%.log',
 	datePattern: 'YYYY-MM-DD',
 	maxSize: '10m',
-	maxFiles: '30d',
+	maxFiles: '60d',
 });
 
 const logger = winston.createLogger({
@@ -17,6 +18,7 @@ const logger = winston.createLogger({
 	),
 	transports: [
 		transport,
+		new DBTransport({ db }),
 		new winston.transports.Console(),
 	],
 });

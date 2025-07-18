@@ -2,18 +2,18 @@
 import React, { useEffect, useState, forwardRef, useImperativeHandle } from 'react';
 
 // Auth
-import { useAuth } from '../../../auth/AuthContext';
-import { hasMinPermission } from '../../../auth/checkRole';
+import { useAuth } from '@/auth/AuthContext';
+import { hasMinPermission } from '@/auth/checkRole';
 
 // Styles
-import '../ModalStyles.css';
+import '@/pages/modals/ModalStyles.css';
 
 // Assets
-import ArchiveFilledIcon from '../../../assets/icons/ArchiveFilledIcon';
-import CrownIcon from '../../../assets/icons/CrownIcon';
+import ArchiveFilledIcon from '@/assets/icons/ArchiveFilledIcon';
+import CrownIcon from '@/assets/icons/CrownIcon';
 
 // Config
-import config from '../../../config.js';
+import config from '@/config.js';
 const serverIp = config.server_ip;
 const serverPort = config.server_port;
 

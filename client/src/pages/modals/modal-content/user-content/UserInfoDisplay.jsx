@@ -1,8 +1,8 @@
 // Auth
-import { logout } from '../../../auth/auth';
-import { hasMinPermission, userAccessString } from '../../../auth/checkRole';
+import { logout } from '@/auth/auth';
+import { hasMinPermission, userAccessString } from '@/auth/checkRole';
 
-export default function UserInfoDisplay({ onClose, user, setUser, setUserManager }) {
+export default function UserInfoDisplay({ onClose, user, setUser, setInfoScreen }) {
 	return (<>
 		<div className="mb-4">
 			{/* User info */}
@@ -12,16 +12,22 @@ export default function UserInfoDisplay({ onClose, user, setUser, setUserManager
 				</p>
 				<p className="text-md font-light">{userAccessString(user?.role)}</p>
 			</div>
-			{/* User management */}
-			{hasMinPermission(user, 'admin') &&
-				<button
-					type="button"
-					onClick={() => setUserManager(true)}
-					className="block text-sm m-auto cursor-pointer mt-1 text-blue-900 hover:text-blue-900/50"
-				>
-					Manage Users
-				</button>
-			}
+			{hasMinPermission(user, 'admin') && <div className="flex w-full mt-1">
+				<div className="mx-auto space-x-3">
+					{/* User management */}
+					<button
+						type="button"
+						onClick={() => setInfoScreen('userManager')}
+						className="text-sm cursor-pointer text-blue-900 hover:text-blue-900/50"
+					>Manage Users</button>
+					{/* Audit log */}
+					<button
+						type="button"
+						onClick={() => setInfoScreen('auditLog')}
+						className="text-sm cursor-pointer text-blue-900 hover:text-blue-900/50"
+					>View Audit Log</button>
+				</div>
+			</div>}
 		</div>
 		{/* Buttons */}
 		<div className="flex-block">

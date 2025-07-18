@@ -34,7 +34,7 @@ const newTraining = async (req, res) => {
 		const user = await logger.getUser(req.user.id);
 		logger.info({
 			actingUser: user,
-			targetID: result.rows[0]?.id,
+			target: name,
 			action: `Created new training`,
 		});
 	}
@@ -81,7 +81,7 @@ const updateTraining = async (req, res) => {
 		const user = await logger.getUser(req.user.id);
 		logger.info({
 			actingUser: user,
-			targetID: id,
+			target: name,
 			action: `Updated training`,
 		});
 	}
@@ -104,9 +104,10 @@ const deleteTraining = async (req, res) => {
 				WHERE training_id = ($1)`,
 			[id]
 		);
-		await db.query(
+		const result = await db.query(
 			`DELETE FROM training
-				WHERE id = ($1)`,
+				WHERE id = ($1)
+				RETURNING name`,
 			[id]
 		);
 		res.status(201).json('Training deleted!');
@@ -115,7 +116,7 @@ const deleteTraining = async (req, res) => {
 		const user = await logger.getUser(req.user.id);
 		logger.info({
 			actingUser: user,
-			targetID: id,
+			target: result.rows[0]?.name,
 			action: `Deleted training`,
 		});
 	}

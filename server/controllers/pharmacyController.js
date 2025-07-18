@@ -34,7 +34,7 @@ const newPharmacy = async (req, res) => {
 		const user = await logger.getUser(req.user.id);
 		logger.info({
 			actingUser: user,
-			targetID: result.rows[0]?.id,
+			target: name,
 			action: `Created new pharmacy`,
 		});
 	}
@@ -74,14 +74,19 @@ const deletePharmacy = async (req, res) => {
 		await db.query(`DELETE FROM pharmacy_training WHERE pharmacy_id = ($1)`, [id]);
 		await db.query(`DELETE FROM pharmacy_blurbs WHERE pharmacy_id = ($1)`, [id]);
 		await db.query(`DELETE FROM pharmacy_contacts WHERE pharmacy_id = ($1)`, [id]);
-		await db.query(`DELETE FROM pharmacies WHERE id = ($1)`, [id]);
+		const result = await db.query(`
+			DELETE FROM pharmacies
+				WHERE id = ($1)
+				RETURNING name`,
+			[id]
+		);
 		res.status(201).json('Pharmacy deleted!');
 
 		// Logging
 		const user = await logger.getUser(req.user.id);
 		logger.info({
 			actingUser: user,
-			targetID: id,
+			target: result.rows[0]?.name,
 			action: `Deleted pharmacy`,
 		});
 	}
@@ -112,7 +117,7 @@ const updatePharmacy = async (req, res) => {
 		const user = await logger.getUser(req.user.id);
 		logger.info({
 			actingUser: user,
-			targetID: id,
+			target: name,
 			action: `Updated pharmacy`,
 		});
 	}
@@ -133,7 +138,8 @@ const pharmacyActive = async (req, res) => {
 		const result = await db.query(`
 			UPDATE pharmacies
 				SET active = $2
-				WHERE id = $1`,
+				WHERE id = $1
+				RETURNING name`,
 			[id, active]
 		);
 		res.status(201).send(active ? 'Pharmacy activated' : 'Pharmacy archived');
@@ -142,7 +148,7 @@ const pharmacyActive = async (req, res) => {
 		const user = await logger.getUser(req.user.id);
 		logger.info({
 			actingUser: user,
-			targetID: id,
+			targetID: result.rows[0]?.name,
 			action: `${active? 'Activated' : 'Archived'} pharmacy`,
 		});
 	}

@@ -1,8 +1,12 @@
 const express = require('express');
 const cors = require('cors');
 const dotenv = require('dotenv');
-const cookieParser = require('cookie-parser')
+const cookieParser = require('cookie-parser');
 
+// Enable cron job
+require('./utils/cronRotateLogs');
+
+// Route imports
 const pharmacyRoutes = require('./routes/pharmacyRoutes.js');
 const contactRoutes = require('./routes/contactRoutes.js');
 const ruleRoutes = require('./routes/ruleRoutes.js');
@@ -14,6 +18,7 @@ const pharmBlurbRoutes = require('./routes/pharmBlurbRoutes.js');
 const blurbRoutes = require('./routes/blurbRoutes.js');
 const authRoutes = require('./routes/authRoutes.js');
 const userRoutes = require('./routes/userRoutes.js');
+const logRoutes = require('./routes/logRoutes.js');
 
 dotenv.config();
 const app = express();
@@ -40,6 +45,7 @@ app.use('/api/pharmblurbs', pharmBlurbRoutes);
 app.use('/api/blurbs', blurbRoutes);
 app.use('/auth', authRoutes);
 app.use('/api/users', userRoutes);
+app.use('/api/logs', logRoutes);
 
 app.listen(port, () => {
 	console.log('\x1b[36m%s\x1b[0m', `Server running on port ${port}`);
