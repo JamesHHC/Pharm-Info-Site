@@ -114,8 +114,24 @@ npm run start
 ```
 > You'll also need a `.env` file in `server/`:
 ```env
+# Server port
 PORT=XX
-DATABASE_URL=postgresql://user:password@localhost:port/pharmacydb
+
+# Database info
+DB_USER=XX
+DB_HOST=XX
+DB_NAME=XX
+DB_PASSWORD=XX
+DB_PORT=XX
+
+# SharePoint/M365 info (for backups)
+CLIENT_ID=XX
+CLIENT_SECRET=XX
+TENANT_ID=XX
+SITE_ID=XX
+DRIVE_ID=XX
+
+# Sever secrets
 JWT_SECRET=XX
 REFRESH_SECRET=XX
 ```

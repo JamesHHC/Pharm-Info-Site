@@ -1,4 +1,4 @@
-const db = require('../db');
+const {pool: db} = require('../db/database');
 const winston = require('winston');
 const DBTransport = require('./DBTransport');
 require('winston-daily-rotate-file');

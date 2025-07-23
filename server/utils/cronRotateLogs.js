@@ -1,5 +1,5 @@
 const cron = require('node-cron');
-const db = require('../db');
+const {pool: db} = require('../db/database');
 
 cron.schedule('0 2 * * *', async () => {
 	console.log('[Cron] Starting log cleanup...');

@@ -1,4 +1,4 @@
-const db = require('../db');
+const {pool: db} = require('../db/database');
 const check_role = require('./check_role');
 
 // Get all pharmacy blurbs

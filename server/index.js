@@ -3,8 +3,9 @@ const cors = require('cors');
 const dotenv = require('dotenv');
 const cookieParser = require('cookie-parser');
 
-// Enable cron job
+// Enable cron jobs
 require('./utils/cronRotateLogs');
+require('./utils/cronBackupDb');
 
 // Route imports
 const pharmacyRoutes = require('./routes/pharmacyRoutes.js');
