@@ -1,7 +1,7 @@
 const cron = require('node-cron');
 const backupAndUpload = require('../db/dbBackup');
 
-cron.schedule('0 23 * * 5', async () => {
+cron.schedule('59 23 * * 5', async () => {
 	console.log('[Cron] Starting scheduled DB backup...');
 	backupAndUpload()
 	.then(filename => {
@@ -11,3 +11,5 @@ cron.schedule('0 23 * * 5', async () => {
 		console.error('[Cron] Backup failed:', err.message || err);
 	});
 });
+
+console.log('\x1b[36m%s\x1b[0m', '[Cron] SharePoint DB backups enabled');

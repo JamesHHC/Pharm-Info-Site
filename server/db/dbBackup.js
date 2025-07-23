@@ -33,6 +33,21 @@ function createBackup() {
 	});
 }
 
+function cleanLocalBackups(dir, keep = 5) {
+	const files = fs.readdirSync(dir)
+		.filter(f => f.endsWith('.sql'))
+		.map(f => ({ name: f, time: fs.statSync(path.join(dir, f)).mtime.getTime() }))
+		.sort((a, b) => b.time - a.time); // newest first
+
+	const filesToDelete = files.slice(keep);
+
+	for (const file of filesToDelete) {
+		const fullPath = path.join(dir, file.name);
+		fs.unlinkSync(fullPath);
+		console.log('[Cleanup] Deleted old local backup:', file.name);
+	}
+}
+
 async function getAccessToken() {
 	const res = await fetch(`https://login.microsoftonline.com/${TENANT_ID}/oauth2/v2.0/token`, {
 		method: 'POST',
@@ -62,7 +77,7 @@ async function uploadToSharePoint(filepath, filename, accessToken) {
 		method: 'PUT',
 		headers: {
 			'Authorization': `Bearer ${accessToken}`,
-			'Content-Type': 'application/octet-stream'
+			'Content-Type': 'application/octet-stream',
 		},
 		body: fileBlob.stream(),
 		duplex: 'half',
@@ -73,11 +88,42 @@ async function uploadToSharePoint(filepath, filename, accessToken) {
 	}
 }
 
+async function deleteOldSharePointBackups(accessToken, days = 30) {
+	const url = `https://graph.microsoft.com/v1.0/sites/${SITE_ID}/drives/${DRIVE_ID}/root:/Pharmacy Info Site:/children`;
+
+	const res = await fetch(url, {
+		headers: {
+			Authorization: `Bearer ${accessToken}`
+		},
+	});
+	const data = await res.json();
+	if (!res.ok) throw new Error(data.error?.message || 'Failed to list files');
+
+	const cutoff = Date.now() - days * 24 * 60 * 60 * 1000;
+	for (const file of data.value) {
+		const created = new Date(file.createdDateTime).getTime();
+		if (created < cutoff) {
+			const deleteUrl = `https://graph.microsoft.com/v1.0/drives/${DRIVE_ID}/items/${file.id}`;
+			await fetch(deleteUrl, {
+				method: 'DELETE',
+				headers: {
+					Authorization: `Bearer ${accessToken}`,
+				},
+			});
+			console.log('[Cleanup] Deleted old SharePoint backup:', file.name);
+		}
+	}
+}
+
 async function backupAndUpload() {
 	try {
 		const { filepath, filename } = await createBackup();
+		await cleanLocalBackups(BACKUP_DIR, 5);
+
 		const token = await getAccessToken();
 		await uploadToSharePoint(filepath, filename, token);
+		await deleteOldSharePointBackups(token, 30);
+		console.log('beep');
 		return filename;
 	}
 	catch (err) {

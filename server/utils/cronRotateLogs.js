@@ -14,3 +14,5 @@ cron.schedule('0 2 * * *', async () => {
 		console.error('[Cron] Failed to clean up logs!', err.message || err);
 	}
 });
+
+console.log('\x1b[36m%s\x1b[0m', '[Cron] Automated DB log rotation enabled');
