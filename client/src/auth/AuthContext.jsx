@@ -10,7 +10,11 @@ export function AuthProvider({ children }) {
 	// Load user
 	useEffect(() => {
 		async function loadUser() {
-			const userData = await fetchUser();
+			let userData = await fetchUser();
+			if (!userData) {
+				const refreshed = await refreshToken();
+				if (refreshed) userData = await fetchUser();
+			}
 			setUser(userData);
 			setLoading(false);
 		}
@@ -26,7 +30,7 @@ export function AuthProvider({ children }) {
 				const userData = await fetchUser();
 				setUser(userData);
 			}
-		}, 10 * 60 * 1000); // every 12 min
+		}, 10 * 60 * 1000); // every 10 min
 
 		return () => clearInterval(interval);
 	}, []);
