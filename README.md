@@ -34,6 +34,12 @@ A responsive internal web application designed to streamline access to pharmacy 
 - 🛠️ **Admin Tools**  
   Custom-built user management interface for assigning and removing roles.
 
+- 🪵 **Built-In Audit Log Viewer**  
+  Admins can access a dedicated panel to view detailed logs of user activity, including what was changed, when, and by whom.
+
+- 💾 **Automated Database Backups to SharePoint**  
+  PostgreSQL backups are automatically generated and uploaded to a secure SharePoint drive every Friday at 8AM.
+
 Want a deeper technical look at how these features are implemented? \
 📂 **More detailed descriptions of features available in the [`/docs`](./docs) folder.**
 

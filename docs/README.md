@@ -25,6 +25,7 @@ The app uses JWT-based authentication with support for refresh tokens to maintai
 
 ## 🕵️ Audit Logging
 
+**Overview:** 
 All API routes that modify or add data to the database are tracked using **Winston**-based audit logging.
 
 **What gets logged:**
@@ -37,6 +38,21 @@ All API routes that modify or add data to the database are tracked using **Winst
 These logs provide traceability for any sensitive or critical changes and can be expanded in the future to include rollback support or exportable reports.
 
 > This system ensures accountability without requiring changes to the database schema or interfering with core app functionality.
+
+---
+
+## 🪵 Audit Log Viewer Tool
+
+**Overview:**  
+This admin-only tool, integrated into the frontend, allows privileged users to view audit logs from within the application. This provides visibility into critical backend actions without requiring direct database access.
+
+**Key Capabilities:**
+
+- Displays logs with sortable columns for user, action type, target, and timestamp.
+- Real-time filtering to locate entries quickly by user or action.
+- Accessible only to users with the `admin` role (or higher, if expanded in the future).
+
+> This UI addition complements the backend’s Winston-based logging, giving admins instant insight into who did what — and when — right from their browser.
 
 ---
 
@@ -107,6 +123,22 @@ Each relationship is implemented using a dedicated **junction table** in Postgre
 - Enables scalable querying from either side of the relationship
 
 These connections are surfaced throughout the UI—for example, in modals where users can search for and associate existing rules or contacts with a pharmacy. Changes to shared data propagate wherever the resource is linked, maintaining consistency without manual duplication.
+
+---
+
+## 💾 Automated Backups to SharePoint
+
+**Overview:**  
+To safeguard data and ensure disaster recovery readiness, the backend performs automated weekly PostgreSQL backups. These backups are timestamped and uploaded to a designated SharePoint drive via the Microsoft Graph API.
+
+**How it works:**
+
+- A scheduled Node.js cron job runs every Friday at 8AM.
+- The job performs a PostgreSQL `pg_dump` using the custom format for better control during restoration.
+- The resulting `.sql` file is uploaded to SharePoint using a secure OAuth2 workflow.
+- Older backup files are automatically purged locally and remotely to conserve storage.
+
+> Credentials for SharePoint access are stored in environment variables and scoped specifically for file upload purposes.
 
 ---
 
