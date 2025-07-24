@@ -2,6 +2,17 @@
 
 This document provides an in-depth look at the technical features of the Pharmacy Info web app, including how they were implemented and the rationale behind key decisions.
 
+### Table of Contents
+- [Authentication & Role-Based Access Control](#-authentication--role-based-access-control)
+- [Audit Logging](#%EF%B8%8F-audit-logging)
+- [Audit Log Viewer Tool](#-audit-log-viewer-tool)
+- [Smart Data Editing](#-smart-data-editing-modals)
+- [Real-Time Filtering & Search](#-real-time-filtering--search)
+- [Many-to-Many Relationships](#-many-to-many-relationships)
+- [Automated Backups to SharePoint](#-automated-backups-to-sharepoint)
+- [Mobile-Responsive Design](#-mobile-responsive-design)
+- [Planned Features & Considerations](#-planned-features--considerations)
+
 ---
 
 ## 🔐 Authentication & Role-Based Access Control
