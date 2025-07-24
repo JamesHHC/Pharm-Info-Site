@@ -51,7 +51,7 @@ const login = async (req, res) => {
 	const {username, password} = req.body;
 	const result = await db.query(`
 		SELECT * FROM users
-			WHERE username = $1`,
+			WHERE username ILIKE $1`,
 		[username]
 	);
 	const user = result.rows[0];

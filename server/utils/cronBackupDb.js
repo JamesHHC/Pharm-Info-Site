@@ -1,7 +1,7 @@
 const cron = require('node-cron');
 const backupAndUpload = require('../db/dbBackup');
 
-cron.schedule('59 23 * * 5', async () => {
+cron.schedule('0 8 * * 5', async () => {
 	console.log('[Cron] Starting scheduled DB backup...');
 	backupAndUpload()
 	.then(filename => {
