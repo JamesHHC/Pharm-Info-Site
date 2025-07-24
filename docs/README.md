@@ -46,6 +46,8 @@ These logs provide traceability for any sensitive or critical changes and can be
 **Overview:**  
 This admin-only tool, integrated into the frontend, allows privileged users to view audit logs from within the application. This provides visibility into critical backend actions without requiring direct database access.
 
+<img src="screenshots/audit_log.png" alt="Audit log" width="500"/>
+
 **Key Capabilities:**
 
 - Displays logs with sortable columns for user, action type, target, and timestamp.
@@ -60,6 +62,8 @@ This admin-only tool, integrated into the frontend, allows privileged users to v
 
 **Overview:**  
 Editing and creating pharmacy or contact records is handled through dynamic modals designed to match the project’s data model and role-based access structure. These modals enable seamless, user-friendly editing experiences while enforcing data consistency and permissions.
+
+<img src="screenshots/edit_pharm_cropped.png" alt="Audit log" width="500"/>
 
 **Key Features:**
 
@@ -110,6 +114,8 @@ The modals for creating or editing entities also include filterable lists (such 
 ---
 
 ## 🧩 Many-to-Many Relationships
+
+<img src="screenshots/linked_contacts.png" alt="Audit log" width="500"/>
 
 Several data entities in the app are connected to pharmacies via many-to-many relationships. These include:
 
