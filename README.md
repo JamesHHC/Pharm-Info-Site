@@ -2,6 +2,17 @@
 
 A responsive internal web application designed to streamline access to pharmacy and contact information. Built with **React**, **Node.js**, and **PostgreSQL**, the app features a minimalist UI paired with robust backend logic, authentication, and dynamic data relationships.
 
+### Table of Contents
+- [Tech Stack](#-tech-stack)
+- [Key Features (Summary)](#-key-features)
+  - [Detailed Breakdown ↗](docs/README.md#-feature-breakdown--pharmacy-info-app)
+- [Screenshots](#-key-features)
+  - [Additional Images ↗](docs/screenshots)
+- [Project Structure](#%EF%B8%8F-project-structure)
+- [Local Setup](#-local-setup)
+- [Database Diagram](#-database-diagram)
+- [Notes](#-notes)
+
 ---
 
 ## 🔧 Tech Stack
