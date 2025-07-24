@@ -5,7 +5,7 @@ A responsive internal web application designed to streamline access to pharmacy 
 ### Table of Contents
 - [Tech Stack](#-tech-stack)
 - [Key Features (Summary)](#-key-features)
-  - [Detailed Breakdown ↗](docs/README.md#-feature-breakdown--pharmacy-info-app)
+  - [Detailed Breakdown ↗](docs#-feature-breakdown--pharmacy-info-app)
 - [Screenshots](#%EF%B8%8F-screenshots)
   - [Additional Images ↗](docs/screenshots)
 - [Project Structure](#%EF%B8%8F-project-structure)
