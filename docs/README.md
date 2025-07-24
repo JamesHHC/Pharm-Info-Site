@@ -74,7 +74,7 @@ This admin-only tool, integrated into the frontend, allows privileged users to v
 **Overview:**  
 Editing and creating pharmacy or contact records is handled through dynamic modals designed to match the project’s data model and role-based access structure. These modals enable seamless, user-friendly editing experiences while enforcing data consistency and permissions.
 
-<img src="screenshots/edit_pharm_cropped.png" alt="Audit log" width="500"/>
+<img src="screenshots/edit_pharm_cropped.png" alt="Pharmacy editing" width="500"/>
 
 **Key Features:**
 
@@ -126,7 +126,7 @@ The modals for creating or editing entities also include filterable lists (such 
 
 ## 🧩 Many-to-Many Relationships
 
-<img src="screenshots/linked_contacts.png" alt="Audit log" width="500"/>
+<img src="screenshots/linked_contacts.png" alt="Linked contacts" width="500"/>
 
 Several data entities in the app are connected to pharmacies via many-to-many relationships. These include:
 
@@ -163,6 +163,8 @@ To safeguard data and ensure disaster recovery readiness, the backend performs a
 
 **Overview:**  
 The app is built to remain functional and user-friendly across a range of screen sizes. While the desktop layout favors side-by-side panels for viewing and searching, the mobile experience adapts to optimize usability on smaller screens.
+
+<img src="screenshots/mobile_friendly.png" alt="Mobile friendly" width="200"/>
 
 **Responsive Behavior:**
 
