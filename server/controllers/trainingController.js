@@ -1,5 +1,6 @@
 const {pool: db} = require('../db/database');
-const check_role = require('./check_role');
+const check_role = require('./controller_utils/check_role');
+const get_changes = require('./controller_utils/get_changes');
 const logger = require('../utils/logger');
 
 // Get all trainings
@@ -69,10 +70,17 @@ const updateTraining = async (req, res) => {
 		if (check_role(req.user.role, 'admin'))
 			return res.status(403).json({ error: 'Insufficient permissions' });
 
+		const train = await db.query(
+			`SELECT * FROM training 
+				WHERE id = $1`,
+			[id]
+		);
+		const changeJson = get_changes(req.body, train.rows[0]);
+
 		const result = await db.query(
 			`UPDATE training
 				SET (name, description) = ($1, $2)
-				WHERE id = ($3)`,
+				WHERE id = $3`,
 			[name, description, id]
 		);
 		res.status(201).json(result.rows[0]);
@@ -83,6 +91,10 @@ const updateTraining = async (req, res) => {
 			actingUser: user,
 			target: name,
 			action: `Updated training`,
+			changes: {
+				targetId: id,
+				fields: changeJson,
+			},
 		});
 	}
 	catch (err) {

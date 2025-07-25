@@ -1,5 +1,6 @@
 const {pool: db} = require('../db/database');
-const check_role = require('./check_role');
+const check_role = require('./controller_utils/check_role');
+const logger = require('../utils/logger');
 
 // PHARMACY-CONTACT //////////////////////////////////////////////////////
 
@@ -89,8 +90,26 @@ const updatePharmContacts = async (req, res) => {
 				[[pharmacy_id], remArr]
 			);
 		}
-
 		res.status(201).json('Pharmacy contacts updated!');
+
+		// Logging
+		if (remArr.length === 0 && addArr.length === 0) return;
+		const user = await logger.getUser(req.user.id);
+		const pharm = await db.query(`SELECT name FROM pharmacies WHERE id = $1`, [pharmacy_id]);
+		logger.info({
+			actingUser: user,
+			target: pharm.rows[0].name,
+			action: `Updated associated contacts`,
+			changes: {
+				targetId: pharmacy_id,
+				fields: {
+					pharm_contacts: {
+						from: found,
+						to: contact_ids,
+					},
+				},
+			},
+		});
 	}
 	catch (err) {
 		console.error('Error updating pharmacy contact(s):', err);
@@ -186,8 +205,26 @@ const updateContactPharms = async (req, res) => {
 				[[contact_id], remArr]
 			);
 		}
-
 		res.status(201).json('Contact pharmacies updated!');
+
+		// Logging
+		if (remArr.length === 0 && addArr.length === 0) return;
+		const user = await logger.getUser(req.user.id);
+		const cont = await db.query(`SELECT name FROM contacts WHERE id = $1`, [contact_id]);
+		logger.info({
+			actingUser: user,
+			target: cont.rows[0].name,
+			action: `Updated associated pharmacies`,
+			changes: {
+				targetId: contact_id,
+				fields: {
+					contact_pharms: {
+						from: found,
+						to: pharmacy_ids,
+					},
+				},
+			},
+		});
 	}
 	catch (err) {
 		console.error('Error updating contact pharmacy(s):', err);

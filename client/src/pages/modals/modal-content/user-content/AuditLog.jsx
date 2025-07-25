@@ -1,5 +1,6 @@
 // React
 import { useEffect, useState, useRef } from 'react';
+import DiffViewer from 'react-diff-viewer-continued';
 
 // Auth
 import { hasMinPermission, aboveRole, roleList } from '@/auth/checkRole';
@@ -16,6 +17,7 @@ export default function UserInfoDisplay({ onClose, user, setUser, setInfoScreen 
 	// Logs
 	const [logs, setLogs] = useState([]);
 	const [lastUpdated, setLastUpdated] = useState('');
+	const [selectedLog, setSelectedLog] = useState(null);
 
 	// Search tools
 	const [search, setSearch] = useState('');
@@ -103,6 +105,44 @@ export default function UserInfoDisplay({ onClose, user, setUser, setInfoScreen 
 	};
 
 	return(<>
+		{/* Modal for log info */}
+		{selectedLog && (
+			<div className="fixed inset-0 bg-black/30 flex items-center justify-center z-50">
+				<div className="bg-white p-4 rounded shadow-md max-w-[80%] max-h-[80%] overflow-y-auto">
+					<h2 className="text-lg font-bold mb-2">Changes - {selectedLog.target}</h2>
+					<ul className="text-sm">
+						{Object.entries(selectedLog.changes.fields).map(([key, {from, to}]) => {
+							const safeFrom = Array.isArray(from) ? (from.length ? from.join(', ') : '[empty]') : String(from ?? '[empty]');
+							const safeTo = Array.isArray(to) ? (to.length ? to.join(', ') : '[empty]') : String(to ?? '[empty]');
+							return (<li key={key} className="mb-2">
+								{/*<span className="font-medium">{key}:</span> "{safeFrom}" → "<strong>{safeTo}</strong>"*/}
+								<span className="font-medium">{key}:</span>
+								<DiffViewer
+									oldValue={safeFrom}
+									newValue={safeTo}
+									splitView={true}
+									showDiffOnly={true}
+									hideLineNumbers={true}
+									compareMethod="diffWords"
+									styles={{
+										diffContainer: { overflowX: 'auto' },
+										contentText: { whiteSpace: 'pre-wrap' },
+									}}
+								/>
+							</li>);
+						})}
+					</ul>
+					<button
+						onClick={() => setSelectedLog(null)}
+						className="block mt-4 text-lg m-auto cursor-pointer px-4 py-1 bg-gray-200 text-gray-400 hover:bg-gray-300 rounded"
+					>
+						Close
+					</button>
+				</div>
+			</div>
+		)}
+
+		{/* Main content */}
 		<div className="mb-4">
 			<div className="mb-2">
 				<span className="flex text-xs">Last Updated: {lastUpdated}</span>
@@ -196,10 +236,29 @@ export default function UserInfoDisplay({ onClose, user, setUser, setInfoScreen 
 							const target = log.target || '';
 							const longTarget = target.length > 40;
 							return (<tr key={log.id} className="bg-white">
-									<td className="px-4 py-2 border-b border-gray-200">{log.acting_user}</td>
-									<td className="px-4 py-2 border-b border-gray-200 bg-gray-100">{log.action}</td>
-									<td title={longTarget ? target : ''} className="px-4 py-2 border-b border-gray-200">{longTarget ? target.slice(0, 40 - 3) + '...' : target}</td>
-									<td className="px-4 py-2 border-b border-gray-200 bg-gray-100">{formatTimestamp(log.timestamp)}</td>
+									{/* Acting User */}
+									<td className="px-4 py-2 border-b border-gray-200">
+										{log.acting_user}
+									</td>
+									{/* Action */}
+									<td
+										className={`px-4 py-2 border-b border-gray-200 bg-gray-100 group ${log.changes && 'cursor-pointer'}`}
+										onClick={() => {if (log.changes) setSelectedLog(log);}}
+									>
+										<span>{log.action}</span>
+										{/* View Changes */}
+										{log.changes && (
+											<button className="ml-1 text-blue-400 cursor-pointer group-hover:underline">↗</button>
+										)}
+									</td>
+									{/* Target */}
+									<td title={longTarget ? target : ''} className="px-4 py-2 border-b border-gray-200">
+										{longTarget ? target.slice(0, 40 - 3) + '...' : target}
+									</td>
+									{/* Timestamp */}
+									<td className="px-4 py-2 border-b border-gray-200 bg-gray-100">
+										{formatTimestamp(log.timestamp)}
+									</td>
 							</tr>);
 						})}
 					</tbody>

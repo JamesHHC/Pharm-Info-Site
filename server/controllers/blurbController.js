@@ -1,5 +1,6 @@
 const {pool: db} = require('../db/database');
-const check_role = require('./check_role');
+const check_role = require('./controller_utils/check_role');
+const get_changes = require('./controller_utils/get_changes');
 const logger = require('../utils/logger');
 
 // Get all blurbs
@@ -69,10 +70,17 @@ const updateBlurb = async (req, res) => {
 		if (check_role(req.user.role, 'admin'))
 			return res.status(403).json({ error: 'Insufficient permissions' });
 
+		const blrb = await db.query(
+			`SELECT * FROM vn_blurbs 
+				WHERE id = $1`,
+			[id]
+		);
+		const changeJson = get_changes(req.body, blrb.rows[0]);
+
 		const result = await db.query(
 			`UPDATE vn_blurbs
 				SET (name, description, type) = ($1, $2, $3)
-				WHERE id = ($4)`,
+				WHERE id = $4`,
 			[name, description, type, id]
 		);
 		res.status(201).json(result.rows[0]);
@@ -83,6 +91,10 @@ const updateBlurb = async (req, res) => {
 			actingUser: user,
 			target: name,
 			action: `Updated VN blurb`,
+			changes: {
+				targetId: id,
+				fields: changeJson,
+			},
 		});
 	}
 	catch (err) {

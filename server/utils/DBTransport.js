@@ -14,13 +14,14 @@ class DbTransport extends Transport {
 			action,
 			target = null,
 			originIP = null,
+			changes = null,
 		} = message || {};
 
 		try {
 			await this.db.query(
-				`INSERT INTO logs (timestamp, level, acting_user, action, target, origin_ip)
-				 	VALUES ($1, $2, $3, $4, $5, $6)`,
-				[timestamp, level, actingUser, action, target, originIP]
+				`INSERT INTO logs (timestamp, level, acting_user, action, target, origin_ip, changes)
+				 	VALUES ($1, $2, $3, $4, $5, $6, $7)`,
+				[timestamp, level, actingUser, action, target, originIP, changes]
 			);
 		}
 		catch (err) {

@@ -1,5 +1,6 @@
 const {pool: db} = require('../db/database');
-const check_role = require('./check_role');
+const check_role = require('./controller_utils/check_role');
+const get_changes = require('./controller_utils/get_changes');
 const logger = require('../utils/logger');
 
 // Get all pharmacies
@@ -103,22 +104,34 @@ const updatePharmacy = async (req, res) => {
 		// Validate user access level
 		if (check_role(req.user.role, 'editor'))
 			return res.status(403).json({ error: 'Insufficient permissions' });
+
+		const pharm = await db.query(
+			`SELECT * FROM pharmacies 
+				WHERE id = $1`,
+			[id]
+		);
+		const changeJson = get_changes(req.body, pharm.rows[0]);
 		
 		const result = await db.query(
 			`UPDATE pharmacies SET (name, communication, verbal_orders, general_notes, oncall_prefs) =
 				($2, $3, $4, $5, $6)
-				WHERE id = ($1)
+				WHERE id = $1
 				RETURNING *`,
 			[id, name, communication, verbal_orders, general_notes, oncall_prefs]
 		);
 		res.status(201).json(result.rows[0]);
 
 		// Logging
+		if (Object.keys(changeJson).length === 0) return;
 		const user = await logger.getUser(req.user.id);
 		logger.info({
 			actingUser: user,
 			target: name,
 			action: `Updated pharmacy`,
+			changes: {
+				targetId: id,
+				fields: changeJson,
+			},
 		});
 	}
 	catch (err) {

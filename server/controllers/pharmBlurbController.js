@@ -1,5 +1,6 @@
 const {pool: db} = require('../db/database');
-const check_role = require('./check_role');
+const check_role = require('./controller_utils/check_role');
+const logger = require('../utils/logger');
 
 // Get all pharmacy blurbs
 const getPharmBlurbs = async (req, res) => {
@@ -87,8 +88,26 @@ const updatePharmBlurbs = async (req, res) => {
 				[[pharmacy_id], remArr]
 			);
 		}
-
 		res.status(201).json('Pharmacy blurbs updated!');
+
+		// Logging
+		if (remArr.length === 0 && addArr.length === 0) return;
+		const user = await logger.getUser(req.user.id);
+		const pharm = await db.query(`SELECT name FROM pharmacies WHERE id = $1`, [pharmacy_id]);
+		logger.info({
+			actingUser: user,
+			target: pharm.rows[0].name,
+			action: `Updated associated blurbs`,
+			changes: {
+				targetId: pharmacy_id,
+				fields: {
+					pharm_blurbs: {
+						from: found,
+						to: blurb_ids,
+					},
+				},
+			},
+		});
 	}
 	catch (err) {
 		console.error('Error updating pharmacy blurb(s):', err);

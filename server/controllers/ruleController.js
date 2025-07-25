@@ -1,5 +1,6 @@
 const {pool: db} = require('../db/database');
-const check_role = require('./check_role');
+const check_role = require('./controller_utils/check_role');
+const get_changes = require('./controller_utils/get_changes');
 const logger = require('../utils/logger');
 
 // Helper function to convert delta JSONs to something readable
@@ -85,10 +86,17 @@ const updateRule = async (req, res) => {
 		if (check_role(req.user.role, 'editor'))
 			return res.status(403).json({ error: 'Insufficient permissions' });
 
+		const qrule = await db.query(
+			`SELECT * FROM rules 
+				WHERE id = $1`,
+			[id]
+		);
+		const changeJson = get_changes(req.body, qrule.rows[0]);
+
 		const result = await db.query(
 			`UPDATE rules
-				SET rule = ($1)
-				WHERE id = ($2)`,
+				SET rule = $1
+				WHERE id = $2`,
 			[rule, id]
 		);
 		res.status(201).json(result.rows[0]);
@@ -99,6 +107,10 @@ const updateRule = async (req, res) => {
 			actingUser: user,
 			target: ruleToText(rule, id),
 			action: `Updated rule`,
+			changes: {
+				targetId: id,
+				fields: changeJson,
+			},
 		});
 	}
 	catch (err) {

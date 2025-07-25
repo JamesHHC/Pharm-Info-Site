@@ -1,5 +1,6 @@
 const {pool: db} = require('../db/database');
-const check_role = require('./check_role');
+const check_role = require('./controller_utils/check_role');
+const get_changes = require('./controller_utils/get_changes');
 const logger = require('../utils/logger');
 
 // Get all contacts
@@ -105,21 +106,33 @@ const updateContact = async (req, res) => {
 		if (check_role(req.user.role, 'editor'))
 			return res.status(403).json({ error: 'Insufficient permissions' });
 		
+		const contact = await db.query(
+			`SELECT * FROM contacts 
+				WHERE id = $1`,
+			[id]
+		);
+		const changeJson = get_changes(req.body, contact.rows[0]);
+
 		const result = await db.query(
 			`UPDATE contacts SET (name, email, phone, title, preferences, dnc, intake_only, contact_type, vip) =
 				($2, $3, $4, $5, $6, $7, $8, $9, $10)
-				WHERE id = ($1)
+				WHERE id = $1
 				RETURNING *`,
 			[id, name, email, phone, title, preferences, dnc, intake_only, contact_type, vip]
 		);
 		res.status(201).json(result.rows[0]);
 
 		// Logging
+		if (Object.keys(changeJson).length === 0) return;
 		const user = await logger.getUser(req.user.id);
 		logger.info({
 			actingUser: user,
 			target: name,
 			action: `Updated contact`,
+			changes: {
+				targetId: id,
+				fields: changeJson,
+			},
 		});
 	}
 	catch (err) {
