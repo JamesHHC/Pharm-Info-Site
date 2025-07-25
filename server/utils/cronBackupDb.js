@@ -11,6 +11,7 @@ cron.schedule('0 8 * * 5', async () => {
 		logger.info({
 			actingUser: 'SYSTEM',
 			action: 'Created database backup',
+			target: filename,
 		});
 	})
 	.catch(err => {

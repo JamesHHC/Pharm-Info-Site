@@ -1,4 +1,4 @@
-const { exec } = require('child_process');
+const { spawn } = require('child_process');
 const fs = require('fs');
 const path = require('path');
 const dotenv = require('dotenv');
@@ -22,13 +22,29 @@ function createBackup() {
 	const timestamp = new Date().toISOString().replace(/[:T]/g, '-').split('.')[0];
 	const filename = `backup-${timestamp}.sql`;
 	const filepath = path.join(BACKUP_DIR, filename);
-
 	const { user, host, database, password } = dbConfig;
+
 	return new Promise((resolve, reject) => {
-		const command = `pg_dump -U ${user} -h ${host} -F c -f "${filepath}" ${database}`;
-		exec(command, { env: { ...process.env, PGPASSWORD: password } }, (error) => {
-			if (error) return reject(error);
-			resolve({ filepath, filename });
+		const args = [
+			'-U', user,
+			'-h', host,
+			'-F', 'c',
+			'-f', filepath,
+			database
+		];
+		const dump = spawn('pg_dump', args, {
+			env: { ...process.env, PGPASSWORD: password }
+		});
+		dump.on('error', (err) => {
+			console.error('Failed to execute pg_dump:', err.message || err);
+			reject(err);
+		});
+		dump.on('close', (code) => {
+			if (code === 0) resolve({ filepath, filename });
+			else {
+				console.error(`Command pg_dump exited with code ${code}`);
+				reject(new Error(`pg_dump failed with exit code ${code}`));
+			}
 		});
 	});
 }
@@ -123,7 +139,6 @@ async function backupAndUpload() {
 		const token = await getAccessToken();
 		await uploadToSharePoint(filepath, filename, token);
 		await deleteOldSharePointBackups(token, 30);
-		console.log('beep');
 		return filename;
 	}
 	catch (err) {
