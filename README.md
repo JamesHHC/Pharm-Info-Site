@@ -83,6 +83,7 @@ Want a deeper technical look at how these features are implemented? \
 client/
 └── src/
     ├── assets/
+    │   └── icons/
     ├── auth/
     ├── pages/
     │   ├── components/
@@ -94,6 +95,7 @@ client/
 
 server/
 ├── controllers/
+│   └── controller_utils/
 ├── routes/
 ├── middleware/
 ├── db/
