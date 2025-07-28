@@ -76,7 +76,8 @@ CREATE TABLE public.logs (
     action text NOT NULL,
     target text,
     origin_ip text,
-    "timestamp" timestamp with time zone DEFAULT now() NOT NULL
+    "timestamp" timestamp with time zone DEFAULT now() NOT NULL,
+    changes json
 );
 
 
