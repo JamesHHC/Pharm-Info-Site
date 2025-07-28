@@ -50,6 +50,11 @@ export async function refreshToken() {
 }
 
 // Remove current token
-export function logout() {
+export async function logout() {
 	localStorage.removeItem('token');
+	const res = await fetch(`${API}/logout`, {
+		method: 'POST',
+		credentials: 'include',
+	});
+	if (res.status === 200) location.reload();
 }

@@ -110,9 +110,21 @@ const refresh = async (req, res) => {
 	}
 };
 
+// Logout user (remove refreshToken cookie)
+const logout = async (req, res) => {
+	res.clearCookie('refreshToken', {
+		httpOnly: true,
+		secure: false,
+		sameSite: 'Lax',
+		path: '/'
+	});
+	res.sendStatus(200);
+};
+
 module.exports = {
 	register,
 	login,
 	me,
 	refresh,
+	logout,
 };
