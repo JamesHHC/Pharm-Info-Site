@@ -59,11 +59,14 @@ This admin-only tool, integrated into the frontend, allows privileged users to v
 
 <img src="screenshots/audit_log.png" alt="Audit log" width="500"/>
 
+<img src="screenshots/diff_viewer.png" alt="Audit log" width="300"/>
+
 **Key Capabilities:**
 
 - Displays logs with sortable columns for user, action type, target, and timestamp.
 - Real-time filtering to locate entries quickly by user or action.
 - Accessible only to users with the `admin` role (or higher, if expanded in the future).
+- Changes are visualized with [jsdiff](https://github.com/kpdecker/jsdiff) to make it easier to see what changed.
 
 > This UI addition complements the backend’s Winston-based logging, giving admins instant insight into who did what — and when — right from their browser.
 
