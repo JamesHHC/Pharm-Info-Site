@@ -20,8 +20,8 @@ function areEqual(a, b) {
 const getChanges = (body, item) => {
 	const changes = {};
 	for (const key in body) {
-		const newVal = typeof body[key] === 'string' ? parseDelta(body[key]) : body[key];
-		const oldVal = typeof item[key] === 'string' ? parseDelta(item[key]) : item[key];
+		const newVal = typeof body[key] === 'string' ? parseDelta(body[key]) : body[key] || '';
+		const oldVal = typeof item[key] === 'string' ? parseDelta(item[key]) : item[key] || '';
 		if (!areEqual(newVal, oldVal)) {
 			changes[key] = {
 				from: oldVal,
