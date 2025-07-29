@@ -129,7 +129,7 @@ export default {
 ```bash
 cd server
 npm install
-npm run start
+node .
 ```
 > You'll also need a `.env` file in `server/`:
 ```env
