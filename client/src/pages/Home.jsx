@@ -63,7 +63,7 @@ function Home() {
 	};
 	const fetchContacts = async () => {
 		try {
-			const res = await fetch(`http://${serverIp}:${serverPort}/api/contacts`);
+			const res = await fetch(`http://${serverIp}:${serverPort}/api/contacts/withpharms`);
 			const data = await res.json();
 			setContacts(data);
 		}
@@ -266,11 +266,20 @@ function Home() {
 														<p className="mt-[-4px]" title={longTitle ? contact.title : ''}>
 															{longTitle ? contact.title.slice(0, 40 - 3) + '...' : contact.title}
 														</p>
-														{contact.contact_type.length > 0 &&
+														{contact.pharmacies.length > 0 &&
 															<div className="text-gray-400 text-sm flex flex-wrap gap-2 mt-1.5 mt-0.5">
-																{(contact.contact_type).map((type) => (
-																	<div className="bg-gray-100 outline outline-gray-400 px-2 py-1 rounded-full shadow-sm" key={type}>{type}</div>
-																))}
+																{(contact.pharmacies).map((pharm) => {
+																	const longPharm = pharm.name.length > 20;
+																	return (
+																		<div
+																			className="bg-gray-100 outline outline-gray-400 px-2 py-1 rounded-full shadow-sm"
+																			title={longPharm ? pharm.name : ''}
+																			key={pharm.id}
+																		>
+																			{longPharm ? pharm.name.slice(0, 20 - 3) + '...' : pharm.name}
+																		</div>
+																	);
+																})}
 															</div>
 														}
 													</div>

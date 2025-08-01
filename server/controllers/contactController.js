@@ -149,8 +149,8 @@ const contactActive = async (req, res) => {
 		if (check_role(req.user.role, 'editor'))
 			return res.status(403).json({ error: 'Insufficient permissions' });
 
-		const result = await db.query(`
-			UPDATE contacts
+		const result = await db.query(
+			`UPDATE contacts
 				SET active = $2
 				WHERE id = $1
 				RETURNING name`,
@@ -172,6 +172,31 @@ const contactActive = async (req, res) => {
 	}
 };
 
+// Get contacts with associated pharmacies joined into data
+const getContactsWithPharms = async (req, res) => {
+	try {
+		const result = await db.query(
+			`SELECT c.*,
+		        COALESCE(
+		            json_agg(
+		                json_build_object('id', p.id, 'name', p.name)
+		                ORDER BY p.name
+		            ) FILTER (WHERE p.id IS NOT NULL),
+		            '[]'
+		        ) AS pharmacies
+		    FROM contacts c
+		    LEFT JOIN pharmacy_contacts pc ON c.id = pc.contact_id
+		    LEFT JOIN pharmacies p ON pc.pharmacy_id = p.id
+		    GROUP BY c.id`
+		);
+		res.json(result.rows);
+	}
+	catch (err) {
+		console.error('Error getting contacts with pharmacies:', err);
+		res.status(500).send('Server error');
+	} 
+};
+
 module.exports = {
 	getContacts,
 	newContact,
@@ -179,4 +204,5 @@ module.exports = {
 	deleteContact,
 	updateContact,
 	contactActive,
+	getContactsWithPharms,
 };
