@@ -186,7 +186,7 @@ export default function InfoPanel({ selectedItem, setSelectedItem, editItem }) {
 					<div className="lg:flex space-x-3">
 						{/* Communication Preferences */}
 						<div className="w-full">
-							<span className="text-sm">Communication Preferences</span>
+							<span className="text-sm">Communication Info</span>
 							<div className="min-h-10 mb-2 bg-white px-3 py-2 rounded-md outline outline-gray-300">
 								<RichViewer deltaString={selectedItem.communication} styling="off" />
 							</div>
@@ -288,17 +288,25 @@ export default function InfoPanel({ selectedItem, setSelectedItem, editItem }) {
 					{/* Contacts */}
 					<span className="text-sm">Contacts</span>
 					<div className="flex flex-wrap gap-2 mt-1 mb-2">
-						{contacts.length > 0 && contacts.map(contact => (
+						{contacts.length > 0 && contacts.map(contact => {
+							const longTitle = contact.title.length > 30;
+							const nameColor = contact.dnc ? {color: 'rgba(200, 80, 80, 1)'} : 
+								contact.intake_only ? {color: 'rgba(210, 150, 20, 1)'} : {};
+							return(
 								<div
 									key={contact.id}
-									className={`${contact.active || 'opacity-30'} cursor-pointer py-2 px-5 bg-white rounded-full shadow-sm outline outline-gray-300`}
+									className={`${contact.active || 'opacity-30'} cursor-pointer my-auto py-2 px-5 bg-white rounded-full shadow-sm outline outline-gray-300`}
 									onClick={() => { setSelectedItem({ ...contact, type: 'contact' }); }}
 								>
-									<p className="text-base">
+									{/* Name */}
+									<p className="text-base font-medium text-[#3c3c50cc]" style={nameColor}>
+										{/* DNC/Intake */}
+										{contact.dnc && <span title="DNC">❌</span>}
+										{contact.intake_only && <span title="INTAKE ONLY">⚠️</span>}
 										{contact.name}
 										{contact.vip &&
 											<span
-												className="ml-1 mr-3 mt-[-4px]"
+												className="ml-1 mr-3"
 												style={{
 													display: 'inline-block',
 											        width: '1em',
@@ -310,10 +318,13 @@ export default function InfoPanel({ selectedItem, setSelectedItem, editItem }) {
 											</span>
 										}
 									</p>
-									<p className="text-sm font-light">{contact.title}</p>
+									{/* Title */}
+									<p className="text-sm font-light" title={longTitle ? contact.title : ''}>
+										{longTitle ? contact.title.slice(0, 30 - 3) + '...' : contact.title}
+									</p>
 								</div>
-							)
-						) || <div className="text-base font-light">No contacts</div>}
+							);
+						}) || <div className="text-base font-light">No contacts</div>}
 					</div>
 				</div>
 			</div>
@@ -387,7 +398,7 @@ export default function InfoPanel({ selectedItem, setSelectedItem, editItem }) {
 						{pharmacies.length > 0 && pharmacies.map(pharmacy => (
 								<div
 									key={pharmacy.id}
-									className={`${pharmacy.active || 'opacity-30'} cursor-pointer text-base py-2 px-4 bg-white rounded-full shadow-sm outline outline-gray-300`}
+									className={`${pharmacy.active || 'opacity-30'} cursor-pointer text-base text-[#3c3c50cc] font-medium py-2 px-4 bg-white rounded-full shadow-sm outline outline-gray-300`}
 									onClick={() => { setSelectedItem({ ...pharmacy, type: 'pharmacy' }); }}
 								>
 									<p>{pharmacy.name}</p>

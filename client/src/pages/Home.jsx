@@ -23,6 +23,7 @@ import CrownIcon from '@/assets/icons/CrownIcon';
 import config from '@/config.js';
 const serverIp = config.server_ip;
 const serverPort = config.server_port;
+const buttonForm = config.button_form;
 
 function Home() {
 	// User/auth stuff
@@ -114,9 +115,20 @@ function Home() {
 				<button
 					tabIndex='-1'
 					onClick={() => setShowSidebar(!showSidebar)}
-					className="cursor-pointer p-2 shadow-md bg-slate-600 hover:bg-slate-700 w-10 h-10 rounded-full font-bold text-white"
+					className="cursor-pointer p-2 shadow-md bg-slate-600 hover:bg-slate-700 w-12 h-12 rounded-full font-bold text-white"
 				>
 					{showSidebar ? '↺' : '⌕'}
+				</button>
+			</div>
+			{/* New/Bad info form button */}
+			<div className="absolute bottom-4 right-4 z-30">
+				<button
+					tabIndex='-1'
+					onClick={() => window.open(buttonForm)}
+					title="Report new/inaccurate data"
+					className="cursor-pointer p-2 shadow-md border-2 border-slate-600 w-12 h-12 rounded-full hover:opacity-70 hover:bg-slate-600/20"
+				>
+					<span className="text-slate-600 font-bold">!</span>
 				</button>
 			</div>
 			{/* Left Column */}
@@ -216,6 +228,7 @@ function Home() {
 								<ul className="space-y-2" tabIndex="-1">
 									{filteredContacts.map((contact) => {
 										const isActive = contact.active;
+										const longTitle = contact.title.length > 40;
 										const thisContact = selectedItem?.type === 'contact' && selectedItem?.id === contact.id;
 										// if (!isActive && !hasMinPermission(user, 'editor')) return;
 										return (
@@ -250,7 +263,9 @@ function Home() {
 																</span>
 															}
 														</p>
-														<p className="mt-[-4px]">{contact.title}</p>
+														<p className="mt-[-4px]" title={longTitle ? contact.title : ''}>
+															{longTitle ? contact.title.slice(0, 40 - 3) + '...' : contact.title}
+														</p>
 														{contact.contact_type.length > 0 &&
 															<div className="text-gray-400 text-sm flex flex-wrap gap-2 mt-1.5 mt-0.5">
 																{(contact.contact_type).map((type) => (

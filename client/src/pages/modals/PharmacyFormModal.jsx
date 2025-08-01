@@ -118,7 +118,7 @@ export default function PharmacyFormModal({ isOpen, onClose, onSubmit, contacts 
 					<RichTextarea
 						id="communication"
 						name="communication"
-						label="Communication Preferences"
+						label="Communication Info"
 					/>
 
 					{/* On-call Prefs */}

@@ -121,6 +121,7 @@ npm run dev
 export default {
     server_ip: 'XX',
     server_port: 'XX',
+    button_form: 'XX',
 };
 ```
 
